@@ -33,6 +33,14 @@
       "replace": "雄牛の皮",
       "reason": "Butler's source says bullock-skins, not cow-hide.",
       "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 d10355d1ad1cc848b83af16db8e93dc50330da6a32750029a69ae1f419897985."
+    },
+    {
+      "unitId": "iliad-21-0039",
+      "field": "ja",
+      "find": "自分が今にも追いつくのだと絶えず思い込ませて",
+      "replace": "今にも追いつけるとアキレウスに絶えず思い込ませて",
+      "reason": "Clarifies that Apollo makes Achilles believe he is about to catch up, avoiding an ambiguous pronoun that could identify Apollo as the chaser.",
+      "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 2f2f1d9be41450a2bdbac81e93f9eabdbfc291618c88057daf3775010a14858a."
     }
   ],
   "reviewSamples": [
@@ -51,6 +59,18 @@
         "iliad-15-0001", "iliad-15-0054", "iliad-16-0001", "iliad-16-0054"
       ],
       "adjudication": "Three findings were accepted and recorded as unit-specific corrections. The note finding on iliad-15-0054 was rejected because the preceding paragraph identifies Ajax and the line continues his speech; the context supports the note."
+    },
+    {
+      "reviewer": "Claude Sonnet 5.5 via managed local CLI",
+      "sampleSha256": "2f2f1d9be41450a2bdbac81e93f9eabdbfc291618c88057daf3775010a14858a",
+      "englishWordCount": 1808,
+      "reviewedUnitIds": [
+        "iliad-17-0001", "iliad-17-0050", "iliad-18-0001", "iliad-18-0048",
+        "iliad-19-0001", "iliad-19-0031", "iliad-20-0001", "iliad-20-0036",
+        "iliad-21-0001", "iliad-21-0039", "iliad-22-0001", "iliad-22-0033",
+        "iliad-23-0001", "iliad-23-0065", "iliad-24-0001", "iliad-24-0056"
+      ],
+      "adjudication": "One pronoun clarification in iliad-21-0039 was accepted and recorded as a unit-specific correction."
     }
   ]
 }

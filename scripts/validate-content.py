@@ -166,12 +166,13 @@ def catalog_for(manifest: dict, source_works: dict, translated_works: dict) -> d
                 },
                 "japanese": {
                     "title": "新規AI生成訳（Butler英訳からの重訳）", "translator": "AI-generated draft",
-                    "url": None, "license": "Original AI-generated translation based on the public-domain English text.",
-                    "reviewScope": "Production sample review covered 32 units / 3,772 English words across Iliad books 1–16; separate targeted production review corrected iliad-01-0002. No full-corpus human review.",
+                    "license": "Original AI-generated translation based on the public-domain English text.",
+                    "reviewScope": "イリアス全24巻から各巻冒頭・末尾の計48単位（英文5,580語）をAIで抜取確認。別途1単位の表現も個別修正。全本文の通読校閲は未実施。",
                 },
                 "commentary": {
-                    "author": "AI-generated draft", "method": "Notes generated from the Butler English paragraphs.",
-                    "reviewScope": "No full human review; model-comparison and production sample review scope are documented in CONTENT.md.",
+                    "author": "AI生成",
+                    "method": "Butler英訳の各段落に基づきAIが作成。",
+                    "reviewScope": "イリアス全24巻から各巻冒頭・末尾の計48単位（英文5,580語）の解説をAIで抜取確認。全解説の通読校閲は未実施。",
                 },
                 "alignment": {
                     "method": "One Butler English source paragraph per stable ID; wrapped lines are joined with spaces.",

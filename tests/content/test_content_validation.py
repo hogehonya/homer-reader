@@ -45,6 +45,23 @@ class ContentValidationTests(unittest.TestCase):
         self.assertEqual(translations["iliad-04-0039"]["notes"][0]["body"], "たとえ女神に守られて無傷で歩けても軽んじなかった、という強調。後半は保持する。")
         self.assertEqual(validate_content.apply_corrections(translations, [correction]), 0)
 
+    def test_catalog_exposes_japanese_review_scope_and_omits_null_japanese_url(self):
+        source_works = {}
+        translated_works = {}
+        manifest_works = {}
+        for work_id in ("iliad", "odyssey"):
+            unit = {"id": f"{work_id}-01-0001", "en": "Source text."}
+            source_works[work_id] = ({"books": [{"number": 1, "units": [unit]}]}, [unit])
+            translated_works[work_id] = {unit["id"]: {"ja": "日本語本文。", "notes": []}}
+            manifest_works[work_id] = {"titleEn": f"The {work_id.title()}", "url": "https://example.test/source", "sha256": "a" * 64}
+        catalog = validate_content.catalog_for(
+            {"retrievedAt": "2026-10-10", "works": manifest_works}, source_works, translated_works,
+        )
+        for work in catalog["works"]:
+            self.assertNotIn("url", work["source"]["japanese"])
+            self.assertIn("AI", work["source"]["commentary"]["author"])
+            self.assertIn("48単位", work["source"]["commentary"]["reviewScope"])
+
     def write_published_fixture(self, public_dir):
         works = []
         catalog_works = []
