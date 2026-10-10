@@ -165,12 +165,12 @@
           "title": "新規AI生成訳（Butler英訳からの重訳）",
           "translator": "AI-generated draft",
           "license": "Original AI-generated translation based on the public-domain English text.",
-          "reviewScope": "本文はAI生成訳。49単位（英文6,203語）をAIで抜取照合し、別途1単位の表現を個別確認・修正。注は別Codexで137件を抜取対照（試行40件＋全48巻の冒頭・末尾96件、全spoiler 3件、長文3件。重複5件）し、綴り2件を限定修正。全文・全注の人手校閲は未実施。"
+          "reviewScope": "49単位（英文6,203語）をAIで抜取照合。別途1単位の表現も個別確認・修正。全本文の通読校閲は未実施。"
         },
         "commentary": {
           "author": "AI生成",
-          "method": "Butler英訳の各段落に基づきAIが作成。",
-          "reviewScope": "1,113本文単位と注749件をAI生成。注は別Codexで137件を抜取対照し、綴り2件を限定修正。全注の人手校閲は未実施。"
+          "method": "既存の日本語注をButler英訳からAIで英訳。",
+          "reviewScope": "49単位（英文6,203語）の既存日本語注を抜取照合。英語注87件を別Codexで抜取対照し、綴り2件を限定修正。全注の人手校閲は未実施。"
         },
         "alignment": {
           "method": "One Butler English source paragraph per stable ID; wrapped lines are joined with spaces.",
@@ -342,12 +342,12 @@
           "title": "新規AI生成訳（Butler英訳からの重訳）",
           "translator": "AI-generated draft",
           "license": "Original AI-generated translation based on the public-domain English text.",
-          "reviewScope": "本文はAI生成訳。49単位（英文5,515語）をAIで抜取照合。注は別Codexで137件を抜取対照（試行40件＋全48巻の冒頭・末尾96件、全spoiler 3件、長文3件。重複5件）し、綴り2件を限定修正。全文・全注の人手校閲は未実施。"
+          "reviewScope": "49単位（英文5,515語）をAIで抜取照合。全本文の通読校閲は未実施。"
         },
         "commentary": {
           "author": "AI生成",
-          "method": "Butler英訳の各段落に基づきAIが作成。",
-          "reviewScope": "1,027本文単位と注626件をAI生成。注は別Codexで137件を抜取対照し、綴り2件を限定修正。全注の人手校閲は未実施。"
+          "method": "既存の日本語注をButler英訳からAIで英訳。",
+          "reviewScope": "49単位（英文5,515語）の既存日本語注を抜取照合。英語注50件を別Codexで抜取対照。全注の人手校閲は未実施。"
         },
         "alignment": {
           "method": "One Butler English source paragraph per stable ID; wrapped lines are joined with spaces.",
