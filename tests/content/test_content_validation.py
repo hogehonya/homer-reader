@@ -60,8 +60,8 @@ class ContentValidationTests(unittest.TestCase):
         for work in catalog["works"]:
             self.assertNotIn("url", work["source"]["japanese"])
             self.assertIn("AI", work["source"]["commentary"]["author"])
-        self.assertIn("48単位", catalog["works"][0]["source"]["commentary"]["reviewScope"])
-        self.assertIn("未実施", catalog["works"][1]["source"]["commentary"]["reviewScope"])
+        self.assertIn("49単位", catalog["works"][0]["source"]["commentary"]["reviewScope"])
+        self.assertIn("49単位", catalog["works"][1]["source"]["commentary"]["reviewScope"])
 
     def test_public_source_manifest_uses_full_import_manifest_and_omits_excluded_text(self):
         source_works = {}

@@ -41,6 +41,15 @@
       "replace": "今にも追いつけるとアキレウスに絶えず思い込ませて",
       "reason": "Clarifies that Apollo makes Achilles believe he is about to catch up, avoiding an ambiguous pronoun that could identify Apollo as the chaser.",
       "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 2f2f1d9be41450a2bdbac81e93f9eabdbfc291618c88057daf3775010a14858a."
+    },
+    {
+      "unitId": "odyssey-12-0001",
+      "field": "noteBody",
+      "noteTitle": "アイアイエ島",
+      "find": "冥府から戻った一行はここへ再び立ち寄り、エルペノルの葬送を行うことになる。",
+      "replace": "冥府から戻った一行はここに上陸する。",
+      "reason": "The original note foreshadows Elpenor's funeral, which is a later scene not mentioned in this paragraph.",
+      "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 a7ec5701599accadca20816baa15a7f433c1356f2bfabf10dadd5e41db6b924c."
     }
   ],
   "reviewSamples": [
@@ -71,6 +80,27 @@
         "iliad-23-0001", "iliad-23-0065", "iliad-24-0001", "iliad-24-0056"
       ],
       "adjudication": "One pronoun clarification in iliad-21-0039 was accepted and recorded as a unit-specific correction."
+    },
+    {
+      "reviewer": "Claude Sonnet 5.5 via managed local CLI",
+      "sampleSha256": "a7ec5701599accadca20816baa15a7f433c1356f2bfabf10dadd5e41db6b924c",
+      "englishWordCount": 6138,
+      "reviewedUnitIds": [
+        "odyssey-01-0001", "odyssey-01-0032", "odyssey-02-0001", "odyssey-02-0035",
+        "odyssey-03-0001", "odyssey-03-0038", "odyssey-04-0001", "odyssey-04-0081",
+        "odyssey-05-0001", "odyssey-05-0037", "odyssey-06-0001", "odyssey-06-0026",
+        "odyssey-07-0001", "odyssey-07-0029", "odyssey-08-0001", "odyssey-08-0050",
+        "odyssey-09-0001", "odyssey-09-0044", "odyssey-10-0001", "odyssey-10-0049",
+        "odyssey-11-0001", "odyssey-11-0054", "odyssey-12-0001", "odyssey-12-0039",
+        "odyssey-13-0001", "odyssey-13-0038", "odyssey-14-0001", "odyssey-14-0035",
+        "odyssey-15-0001", "odyssey-15-0048", "odyssey-16-0001", "odyssey-16-0045",
+        "odyssey-17-0001", "odyssey-17-0063", "odyssey-18-0001", "odyssey-18-0041",
+        "odyssey-19-0001", "odyssey-19-0039", "odyssey-20-0001", "odyssey-20-0036",
+        "odyssey-21-0001", "odyssey-21-0042", "odyssey-22-0001", "odyssey-22-0052",
+        "odyssey-23-0001", "odyssey-23-0029", "odyssey-24-0001", "odyssey-24-0045",
+        "iliad-12-0005", "odyssey-19-0019"
+      ],
+      "adjudication": "One spoiler correction in odyssey-12-0001 was accepted and recorded as a unit-specific note correction. The proposed odyssey-15-0048 note removal was rejected because the preceding source unit already describes Eumaeus's sale to Laertes; the reviewed note is supported by context."
     }
   ]
 }

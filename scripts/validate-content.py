@@ -147,11 +147,11 @@ def catalog_for(manifest: dict, source_works: dict, translated_works: dict) -> d
         source, _ = source_works[work_id]
         english = manifest["works"][work_id]
         if work_id == "iliad":
-            translation_review_scope = "イリアス全24巻から各巻冒頭・末尾の計48単位（英文5,580語）をAIで抜取確認。別途1単位の表現も個別修正。全本文の通読校閲は未実施。"
-            commentary_review_scope = "イリアス全24巻から各巻冒頭・末尾の計48単位（英文5,580語）の解説をAIで抜取確認。全解説の通読校閲は未実施。"
+            translation_review_scope = "49単位（英文6,203語）をAIで抜取照合。別途1単位の表現も個別確認・修正。全本文の通読校閲は未実施。"
+            commentary_review_scope = "49単位（英文6,203語）の解説をAIで抜取照合。全解説の通読校閲は未実施。"
         else:
-            translation_review_scope = "オデュッセイアの翻訳サンプル確認は未実施。全本文の通読校閲も未実施。"
-            commentary_review_scope = "オデュッセイアの解説サンプル確認は未実施。全解説の通読校閲も未実施。"
+            translation_review_scope = "49単位（英文5,515語）をAIで抜取照合。全本文の通読校閲は未実施。"
+            commentary_review_scope = "49単位（英文5,515語）の解説をAIで抜取照合。全解説の通読校閲は未実施。"
         books = []
         for book in source["books"]:
             books.append({
