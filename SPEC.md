@@ -147,7 +147,7 @@ Issue #3で確定した静的JSONの契約です。本文データと公開台�
 | `public/data/catalog.json` | `{version:1,works:[{id,titleJa,titleEn,descriptionJa,books:[{number,titleJa?,unitCount,dataFile}],source:{english,japanese,commentary,alignment}}]}`。作品IDは`iliad`または`odyssey`。各作品は1〜24巻とし、出典・生成方法・確認範囲・対応方法を明記する。`descriptionJa`と任意の`titleJa`は先の展開を明かさない短文・見出しとする。 |
 | 巻データ | `public/data/{workId}/{bookNumber2digit}.json`に`{workId,bookNumber,units}`を置き、選んだ1巻だけを遅延読込する。 |
 | 対訳単位 | `{id,reference,en,ja,notes}`。IDは安定し、`reference`で原典巻行と採用英訳の単位を区別できるようにする。英語・日本語本文は文字列として描画しHTMLを解釈しない。 |
-| 解説 | `{kind,title,titleEn,body,bodyEn,spoiler,sourceUrl?}`。`title`と`body`は既存の日本語文を保持し、必須の`titleEn`と`bodyEn`に対応する英訳を置く。全フィールドの値は空でない文字列とする。kindは`person`、`place`、`myth`、`language`、`interpretation`のいずれか。先の展開を含む注釈は英日両方の見出し・本文を初期状態で隠す。 |
+| 解説 | `{kind,title,titleEn,body,bodyEn,spoiler,sourceUrl?}`。`title`と`body`は既存の日本語文を保持し、必須の`titleEn`と`bodyEn`に対応する英訳を置く。必須の文字列フィールドは非空とし、`spoiler`はboolean、`sourceUrl`は指定時にHTTPS URLとする。kindは`person`、`place`、`myth`、`language`、`interpretation`のいずれか。先の展開を含む注釈は英日両方の見出し・本文を初期状態で隠す。 |
 | 保存 | Issue #3ではしおり・読書位置などを保存しない。 |
 | 秘密情報 | APIキー等の秘密情報を成果物へ含めない。公開SPAの実行時に外部翻訳APIを使わない。 |
 
