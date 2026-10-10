@@ -53,7 +53,7 @@ class ContentValidationTests(unittest.TestCase):
             unit = {"id": f"{work_id}-01-0001", "en": "Source text."}
             source_works[work_id] = ({"books": [{"number": 1, "units": [unit]}]}, [unit])
             translated_works[work_id] = {unit["id"]: {"ja": "日本語本文。", "notes": []}}
-            manifest_works[work_id] = {"titleEn": f"The {work_id.title()}", "url": "https://example.test/source", "sha256": "a" * 64}
+            manifest_works[work_id] = {"url": "https://example.test/source", "sha256": "a" * 64}
         catalog = validate_content.catalog_for(
             {"retrievedAt": "2026-10-10", "works": manifest_works}, source_works, translated_works,
         )
