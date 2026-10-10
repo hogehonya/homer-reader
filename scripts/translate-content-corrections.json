@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "corrections": [
+    {
+      "unitId": "iliad-01-0002",
+      "field": "ja",
+      "find": "自分の祭司クリューセース",
+      "replace": "アポロンの祭司クリューセース",
+      "reason": "Butler's phrase 'Chryses his priest' identifies Chryses as Apollo's priest, not Agamemnon's.",
+      "reviewEvidence": "Parent's 4-paragraph / 491-English-word spot check identified the ambiguity; only this unit is changed."
+    }
+  ]
+}
