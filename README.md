@@ -1,12 +1,12 @@
 # homer-reader
 
-ホメロスの『イリアス』と『オデュッセイア』を、ブラウザ上で日英対訳・日本語解説付きで読むSPAです。
+ホメロスの『イリアス』と『オデュッセイア』を、ブラウザ上で日英対訳・日本語解説付きで読むSPAです。注の日英表示はIssue #9で追加中です。
 
 ## 現在の状態
 
-『イリアス』『オデュッセイア』全48巻を収録しています。初回公開はrelease `r1119-b3`（main commit `c149af861d9f574ee3e4abafcbefcbd0c0621a47`）として完了しました。main CI #3と公開台帳CI #184は成功し、初回配信57ファイルのhashがpublication metadataと一致します。最新の配信検証と公開後QAは[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。詳細は[PLAN.md](PLAN.md)。
+『イリアス』『オデュッセイア』全48巻を収録しています。初回公開はrelease `r1119-b3`（main commit `c149af861d9f574ee3e4abafcbefcbd0c0621a47`）として完了しました。main CI #3と公開台帳CI #184は成功し、初回配信57ファイルのhashがpublication metadataと一致します。初回配信の検証と公開後QAは[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。詳細は[PLAN.md](PLAN.md)。
 
-注を英語・日本語で表示するIssue #9の変更は作業中です。既存の日本語の注を保持し、英訳の確認範囲・結果は[Issue #9](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/9)の最新記録を参照してください。この変更の統合・公開完了はまだ確認されていません。
+注を英語・日本語で表示するIssue #9の変更は作業中です。既存の日本語の注を保持し、英訳の確認範囲・結果は[Issue #9](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/9)の最新記録を参照してください。下記のURLと公開証跡はIssue #9の変更を含まない初回公開のものです。Issue #9の統合・公開結果も同Issueの完了記録を正本とし、記録追記だけの追加配信は行いません。
 
 閲覧URL: https://homer-reader.honya.dev（初回公開でHTTP 200を2026-10-10 17:44:30 JSTに確認）
 
@@ -15,10 +15,10 @@ Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/h
 | 項目 | 状態 |
 | :--- | :--- |
 | 要求・仕様書 | 作成済み（[SPEC.md](SPEC.md)が機能・コンテンツ仕様の正本） |
-| アプリ実装 | 公開中のreader UIと48巻データはmain commit `c149af8`に統合済み。注の日英表示を追加するIssue #9は実装中で、独立レビュー済み。最新状況はIssue #9を参照。 |
-| 本文・日本語訳・解説データ | 48巻・2,140対訳単位・英語本文268,999語。212/212バッチ成功。98 distinct units / 11,718語と別途1単位を抜取確認し、6件の限定修正を記録。全文の人手校閲は未実施。 |
+| アプリ実装 | 公開中のreader UIと48巻データはmain commit `c149af8`に統合済み。Issue #9のUI実装は完了し独立レビュー済み。注釈データ作成と統合受入・公開確認は継続中。最新状態はIssue #9を参照。 |
+| 本文・日本語訳・注釈データ | 本文は48巻・2,140対訳単位・英語本文268,999語。Issue #9では既存1,375注の日本語を保持して英訳を追加中。英訳確認の範囲・結果はIssue #9の最新記録を参照。本文・訳の既存抜取確認は98 distinct units / 11,718語と別途1単位、6件の限定修正を記録。全文の人手校閲は未実施。 |
 | CI | PR CI #2（[pipeline 2](https://ci.honya.dev/repos/154/pipeline/2)、commit `3ad028b`）は22 UI tests、12 Python tests、Node/Python strict 48-book verificationに成功。main CI #3と公開台帳CI #184も成功。 |
-| 公開 | 初回公開release `r1119-b3`を確認。HTTP 200、57配信ファイル全てのhash一致、初回登録後container ID `83485a1a23df505b9300091b8adbd9e0265c704f041eb61b8a54c01ab9ae8ea0`。最新の配信・QA証跡はIssue #3完了コメントを参照。 |
+| 公開 | 初回公開release `r1119-b3`を確認。HTTP 200、57配信ファイル全てのhash一致、初回登録後container ID `83485a1a23df505b9300091b8adbd9e0265c704f041eb61b8a54c01ab9ae8ea0`。この証跡はIssue #9の変更を含みません。最新のIssue #9配信・QA結果は同Issueの完了記録を参照。 |
 
 ## 読書の目的
 
