@@ -42,7 +42,7 @@ The generation runner uses the managed `codex-deepseek` runtime with its configu
 
 ## Review coverage and recorded correction
 
-The Japanese content remains an AI draft. A targeted sample review covered 4 paragraphs / 491 English words; it is not a full review. One semantic ambiguity in `iliad-01-0002` was corrected: Butler's “Chryses his priest” means Chryses is Apollo's priest. The draft wording `自分の祭司クリューセース` was corrected to `アポロンの祭司クリューセース`. This is a unit-specific correction in [`scripts/translate-content-corrections.json`](scripts/translate-content-corrections.json), applied during validation and assembly. In the same sample, “which of the gods” was rendered `どの神か` and retained. Further review should record its sample size and findings here; no full-corpus human review is claimed.
+The Japanese content remains an AI draft. A separate model-comparison run used the same 4 source paragraphs / 491 English words for DeepSeek and Claude outputs; this is not evidence that all four production-cache translations were reviewed and supports no general quality-winner claim. The Claude sample correctly resolved the priest relationship but added unsupported detail and exceeded the requested note limit. Production review separately confirmed one semantic ambiguity in `iliad-01-0002`: Butler's “Chryses his priest” means Chryses is Apollo's priest. The production draft wording `自分の祭司クリューセース` was corrected to `アポロンの祭司クリューセース`. This is a unit-specific correction in [`scripts/translate-content-corrections.json`](scripts/translate-content-corrections.json), applied during validation and assembly. No full-corpus human review is claimed.
 
 ## Reproduce and verify
 

@@ -151,11 +151,11 @@ def catalog_for(manifest: dict, source_works: dict, translated_works: dict) -> d
                 "japanese": {
                     "title": "新規AI生成訳（Butler英訳からの重訳）", "translator": "AI-generated draft",
                     "url": None, "license": "Original AI-generated translation based on the public-domain English text.",
-                    "reviewScope": "Targeted sample review: 4 paragraphs / 491 English words; not a full human review.",
+                    "reviewScope": "A separate model-comparison sample covered 4 source paragraphs / 491 English words; targeted production review confirmed one correction in iliad-01-0002. No full human review.",
                 },
                 "commentary": {
                     "author": "AI-generated draft", "method": "Notes generated from the Butler English paragraphs.",
-                    "reviewScope": "No full human review; targeted sample coverage is documented in CONTENT.md.",
+                    "reviewScope": "No full human review; model-comparison and targeted production review scope are documented in CONTENT.md.",
                 },
                 "alignment": {
                     "method": "One Butler English source paragraph per stable ID; wrapped lines are joined with spaces.",
