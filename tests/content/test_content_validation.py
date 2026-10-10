@@ -21,6 +21,9 @@ class ContentValidationTests(unittest.TestCase):
         self.assertEqual(validate_content.apply_corrections(translations, [correction]), 1)
         self.assertIn("アポロンの祭司", translations["iliad-01-0002"]["ja"])
         self.assertEqual(validate_content.apply_corrections(translations, [correction]), 0)
+        ambiguous = {"iliad-01-0002": {"ja": "自分の祭司クリューセースと自分の祭司クリューセース。アポロンの祭司クリューセース。"}}
+        with self.assertRaisesRegex(ValueError, "does not match current draft"):
+            validate_content.apply_corrections(ambiguous, [correction])
 
     def write_published_fixture(self, public_dir):
         works = []

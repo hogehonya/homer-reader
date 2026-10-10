@@ -1,6 +1,6 @@
 # Content sources, normalization, and review
 
-This file is the content provenance record for the 48-book reader. The published corpus contains Samuel Butler's English narrative text, a new AI-generated Japanese translation of that English, and AI-generated Japanese reading notes. The Japanese text is not translated directly from ancient Greek. It is an AI draft, not an expert-reviewed edition.
+This file is the content provenance record for the 48-book reader. Once assembled, the published corpus will contain Samuel Butler's English narrative text, a new AI-generated Japanese translation of that English, and AI-generated Japanese reading notes. The Japanese text is not translated directly from ancient Greek. It is an AI draft, not an expert-reviewed edition.
 
 ## Sources and rights basis
 

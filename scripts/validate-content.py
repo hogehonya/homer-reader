@@ -48,10 +48,11 @@ def apply_corrections(translations: dict[str, dict], corrections: list[dict]) ->
             raise ValueError(f"invalid or unknown translation correction target: {unit_id}")
         text = translations[unit_id]["ja"]
         original, replacement = correction["find"], correction["replace"]
-        if text.count(original) == 1:
+        matches = text.count(original)
+        if matches == 1:
             translations[unit_id]["ja"] = text.replace(original, replacement, 1)
             applied += 1
-        elif replacement not in text:
+        elif matches != 0 or replacement not in text:
             raise ValueError(f"reviewed correction does not match current draft: {unit_id}")
     return applied
 
