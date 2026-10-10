@@ -19,6 +19,7 @@ TRANSLATOR = importlib.util.module_from_spec(TRANSLATE_SPEC)
 assert TRANSLATE_SPEC.loader
 TRANSLATE_SPEC.loader.exec_module(TRANSLATOR)
 KINDS = {"person", "place", "myth", "language", "interpretation"}
+EXPECTED_NOTE_COUNTS = {"iliad": 749, "odyssey": 626}
 WORK_META = {
     "iliad": {
         "titleJa": "イリアス", "titleEn": "The Iliad",
@@ -31,13 +32,59 @@ WORK_META = {
 }
 
 
-def check_note(note: dict, unit_id: str) -> None:
+def check_note(note: dict, unit_id: str, require_english: bool = False) -> None:
     if note.get("kind") not in KINDS or not isinstance(note.get("title"), str) or not note["title"].strip():
         raise ValueError(f"{unit_id}: invalid note kind/title")
     if not isinstance(note.get("body"), str) or not note["body"].strip() or not isinstance(note.get("spoiler"), bool):
         raise ValueError(f"{unit_id}: invalid note body/spoiler")
     if "sourceUrl" in note and not isinstance(note["sourceUrl"], str):
         raise ValueError(f"{unit_id}: invalid sourceUrl")
+    if require_english:
+        for field in ("titleEn", "bodyEn"):
+            if not isinstance(note.get(field), str) or not note[field].strip():
+                raise ValueError(f"{unit_id}: note {field} must be a non-empty string")
+
+
+def note_signature(note: dict) -> str:
+    fields = {key: value for key, value in note.items() if key not in {"titleEn", "bodyEn"}}
+    return json.dumps(fields, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def existing_note_translations(public_dir: Path) -> dict[str, dict]:
+    result = {}
+    for work_id in ("iliad", "odyssey"):
+        for number in range(1, 25):
+            path = public_dir / work_id / f"{number:02d}.json"
+            if not path.is_file():
+                continue
+            payload = json.loads(path.read_text(encoding="utf-8"))
+            if payload.get("workId") != work_id or payload.get("bookNumber") != number:
+                raise ValueError(f"existing note translations have invalid book metadata: {path}")
+            for unit in payload.get("units", []):
+                for index, note in enumerate(unit.get("notes", []), 1):
+                    key = f"{unit['id']}#note-{index:04d}"
+                    title_en, body_en = note.get("titleEn"), note.get("bodyEn")
+                    if title_en is None and body_en is None:
+                        continue
+                    if not isinstance(title_en, str) or not title_en.strip() or not isinstance(body_en, str) or not body_en.strip():
+                        raise ValueError(f"{key}: existing English note fields must both be non-empty")
+                    if key in result:
+                        raise ValueError(f"duplicate existing note translation: {key}")
+                    result[key] = {"signature": note_signature(note), "titleEn": title_en, "bodyEn": body_en}
+    return result
+
+
+def preserve_note_translations(unit_id: str, notes: list[dict], existing: dict[str, dict]) -> list[dict]:
+    preserved = []
+    for index, note in enumerate(notes, 1):
+        key = f"{unit_id}#note-{index:04d}"
+        previous = existing.get(key)
+        if previous is None:
+            raise ValueError(f"{key}: missing English note translation; run scripts/translate-notes.py first")
+        if previous["signature"] != note_signature(note):
+            raise ValueError(f"{key}: Japanese note changed since its English translation")
+        preserved.append({**note, "titleEn": previous["titleEn"], "bodyEn": previous["bodyEn"]})
+    return preserved
 
 
 def apply_corrections(translations: dict[str, dict], corrections: list[dict]) -> int:
@@ -148,10 +195,10 @@ def catalog_for(manifest: dict, source_works: dict, translated_works: dict) -> d
         english = manifest["works"][work_id]
         if work_id == "iliad":
             translation_review_scope = "49単位（英文6,203語）をAIで抜取照合。別途1単位の表現も個別確認・修正。全本文の通読校閲は未実施。"
-            commentary_review_scope = "49単位（英文6,203語）の解説をAIで抜取照合。全解説の通読校閲は未実施。"
+            commentary_review_scope = "49単位（英文6,203語）の既存日本語注をAIで抜取照合。英語注87件を別Codexで抜取対照し、綴り2件を限定修正。全注の人手校閲は未実施。"
         else:
             translation_review_scope = "49単位（英文5,515語）をAIで抜取照合。全本文の通読校閲は未実施。"
-            commentary_review_scope = "49単位（英文5,515語）の解説をAIで抜取照合。全解説の通読校閲は未実施。"
+            commentary_review_scope = "49単位（英文5,515語）の既存日本語注をAIで抜取照合。英語注50件を別Codexで抜取対照。全注の人手校閲は未実施。"
         books = []
         for book in source["books"]:
             books.append({
@@ -177,7 +224,7 @@ def catalog_for(manifest: dict, source_works: dict, translated_works: dict) -> d
                 },
                 "commentary": {
                     "author": "AI生成",
-                    "method": "Butler英訳の各段落に基づきAIが作成。",
+                    "method": "Butler英訳の各段落に基づき日本語注をAIで作成し、その日本語注をAIで英訳。",
                     "reviewScope": commentary_review_scope,
                 },
                 "alignment": {
@@ -245,6 +292,7 @@ def public_source_manifest(manifest: dict, source_works: dict) -> dict:
 
 def assemble(source_dir: Path, cache_dir: Path, raw_dir: Path, public_dir: Path) -> dict:
     manifest, source_works = validate_sources(source_dir, raw_dir)
+    prior_note_translations = existing_note_translations(public_dir)
     translated_works = {}
     for work_id, (parsed, units) in source_works.items():
         translated = load_translations(work_id, parsed["books"], cache_dir)
@@ -254,6 +302,17 @@ def assemble(source_dir: Path, cache_dir: Path, raw_dir: Path, public_dir: Path)
             if not any(translated[unit["id"]]["notes"] for unit in book["units"]):
                 raise ValueError(f"{work_id} book {book['number']}: missing reading commentary")
         translated_works[work_id] = translated
+    expected_note_keys = {
+        f"{unit['id']}#note-{index:04d}"
+        for work_id in ("iliad", "odyssey")
+        for unit in source_works[work_id][1]
+        for index, _ in enumerate(translated_works[work_id][unit["id"]]["notes"], 1)
+    }
+    if set(prior_note_translations) != expected_note_keys:
+        raise ValueError(
+            "existing English note translations do not cover the complete generated note set; "
+            "run scripts/translate-notes.py before assembling"
+        )
     catalog = catalog_for(manifest, source_works, translated_works)
     for work in catalog["works"]:
         work_id = work["id"]
@@ -264,7 +323,9 @@ def assemble(source_dir: Path, cache_dir: Path, raw_dir: Path, public_dir: Path)
                 "units": [
                     {"id": unit["id"], "reference": unit["reference"], "en": unit["en"],
                      "ja": translated_works[work_id][unit["id"]]["ja"],
-                     "notes": translated_works[work_id][unit["id"]]["notes"]}
+                     "notes": preserve_note_translations(
+                         unit["id"], translated_works[work_id][unit["id"]]["notes"], prior_note_translations,
+                     )}
                     for unit in book["units"]
                 ],
             }
@@ -278,7 +339,7 @@ def assemble(source_dir: Path, cache_dir: Path, raw_dir: Path, public_dir: Path)
     return catalog
 
 
-def verify_published(public_dir: Path) -> None:
+def verify_published(public_dir: Path, expected_note_counts: dict[str, int] | None = EXPECTED_NOTE_COUNTS) -> None:
     manifest_path = public_dir / "source-manifest.json"
     catalog_path = public_dir / "catalog.json"
     if not manifest_path.is_file() or not catalog_path.is_file():
@@ -312,6 +373,7 @@ def verify_published(public_dir: Path) -> None:
         seen_ids: set[str] = set()
         unit_total = 0
         word_total = 0
+        note_total = 0
         for number, (book, expected) in enumerate(zip(catalog_books, manifest_work["books"]), 1):
             expected_file = f"data/{work_id}/{number:02d}.json"
             if book.get("number") != number or expected.get("number") != number or book.get("dataFile") != expected_file:
@@ -340,7 +402,8 @@ def verify_published(public_dir: Path) -> None:
                 if not isinstance(notes, list):
                     raise ValueError(f"{unit_id}: notes must be an array")
                 for note in notes:
-                    check_note(note, unit_id)
+                    check_note(note, unit_id, require_english=True)
+                note_total += len(notes)
             if not units or units[0]["id"] != expected.get("firstUnitId") or units[-1]["id"] != expected.get("lastUnitId"):
                 raise ValueError(f"{work_id} book {number}: first/last unit boundary mismatch")
             if narrative_digest(units) != expected.get("narrativeSha256"):
@@ -352,6 +415,8 @@ def verify_published(public_dir: Path) -> None:
             word_total += book_words
         if unit_total != manifest_work.get("narrativeUnitCount") or word_total != manifest_work.get("englishWordCount"):
             raise ValueError(f"{work_id}: total unit/word count mismatch")
+        if expected_note_counts is not None and note_total != expected_note_counts[work_id]:
+            raise ValueError(f"{work_id}: note count mismatch ({note_total}/{expected_note_counts[work_id]})")
     print(f"Verified published source coverage: 48 books / {sum(work['narrativeUnitCount'] for work in manifest_works)} narrative units.")
 
 

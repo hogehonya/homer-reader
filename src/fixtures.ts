@@ -77,13 +77,17 @@ export function fixtureBook(workId: BookData["workId"] = "iliad", bookNumber = 1
           {
             kind: "person",
             title: "詩の呼びかけ",
+            titleEn: "Poetic invocation",
             body: "詩人が物語を始めるための言葉です。",
+            bodyEn: "The poet calls upon the goddess to begin the tale.",
             spoiler: false,
           },
           {
             kind: "interpretation",
             title: "パトロクロスの死の伏線",
+            titleEn: "Foreshadowing Patroclus's death",
             body: "<script>bad()</script>",
+            bodyEn: "<script>bad()</script>",
             spoiler: true,
           },
         ],

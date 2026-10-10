@@ -40,7 +40,9 @@ export interface Catalog {
 export interface Note {
   kind: NoteKind;
   title: string;
+  titleEn: string;
   body: string;
+  bodyEn: string;
   spoiler: boolean;
   sourceUrl?: string;
 }
@@ -204,7 +206,9 @@ export function parseBook(
         return {
           kind: note.kind as NoteKind,
           title: text(note.title, `units[${index}].notes[${noteIndex}].title`),
+          titleEn: text(note.titleEn, `units[${index}].notes[${noteIndex}].titleEn`),
           body: text(note.body, `units[${index}].notes[${noteIndex}].body`),
+          bodyEn: text(note.bodyEn, `units[${index}].notes[${noteIndex}].bodyEn`),
           spoiler: note.spoiler,
           ...(sourceUrl === undefined ? {} : { sourceUrl }),
         };

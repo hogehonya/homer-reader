@@ -32,6 +32,8 @@ describe("reader app", () => {
     expect(root.querySelector(".unit__english")?.textContent).toBe("Sing, goddess.");
     expect(root.querySelector(".translation--english")?.getAttribute("lang")).toBe("en");
     expect(root.querySelector(".unit__japanese")?.textContent).toBe("女神よ、歌いたまえ。");
+    expect(root.querySelector(".unit__notes-heading [lang='en']")?.textContent).toBe("Notes");
+    expect(root.querySelector(".unit__notes-heading [lang='ja']")?.textContent).toBe("解説");
     expect(root.querySelector("script")).toBeNull();
     expect(root.querySelector(".note__body")?.textContent).not.toContain("bad()");
 
@@ -57,6 +59,49 @@ describe("reader app", () => {
     expect(spoiler.open).toBe(true);
     expect(body.textContent).toContain("<script>bad()</script>");
     expect(body.querySelector("script")).toBeNull();
+  });
+
+  it("renders bilingual note labels, titles, and bodies with language metadata", async () => {
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector(".note")).not.toBeNull());
+
+    const note = root.querySelector<HTMLElement>("details[data-spoiler='false']")!;
+    const summary = note.querySelector("summary")!;
+    expect(summary.querySelector(".note__kind [lang='en']")?.textContent).toBe("Person");
+    expect(summary.querySelector(".note__kind [lang='ja']")?.textContent).toBe("人物");
+    expect(summary.querySelector(".note__title [lang='en']")?.textContent).toBe("Poetic invocation");
+    expect(summary.querySelector(".note__title [lang='ja']")?.textContent).toBe("詩の呼びかけ");
+
+    const english = note.querySelector<HTMLElement>(".note__locale--english")!;
+    const japanese = note.querySelector<HTMLElement>(".note__locale--japanese")!;
+    expect(english.getAttribute("lang")).toBe("en");
+    expect(japanese.getAttribute("lang")).toBe("ja");
+    expect(english.querySelector("p")?.textContent).toBe("The poet calls upon the goddess to begin the tale.");
+    expect(japanese.querySelector("p")?.textContent).toBe("詩人が物語を始めるための言葉です。");
+    expect(english.compareDocumentPosition(japanese) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("keeps both spoiler note titles and bodies inside the closed disclosure", async () => {
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector("details[data-spoiler='true']")).not.toBeNull());
+
+    const spoiler = root.querySelector<HTMLDetailsElement>('details[data-spoiler="true"]')!;
+    const summary = spoiler.querySelector("summary")!;
+    expect(spoiler.open).toBe(false);
+    expect(summary.querySelector(".note__spoiler-label [lang='en']")?.textContent).toBe("Spoiler");
+    expect(summary.querySelector(".note__spoiler-label [lang='ja']")?.textContent).toBe("ネタバレを含む解説");
+    expect(summary.textContent).not.toContain("Foreshadowing Patroclus's death");
+    expect(summary.textContent).not.toContain("パトロクロスの死の伏線");
+
+    const english = spoiler.querySelector<HTMLElement>(".note__locale--english")!;
+    const japanese = spoiler.querySelector<HTMLElement>(".note__locale--japanese")!;
+    expect(english.querySelector("h5")?.textContent).toBe("Foreshadowing Patroclus's death");
+    expect(japanese.querySelector("h5")?.textContent).toBe("パトロクロスの死の伏線");
+    expect(english.querySelector("p")?.textContent).toBe("<script>bad()</script>");
+    expect(japanese.querySelector("p")?.textContent).toBe("<script>bad()</script>");
+    expect(spoiler.querySelector("script, img, iframe")).toBeNull();
   });
 
   it("offers retry after a failed volume fetch and renders the recovered data", async () => {

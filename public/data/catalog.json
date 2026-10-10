@@ -169,8 +169,8 @@
         },
         "commentary": {
           "author": "AI生成",
-          "method": "Butler英訳の各段落に基づきAIが作成。",
-          "reviewScope": "49単位（英文6,203語）の解説をAIで抜取照合。全解説の通読校閲は未実施。"
+          "method": "Butler英訳の各段落に基づき日本語注をAIで作成し、その日本語注をAIで英訳。",
+          "reviewScope": "49単位（英文6,203語）の既存日本語注をAIで抜取照合。英語注87件を別Codexで抜取対照し、綴り2件を限定修正。全注の人手校閲は未実施。"
         },
         "alignment": {
           "method": "One Butler English source paragraph per stable ID; wrapped lines are joined with spaces.",
@@ -346,8 +346,8 @@
         },
         "commentary": {
           "author": "AI生成",
-          "method": "Butler英訳の各段落に基づきAIが作成。",
-          "reviewScope": "49単位（英文5,515語）の解説をAIで抜取照合。全解説の通読校閲は未実施。"
+          "method": "Butler英訳の各段落に基づき日本語注をAIで作成し、その日本語注をAIで英訳。",
+          "reviewScope": "49単位（英文5,515語）の既存日本語注をAIで抜取照合。英語注50件を別Codexで抜取対照。全注の人手校閲は未実施。"
         },
         "alignment": {
           "method": "One Butler English source paragraph per stable ID; wrapped lines are joined with spaces.",

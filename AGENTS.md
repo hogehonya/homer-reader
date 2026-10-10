@@ -6,6 +6,7 @@
 
 - Issue #1の文書整備は完了しています。Issue #3はreader UI・データ契約・テスト・CI構成、Issue #4は本文48巻の整備を担当し、別worktreeで並行します。
 - main commit `c149af8`へUIと48巻データを統合し、初回release `r1119-b3`を公開済みです。PR CI #2、main CI #3、台帳CI #184、配信57ファイルhash一致を確認しました。最新の配信検証記録は[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。
+- Issue #9では既存注釈の日英表示を追加中です。Issue #9のN1〜N7は統合データ・CI・実画面・英訳確認の証拠が揃うまで合格扱いせず、最終配信・受入記録は[Gitea Issue #9](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/9)の完了コメントを参照します。
 - 機能・コンテンツ仕様の正本は`SPEC.md`、受入条件の正本は`ACCEPTANCE.md`です。要求を変える場合は`SPEC.md`の要求IDを先に更新し、対応する条件を`ACCEPTANCE.md`へ反映します。
 - 要求の原文引用は`SPEC.md`の5.1だけに置き、他文書へ複製しません。
 
