@@ -253,6 +253,11 @@ h4 {
   background: var(--color-surface);
 }
 
+.reader-continuation {
+  justify-content: space-between;
+  margin: 2rem 0 0;
+}
+
 .reader-controls label {
   font-weight: 700;
 }

@@ -43,4 +43,16 @@ describe("reader data contract", () => {
     missingJapanese.units[0].ja = "  ";
     expect(() => parseBook(missingJapanese)).toThrow(/non-empty/);
   });
+
+  it("rejects a book that does not match the catalog's selected identity and unit count", () => {
+    expect(() => parseBook(fixtureBook("odyssey", 1), {
+      workId: "iliad", bookNumber: 1, unitCount: 1,
+    })).toThrow(/does not match/);
+    expect(() => parseBook(fixtureBook("iliad", 2), {
+      workId: "iliad", bookNumber: 1, unitCount: 1,
+    })).toThrow(/does not match/);
+    expect(() => parseBook(fixtureBook(), {
+      workId: "iliad", bookNumber: 1, unitCount: 2,
+    })).toThrow(/unit count/);
+  });
 });

@@ -10,7 +10,7 @@
 
 ## 現在確認できている状態
 
-controllerの2026-10-10報告では、Samuel Butler英訳48巻を取得済みで、日本語訳の生成を4 workerで進行中です。content担当の直近報告は212バッチ中54件成功・失敗0件です。現在の集計目標は2作品合計2,140対訳単位・英語268,999語です。これらは進行中の報告値で、完成・完全性を示す検証済み件数ではありません。出典manifestと再現可能な検証器をデータ成果物とともに確認し、統合時に確定値を記録します。demo-previewsの台帳変更PR #95はCI #183成功、未マージです。homer-reader CI repo ID 154は有効化済みでtrusted volumesが設定済みとの報告です。公開は未実施で、外部状態は統合・公開時に再確認します。
+controllerの2026-10-10報告では、Samuel Butler英訳48巻を取得済みで、日本語訳の生成を4 workerで進行中です。content担当の直近報告は212バッチ中65件成功・失敗0件です。現在の集計目標は2作品合計2,140対訳単位・英語268,999語です。これらは進行中の報告値で、完成・完全性を示す検証済み件数ではありません。出典manifestと再現可能な検証器をデータ成果物とともに確認し、統合時に確定値を記録します。demo-previewsの台帳変更PR #95はCI #183成功、未マージです。homer-reader CI repo ID 154は有効化済みでtrusted volumesが設定済みとの報告です。公開は未実施で、外部状態は統合・公開時に再確認します。
 
 ## 役割と作業場所
 
@@ -37,7 +37,7 @@ UI作業場所は`/home/honya/repos/worktrees/homer-reader-issue-3`、ブラン�
 | :--- | :--- | :--- | :--- |
 | 0 | 本計画と実装方針をrepoの正本に記録する | PLAN・SPEC・READMEのリンクとdiff検査、計画専用docs-only commit | 完了（mainに統合済み） |
 | 1 | Issue #3でreader UI、共有JSON契約、検証スクリプト、fixtureテストを実装 | Issue #3 worktreeのcommit、test・typecheck・build結果、独立監査結果 | UI・テスト実装済み、ローカル検査成功。独立監査・統合待ち |
-| 2 | Issue #4で48巻データを別worktreeに作成 | catalogに作品ごと24巻、全ファイル・全単位の非空日英本文、コミット済みsource manifest・再現可能な検証結果、出典・生成・抜取確認範囲 | 212バッチ中54件成功・失敗0件との直近報告。目標2,140対訳単位・英語268,999語は未検証 |
+| 2 | Issue #4で48巻データを別worktreeに作成 | catalogに作品ごと24巻、全ファイル・全単位の非空日英本文、コミット済みsource manifest・再現可能な検証結果、出典・生成・抜取確認範囲 | 212バッチ中65件成功・失敗0件との直近報告。目標2,140対訳単位・英語268,999語は未検証 |
 | 3 | Issue #3と#4をcontrollerが統合して検証 | 統合commit、48巻完全性・底本照合・日英対応・出典監査、UI全条件の結果 | 未着手 |
 | 4 | demo-previews Issue #94 / PR #95で台帳登録し、controllerがCIを確認 | PR #95・CI #183成功、未マージ。CI repo ID 154有効・trusted volumes設定済みとの報告。release準備後に台帳とmain用CIを再確認 | release準備まで保留 |
 | 5 | mainでCI公開し、配信先を検証 | CIのtest/typecheck/build/content gate成功、static publishのprepare→publish→verify成功、`publication.json`のcommit/pipeline一致、画面の主要操作確認 | 未着手 |

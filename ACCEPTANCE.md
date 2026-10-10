@@ -4,7 +4,7 @@
 
 ## 状態
 
-SPAのUI・データ契約・CI設定を実装中です。2026-10-10、Issue #3 worktreeでNode 24.19.0を使い`npm ci --offline`、13 fixture tests、typecheck、buildが成功しました。content gateは`public/data/catalog.json`が未配置のため失敗し、公開を止めることを確認しました。S1〜S18は全巻データと実画面を含む統合検証が未完了のため未チェックです。
+SPAのUI・データ契約・CI設定を実装中です。2026-10-10、Issue #3 worktreeでNode 24.19.0を使い`npm ci --offline`、20 fixture tests、typecheck、buildが成功しました。content gateは`public/data/catalog.json`が未配置のため失敗し、公開を止めることを確認しました。S1〜S18は全巻データと実画面を含む統合検証が未完了のため未チェックです。
 
 ## 文書（Issue #1）
 

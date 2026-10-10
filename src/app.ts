@@ -154,6 +154,7 @@ function renderCatalogError(root: HTMLElement, message: string, retry: () => voi
   main.append(actions);
   page.append(main);
   root.replaceChildren(page);
+  finishPage(root, "ホメロス読書室 | 作品データの読込エラー");
 }
 
 function renderCatalogPage(root: HTMLElement, catalog: Catalog, routeError?: string) {
@@ -172,6 +173,9 @@ function renderCatalogPage(root: HTMLElement, catalog: Catalog, routeError?: str
     appendText(card, "h2", work.titleJa);
     appendText(card, "p", work.titleEn, "work-card__title-en");
     appendText(card, "p", work.descriptionJa);
+    appendText(card, "p", `英訳：${work.source.english.translator}`, "work-card__source");
+    appendText(card, "p", `日本語訳：${work.source.japanese.title}（${work.source.japanese.translator}）`, "work-card__source");
+    appendText(card, "p", `解説：${work.source.commentary.author}（${work.source.commentary.method}）`, "work-card__source");
     appendText(card, "p", `${work.books.length}巻をカタログに収録`, "work-card__count");
     const volumeList = element(root.ownerDocument, "div", "work-card__volumes");
     for (const book of work.books) {
@@ -184,6 +188,7 @@ function renderCatalogPage(root: HTMLElement, catalog: Catalog, routeError?: str
   main.append(works);
   page.append(main);
   root.replaceChildren(page);
+  finishPage(root, "ホメロス読書室 | 作品と巻を選ぶ");
 }
 
 function renderInvalidRoute(root: HTMLElement, catalog: Catalog, message: string) {
@@ -212,6 +217,7 @@ function renderBookError(root: HTMLElement, catalog: Catalog, work: WorkIndex, b
   status.append(actions);
   page.main.append(status);
   root.replaceChildren(page.element);
+  finishPage(root, `ホメロス読書室 | ${work.titleJa} ${bookIndex.titleJa ?? `${bookIndex.number}巻`} の読込エラー`);
 }
 
 function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bookIndex: WorkIndex["books"][number], book: BookData) {
@@ -226,7 +232,8 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
     heading.id = `unit-heading-${index}`;
     const columns = element(root.ownerDocument, "div", "unit__translations");
     const english = element(root.ownerDocument, "section", "translation translation--english");
-    appendText(english, "h4", "English");
+    english.lang = "en";
+    appendText(english, "h4", "English").lang = "en";
     appendText(english, "p", unit.en, "unit__english");
     const japanese = element(root.ownerDocument, "section", "translation translation--japanese");
     appendText(japanese, "h4", "日本語訳");
@@ -244,7 +251,9 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
     units.append(article);
   });
   page.main.append(units, renderEditionDetails(root.ownerDocument, work));
+  page.main.append(createAdjacentBookNavigation(root.ownerDocument, work, book.bookNumber));
   root.replaceChildren(page.element);
+  finishPage(root, `ホメロス読書室 | ${work.titleJa} ${bookIndex.titleJa ?? `${book.bookNumber}巻`}`);
 }
 
 function renderNote(document: Document, note: Note) {
@@ -253,9 +262,10 @@ function renderNote(document: Document, note: Note) {
   details.dataset.spoiler = String(note.spoiler);
   const summary = element(document, "summary", "note__summary");
   appendText(summary, "span", KIND_LABELS[note.kind], "note__kind");
-  appendText(summary, "span", note.title, "note__title");
-  if (note.spoiler) appendText(summary, "span", "ネタバレを含みます", "note__spoiler-label");
+  if (note.spoiler) appendText(summary, "span", "ネタバレを含む解説", "note__spoiler-label");
+  else appendText(summary, "span", note.title, "note__title");
   const body = element(document, "div", "note__body");
+  if (note.spoiler) appendText(body, "h5", note.title, "note__title");
   appendText(body, "p", note.body);
   if (note.sourceUrl) {
     const source = element(document, "p", "note__source");
@@ -338,6 +348,32 @@ function createReaderShell(document: Document, catalog: Catalog, work: WorkIndex
   main.append(heading, controls);
   page.append(main);
   return { element: page, main };
+}
+
+function createAdjacentBookNavigation(document: Document, work: WorkIndex, bookNumber: number) {
+  const navigation = element(document, "nav", "reader-controls reader-continuation");
+  navigation.setAttribute("aria-label", "前後の巻へ進む");
+  const browser = document.defaultView;
+  if (!browser) throw new Error("A browser window is required to render volume navigation");
+  const position = work.books.findIndex((entry) => entry.number === bookNumber);
+  const previous = work.books[position - 1];
+  const next = work.books[position + 1];
+  const previousButton = button(document, "前の巻", "previous-book");
+  previousButton.disabled = !previous;
+  previousButton.addEventListener("click", () => previous && setRoute(browser, work.id, previous.number));
+  const nextButton = button(document, "次の巻", "next-book");
+  nextButton.disabled = !next;
+  nextButton.addEventListener("click", () => next && setRoute(browser, work.id, next.number));
+  navigation.append(previousButton, nextButton);
+  return navigation;
+}
+
+function finishPage(root: HTMLElement, title: string) {
+  root.ownerDocument.title = title;
+  const heading = root.querySelector<HTMLElement>("main h1");
+  if (!heading) return;
+  heading.tabIndex = -1;
+  heading.focus();
 }
 
 function createPage(document: Document, catalog?: Catalog) {

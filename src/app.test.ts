@@ -30,6 +30,7 @@ describe("reader app", () => {
 
     expect(window.location.hash).toBe("#/iliad/1");
     expect(root.querySelector(".unit__english")?.textContent).toBe("Sing, goddess.");
+    expect(root.querySelector(".translation--english")?.getAttribute("lang")).toBe("en");
     expect(root.querySelector(".unit__japanese")?.textContent).toBe("女神よ、歌いたまえ。");
     expect(root.querySelector("script")).toBeNull();
     expect(root.querySelector(".note__body")?.textContent).not.toContain("bad()");
@@ -49,6 +50,9 @@ describe("reader app", () => {
     const body = spoiler.querySelector<HTMLElement>(".note__body")!;
 
     expect(spoiler.open).toBe(false);
+    expect(spoiler.querySelector("summary")?.textContent).not.toContain("パトロクロスの死の伏線");
+    expect(spoiler.querySelector("summary")?.textContent).toContain("ネタバレを含む解説");
+    expect(body.textContent).toContain("パトロクロスの死の伏線");
     spoiler.querySelector("summary")!.click();
     expect(spoiler.open).toBe(true);
     expect(body.textContent).toContain("<script>bad()</script>");
@@ -118,6 +122,87 @@ describe("reader app", () => {
     await vi.waitFor(() => expect(window.location.hash).toBe("#/hades/1"));
     window.history.forward();
     await vi.waitFor(() => expect(window.location.hash).toBe("#/"));
+  });
+
+  it("shows a catalog error for a valid route whose volume is absent from the catalog", async () => {
+    window.history.replaceState({}, "", "/#/iliad/24");
+    const fetcher = mockedFetcher();
+    app = createReaderApp(root, { fetcher, window });
+    await app.ready;
+
+    expect(root.textContent).toContain("この巻はカタログにありません");
+    expect(fetcher.mock.calls.some(([input]) => String(input).endsWith("/24.json"))).toBe(false);
+  });
+
+  it("focuses the completed page heading and updates the document title on navigation", async () => {
+    window.history.replaceState({}, "", "/#/iliad/1");
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector(".unit__english")).not.toBeNull());
+
+    const firstHeading = root.querySelector("h1")!;
+    expect(firstHeading.getAttribute("tabindex")).toBe("-1");
+    expect(document.activeElement).toBe(firstHeading);
+    expect(document.title).toContain("イリアス");
+
+    root.querySelector<HTMLButtonElement>("[data-action='next-book']")!.click();
+    await vi.waitFor(() => expect(root.querySelector(".reader-page__heading")?.textContent).toContain("第二巻"));
+    expect(document.activeElement).toBe(root.querySelector("h1"));
+    expect(document.title).toContain("第二巻");
+
+    root.querySelector<HTMLAnchorElement>(".reader-controls a")!.click();
+    await vi.waitFor(() => expect(root.querySelector("[data-view='catalog'] h1")).not.toBeNull());
+    expect(document.activeElement).toBe(root.querySelector("[data-view='catalog'] h1"));
+    expect(document.title).toContain("作品と巻を選ぶ");
+  });
+
+  it("shows source origins on the work selection cards", async () => {
+    window.history.replaceState({}, "", "/#/");
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window });
+    await app.ready;
+
+    const card = root.querySelector(".work-card")!;
+    expect(card.textContent).toContain("Samuel Butler");
+    expect(card.textContent).toContain("AI日本語訳");
+    expect(card.textContent).toContain("AI");
+    expect(card.textContent).toContain("短い背景説明を生成");
+  });
+
+  it("renders the next-volume control at the end of the reading page", async () => {
+    window.history.replaceState({}, "", "/#/iliad/1");
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector(".edition-details")).not.toBeNull());
+
+    const continuation = root.querySelector<HTMLElement>(".reader-continuation")!;
+    expect(continuation.querySelector("[data-action='next-book']")).not.toBeNull();
+    continuation.querySelector<HTMLButtonElement>("[data-action='next-book']")!.click();
+    await vi.waitFor(() => expect(window.location.hash).toBe("#/iliad/2"));
+  });
+
+  it("shows an error instead of rendering a volume with mismatched identity", async () => {
+    const fetcher = vi.fn(async (input: RequestInfo | URL) => {
+      const url = String(input);
+      if (url.endsWith("catalog.json")) return jsonResponse(fixtureCatalog);
+      return jsonResponse(fixtureBook("odyssey", 1));
+    });
+    app = createReaderApp(root, { fetcher, window });
+    await app.ready;
+
+    await vi.waitFor(() => expect(root.textContent).toContain("巻データを読み込めませんでした"));
+    expect(root.querySelector(".unit__english")).toBeNull();
+  });
+
+  it("handles malformed book JSON as a failed load", async () => {
+    const fetcher = vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input).endsWith("catalog.json")) return jsonResponse(fixtureCatalog);
+      return new Response("{bad json", { status: 200, headers: { "Content-Type": "application/json" } });
+    });
+    app = createReaderApp(root, { fetcher, window });
+    await app.ready;
+
+    await vi.waitFor(() => expect(root.textContent).toContain("巻データを読み込めませんでした"));
+    expect(root.querySelector(".unit__english")).toBeNull();
   });
 
   it("moves between volumes using the selector and previous/next controls", async () => {

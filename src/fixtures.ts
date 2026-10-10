@@ -82,7 +82,7 @@ export function fixtureBook(workId: BookData["workId"] = "iliad", bookNumber = 1
           },
           {
             kind: "interpretation",
-            title: "先の展開を含む解説",
+            title: "パトロクロスの死の伏線",
             body: "<script>bad()</script>",
             spoiler: true,
           },
