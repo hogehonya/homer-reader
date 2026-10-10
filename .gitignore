@@ -1,0 +1,5 @@
+node_modules/
+dist/
+.static-publish/
+__pycache__/
+*.py[cod]

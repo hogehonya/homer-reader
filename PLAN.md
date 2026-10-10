@@ -35,8 +35,8 @@ UI作業場所は`/home/honya/repos/worktrees/homer-reader-issue-3`、ブラン�
 
 | 順 | 作業 | 完了証拠 | 状態 |
 | :--- | :--- | :--- | :--- |
-| 0 | 本計画と実装方針をrepoの正本に記録する | PLAN・SPEC・READMEのリンクとdiff検査、計画専用docs-only commit | commit前 |
-| 1 | Issue #3でreader UI、共有JSON契約、検証スクリプト、fixtureテストを実装 | Issue #3 worktreeのcommit、test・typecheck・build結果、独立監査結果 | 未着手 |
+| 0 | 本計画と実装方針をrepoの正本に記録する | PLAN・SPEC・READMEのリンクとdiff検査、計画専用docs-only commit | 完了（mainに統合済み） |
+| 1 | Issue #3でreader UI、共有JSON契約、検証スクリプト、fixtureテストを実装 | Issue #3 worktreeのcommit、test・typecheck・build結果、独立監査結果 | UI・テスト実装済み、ローカル検査成功。独立監査・統合待ち |
 | 2 | Issue #4で48巻データを別worktreeに作成 | catalogに作品ごと24巻、全ファイル・全単位の非空日英本文、出典・生成・抜取確認範囲の検証結果 | 英訳取得・2段落pilot済み、全訳中断 |
 | 3 | Issue #3と#4をcontrollerが統合して検証 | 統合commit、48巻完全性・底本照合・日英対応・出典監査、UI全条件の結果 | 未着手 |
 | 4 | demo-previews Issue #94 / PR #95で台帳登録し、controllerがCIを確認 | PR #95・CI #183成功、未マージ。CI repo ID 154有効・trusted volumes設定済みとの報告。release準備後に台帳とmain用CIを再確認 | release準備まで保留 |

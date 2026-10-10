@@ -25,9 +25,14 @@
 
 ## 検証
 
-現在は文書リンクと差分を検証します。実装後のコマンドはpackage scripts整備時に追記します。
+実装と文書を次の手順で検証します。`validate:content`は48巻データを統合するまで失敗が期待値です。
 
 ```bash
+npm ci
+npm test
+npm run typecheck
+npm run build
+npm run validate:content
 # 相対リンクの解決確認
 grep -rhoE '\]\([^()#]+\.md\)' *.md | sed -E 's/^\]\(//; s/\)$//' | sort -u | while read -r f; do [ -f "$f" ] || echo "missing: $f"; done
 git diff --check

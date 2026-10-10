@@ -141,7 +141,7 @@ Issue #3で確定した静的JSONの契約です。本文データと公開台�
 
 | 対象 | 方針 |
 | :--- | :--- |
-| `public/data/catalog.json` | `{version:1,works:[{id,titleJa,titleEn,descriptionJa,books:[{number,titleJa?,unitCount,dataFile}],source:{english,japanese,commentary,alignment}}]}`。作品IDは`iliad`または`odyssey`。各作品は1〜24巻とし、出典・生成方法・確認範囲・対応方法を明記する。 |
+| `public/data/catalog.json` | `{version:1,works:[{id,titleJa,titleEn,descriptionJa,books:[{number,titleJa?,unitCount,dataFile}],source:{english,japanese,commentary,alignment}}]}`。作品IDは`iliad`または`odyssey`。各作品は1〜24巻とし、出典・生成方法・確認範囲・対応方法を明記する。`descriptionJa`は先の展開を明かさない短い紹介とする。 |
 | 巻データ | `public/data/{workId}/{bookNumber2digit}.json`に`{workId,bookNumber,units}`を置き、選んだ1巻だけを遅延読込する。 |
 | 対訳単位 | `{id,reference,en,ja,notes}`。IDは安定し、`reference`で原典巻行と採用英訳の単位を区別できるようにする。英語・日本語本文は文字列として描画しHTMLを解釈しない。 |
 | 解説 | `{kind,title,body,spoiler,sourceUrl?}`。kindは`person`、`place`、`myth`、`language`、`interpretation`のいずれか。先の展開を含む解説は初期状態で隠す。 |
@@ -181,7 +181,7 @@ Issue #4のAgent決定として、Samuel Butler英訳をもとにAI全訳しま�
 | 出典の網羅 | 全巻が出典メタ情報を持つことを検査する。 |
 | 表示の境界 | 320px幅、キーボード操作、読込失敗時の再試行を確認する。 |
 
-検証工程とゲートは[PLAN.md](PLAN.md)に定めます。機械検証スクリプトはIssue #3で実装予定です。未確認の本文・許諾を、検証済みとして扱いません。
+検証工程とゲートは[PLAN.md](PLAN.md)に定めます。機械検証スクリプトはIssue #3で実装済みです。全48巻データの統合まではcontent gateが失敗し、公開を止めます。未確認の本文・許諾を、検証済みとして扱いません。
 
 ## 13. 実装方針（Issue #3）
 

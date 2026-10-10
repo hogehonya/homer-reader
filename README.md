@@ -4,14 +4,14 @@
 
 ## 現在の状態
 
-現在はIssue #3実装に先立って、要求・実行計画・データ境界を文書へ記録しています。アプリコードとrepo CI設定は未着手です。本文48巻の準備状況、公開台帳PRとCIの報告値は[PLAN.md](PLAN.md)に記録し、公開前に再確認します。
+Issue #3専用worktreeでreader UI・テスト・CI設定を実装しています。fixtureによる13件のテスト、typecheck、buildは成功しました。全48巻データとの統合、mainのCI、公開は未完了です。本文の準備状況と台帳・CIの報告値は[PLAN.md](PLAN.md)に記録し、公開前に再確認します。
 
 | 項目 | 状態 |
 | :--- | :--- |
 | 要求・仕様書 | 作成済み（[SPEC.md](SPEC.md)が機能・コンテンツ仕様の正本） |
-| アプリ実装 | 未着手。Issue #3専用worktreeで実装予定 |
+| アプリ実装 | Issue #3専用worktreeで実装中。13テスト・typecheck・build成功、別Agent監査と統合は未完了 |
 | 本文・日本語訳・解説データ | controller報告では英訳48巻取得・2段落pilot済み、全訳は中断中。全巻データは未完成 |
-| CI | repo CI設定は未作成。CI repo ID 154有効・trusted volumes設定済みとのcontroller報告あり |
+| CI | Issue #3 branchにPR検査・main公開gateを作成。実行未確認。CI repo ID 154有効・trusted volumes設定済みとのcontroller報告あり |
 | 公開 | 未実施。demo-previews PR #95はCI成功・未マージとの報告。公開・画面検証は未実施 |
 
 ## 読書の目的
@@ -48,16 +48,17 @@
 
 ## 開発と検証
 
-実装後はNode.js 22以上とnpmを使う予定です。以下のコマンドはpackage scripts作成後に使う手順で、現時点ではまだ実行できません。
+Node.js 24.15以上とnpmを使います。
 
 ```bash
 npm ci
+npm run dev
 npm test
 npm run typecheck
 npm run build
 npm run validate:content
 ```
 
-`test`、`typecheck`、`build`は本文データなしでも実行できる設計とします。`validate:content`は公開前ゲートで48巻すべてのデータを要求します。本文が未配置の間は失敗する設計です。実装前の現在は文書リンク確認と`git diff --check`を使います。
+`test`、`typecheck`、`build`は本文データなしで実行できます。`validate:content`は公開前ゲートで48巻すべてのデータを要求します。本文が未配置の現状では失敗するのが正しい結果です。
 
-UI設計はDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。色の役割、フォーカス、ライト／ダークテーマ、320px幅を実装・確認します。
+UIはDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。色の役割、フォーカス、ライト／ダークテーマ、320px向けCSSを実装しました。実ブラウザでの表示・拡大・コントラスト確認は未完了です。

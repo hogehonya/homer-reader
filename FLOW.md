@@ -1,6 +1,6 @@
 # 処理フロー
 
-homer-readerの流れを示します。実装は未着手のため、読書と表示の流れは仕様、コンテンツ整備と公開の流れは計画です。
+homer-readerの読書と公開の流れを示します。Issue #3のreader UIとCI設定は実装済みですが、48巻データとの統合、mainでのCI実行と公開は未完了です。
 
 ## 読書フロー
 
@@ -85,17 +85,17 @@ flowchart TD
 
 ## 公開
 
-公開は将来のCI経由を既定経路とします（A4）。CIは未構成で、公開先URLは未確定です。
+公開はCI経由とします（A4）。PRではtest・typecheck・build・設定確認を行い、main push/manualではこれらに全48巻のcontent gateを加え、全て成功した場合だけ静的公開します。台帳PR #95は未マージとのcontroller報告があり、公開自体は未実施です。
 
 ```mermaid
 flowchart TD
-    A[mainへ反映] --> B[CIで検査]
-    B --> C[ビルド]
-    C --> D[配信環境へ反映]
-    D --> E[公開URLで内容を検証]
+    A[mainへ反映] --> B[test typecheck build]
+    B --> C[48巻と対訳を検証]
+    C --> D[static prepare publish verify]
+    D --> E[公開URLで主要操作を検証]
     E --> F{本文・訳・解説が一致?}
     F -->|はい| G[公開完了を記録]
     F -->|いいえ| H[未完了として記録]
 ```
 
-CIは技術構成の確定後に整備し、この段階でダミーのCIを置きません。
+mainのCIと実公開はcontrollerによる統合後に行います。公開完了前に未実施の検査を成功扱いしません。
