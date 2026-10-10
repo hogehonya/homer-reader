@@ -1,0 +1,483 @@
+{
+  "version": 1,
+  "retrievedAt": "2026-10-10",
+  "hashAlgorithm": "SHA-256",
+  "narrativeDigestFormat": "SHA-256 of UTF-8 JSON array [{id,en}, ...] using ensure_ascii=false and compact separators, in source order",
+  "normalization": "UTF-8 decode; join wrapped lines within paragraphs; preserve paragraph order and wording; exclude the first checked editorial block after each BOOK marker; exclude Odyssey detached FOOTNOTES and inline reference digits; exclude Project Gutenberg post-ebook matter.",
+  "works": [
+    {
+      "id": "iliad",
+      "gutenbergId": 2199,
+      "sourceUrl": "https://www.gutenberg.org/files/2199/2199-0.txt",
+      "rawSha256": "a7a39e3467305472fcd5ee0e42fc93d069449171cf1758f2a42cfae8b2da2774",
+      "rawByteLength": 929005,
+      "bookCount": 24,
+      "narrativeUnitCount": 1113,
+      "englishWordCount": 151966,
+      "exclusions": {
+        "editorialHeadingCount": 24,
+        "editorialHeadingSha256ByBook": [
+          "a0bdcf4fc7de4b9f420617a9afe5a2f1b9e0e6827fe06f55e74d1096f0bba533",
+          "35dfd8d386023645ec3d2c3bb8f6244d89a3d6f36ed8d4e5af4f4795bd8e646d",
+          "14a1f5375d6d9003d27c621ca52e26f026a140446237b3cfd5631d1ace313233",
+          "c873b7c52121461aa373045f5b2cb00447b00f5d52c85892a7db172ff9901db9",
+          "65fabaff780997c4017bd15446957b1586b2c8851a95048c5dc43db4e8d934d2",
+          "7310979e2b20fce686e66863356a82a86c5c92437fbd97e919f68b4738022fb1",
+          "84826693e86db63671cbf928fcfe77c79e7e2ba731b90410362d1b873249be6e",
+          "0aa9f76c01d87e0d63414c5a1010f47be8288581cb3d8a86a492f481fd1d3fc4",
+          "003fa7dd865e883cf62a4d59bbd4d41d5b43bcc5ba8d2fa46a0a42a7c73dd611",
+          "0fc6b103540357ca0366a6b75b92fe5cc02d85079af66669789d6bd44fa55dd8",
+          "8f894ad92a30adf7d13b3348f2cd4734f2aa739645b956308d45423f1e6b221d",
+          "d83334ac3d0318b51c125ea542b894ed495c10455aed8b42b1974c97e3ab2fac",
+          "eefcec6c2f09bd220b3401c3284ce8c7c55721abd8333479b0584dd5cc2ba6fc",
+          "dd8f6c836d612b621ec6583d9f085b85211f0fa06d7bc21efc5dd3d7b29f069e",
+          "f7d0ba5ac52ea51bc6075631408ddd99b4049c6bffa0ea5b56b325f73e90e2b7",
+          "017dd506f06f38ddeef1c647a112f2921719f56f14cfb0c39557ff15eff1bca5",
+          "dd858f7d7c1b64ee350d95fbfa5091d52542b7b7a7dada4964e6008527b66e7b",
+          "12d0cfee578b203f4ff14cc6ab6ed34860549193514666c2bcf313b4c9ea3274",
+          "f489baffb67ba35ffc20291e9cf6665be07279a54937eea32945e80ad5b314d1",
+          "12f7a664d5938b6a544c08a307f99b254a771af2467e9a7dd239d32b240e26c4",
+          "8e950eb3d95f97b57ac313b928f7a063ba78c8467215a26a2b87fca28d540445",
+          "c885e4b09b1127cb79dbc18281b1209e3bad21f537a1420354e65ee15f05f7f9",
+          "78328beaa246bc9bfc5841a222677fe6b40f6b16239d6a54e4e5765e11553ca2",
+          "042d73a6c1bef7b62671e77f946b3409051064a383dd0b308341a01ad352a1b8"
+        ],
+        "detachedEndnoteBlockCount": 0,
+        "detachedEndnoteReferenceCount": 0,
+        "inlineEndnoteMarkerCount": 0,
+        "postEbookBlockCount": 51
+      },
+      "books": [
+        {
+          "number": 1,
+          "unitCount": 54,
+          "englishWordCount": 5788,
+          "firstUnitId": "iliad-01-0001",
+          "lastUnitId": "iliad-01-0054",
+          "narrativeSha256": "8967a4145597d72c341807295d60a0928b1157771bfcf70240342e093e103684"
+        },
+        {
+          "number": 2,
+          "unitCount": 83,
+          "englishWordCount": 7892,
+          "firstUnitId": "iliad-02-0001",
+          "lastUnitId": "iliad-02-0083",
+          "narrativeSha256": "602f0aa10800924c678c1fc02e6369aad40bf1097bfda81dbf7b687128c05af7"
+        },
+        {
+          "number": 3,
+          "unitCount": 41,
+          "englishWordCount": 4002,
+          "firstUnitId": "iliad-03-0001",
+          "lastUnitId": "iliad-03-0041",
+          "narrativeSha256": "6900de96314ff8df85a57783128c7fb0534caaf76fcc0914cfc803bb5e4306f5"
+        },
+        {
+          "number": 4,
+          "unitCount": 39,
+          "englishWordCount": 5009,
+          "firstUnitId": "iliad-04-0001",
+          "lastUnitId": "iliad-04-0039",
+          "narrativeSha256": "5b51d9746c6aa2ad42c0b68e1b41469ccc04302d8ca5e2116cf87592084e84ef"
+        },
+        {
+          "number": 5,
+          "unitCount": 67,
+          "englishWordCount": 8530,
+          "firstUnitId": "iliad-05-0001",
+          "lastUnitId": "iliad-05-0067",
+          "narrativeSha256": "387f2aacece5886413bf0da37ef20fcecd6cc5a19ed745e353c9803ad916e353"
+        },
+        {
+          "number": 6,
+          "unitCount": 35,
+          "englishWordCount": 4941,
+          "firstUnitId": "iliad-06-0001",
+          "lastUnitId": "iliad-06-0035",
+          "narrativeSha256": "82fa58b2bfc47307d99266cb74963218648c5e3d5057c09e7aa668166937ccde"
+        },
+        {
+          "number": 7,
+          "unitCount": 35,
+          "englishWordCount": 4369,
+          "firstUnitId": "iliad-07-0001",
+          "lastUnitId": "iliad-07-0035",
+          "narrativeSha256": "9fdaf4c974f91073b6c728f76e674454b31b383b397bfd55cfbc6321b0eb71ea"
+        },
+        {
+          "number": 8,
+          "unitCount": 41,
+          "englishWordCount": 5238,
+          "firstUnitId": "iliad-08-0001",
+          "lastUnitId": "iliad-08-0041",
+          "narrativeSha256": "c5c0331c4c08dc4cec71f4c5a6496ad563c07aef6d2b1cad4faea04a60977225"
+        },
+        {
+          "number": 9,
+          "unitCount": 34,
+          "englishWordCount": 6827,
+          "firstUnitId": "iliad-09-0001",
+          "lastUnitId": "iliad-09-0034",
+          "narrativeSha256": "45023e843a47a1cff09646df678e26993f2c0980fdb058659fce93e15bec22a8"
+        },
+        {
+          "number": 10,
+          "unitCount": 48,
+          "englishWordCount": 5469,
+          "firstUnitId": "iliad-10-0001",
+          "lastUnitId": "iliad-10-0048",
+          "narrativeSha256": "5506cd042de4d904c68dd295a6fdc8b4d1b71aecdb564267cfa86c3290b9134a"
+        },
+        {
+          "number": 11,
+          "unitCount": 55,
+          "englishWordCount": 8425,
+          "firstUnitId": "iliad-11-0001",
+          "lastUnitId": "iliad-11-0055",
+          "narrativeSha256": "b1b5aa9b2bdfbe43aa25950e1496eb8b825fb7cd09273d67770f5f9c9165f5cd"
+        },
+        {
+          "number": 12,
+          "unitCount": 21,
+          "englishWordCount": 4721,
+          "firstUnitId": "iliad-12-0001",
+          "lastUnitId": "iliad-12-0021",
+          "narrativeSha256": "486a1642e36a346678054d3b1a23a1aad86ca10f8e777aaaeddebea33b64d377"
+        },
+        {
+          "number": 13,
+          "unitCount": 54,
+          "englishWordCount": 8345,
+          "firstUnitId": "iliad-13-0001",
+          "lastUnitId": "iliad-13-0054",
+          "narrativeSha256": "e23780ccf0fcb2e2bfe039f00b6ae0cc59a7dbfce2fc16a3ad8ea248e1df4d34"
+        },
+        {
+          "number": 14,
+          "unitCount": 40,
+          "englishWordCount": 5194,
+          "firstUnitId": "iliad-14-0001",
+          "lastUnitId": "iliad-14-0040",
+          "narrativeSha256": "1f5fa2daad38b7392469ba3323563562f3464740e8902216a6afcd2b3b504c35"
+        },
+        {
+          "number": 15,
+          "unitCount": 54,
+          "englishWordCount": 7354,
+          "firstUnitId": "iliad-15-0001",
+          "lastUnitId": "iliad-15-0054",
+          "narrativeSha256": "6490ef42501e499862c73d949d7830f9442c28f609d4110f56f11e7d2617319b"
+        },
+        {
+          "number": 16,
+          "unitCount": 54,
+          "englishWordCount": 8849,
+          "firstUnitId": "iliad-16-0001",
+          "lastUnitId": "iliad-16-0054",
+          "narrativeSha256": "fbd20b07b5d87fbb5a29640b1756a51ce2afeb9c073eab5d6d490e0c019545f8"
+        },
+        {
+          "number": 17,
+          "unitCount": 50,
+          "englishWordCount": 7245,
+          "firstUnitId": "iliad-17-0001",
+          "lastUnitId": "iliad-17-0050",
+          "narrativeSha256": "0f9e6f7b28de7e4311503e6905838f58d3891f9d1d24a11cf7181e81f34c9769"
+        },
+        {
+          "number": 18,
+          "unitCount": 48,
+          "englishWordCount": 5990,
+          "firstUnitId": "iliad-18-0001",
+          "lastUnitId": "iliad-18-0048",
+          "narrativeSha256": "279c95420bb4e7b641cdf436a4965aeea609c6240ba3e37ebdff85660bc4f039"
+        },
+        {
+          "number": 19,
+          "unitCount": 31,
+          "englishWordCount": 3997,
+          "firstUnitId": "iliad-19-0001",
+          "lastUnitId": "iliad-19-0031",
+          "narrativeSha256": "dfb386d450a1dcfd7a36eea7da6eb1900dd9744401be5a5957f80fd9ddde3ad0"
+        },
+        {
+          "number": 20,
+          "unitCount": 36,
+          "englishWordCount": 4970,
+          "firstUnitId": "iliad-20-0001",
+          "lastUnitId": "iliad-20-0036",
+          "narrativeSha256": "81bf760d342dc7ae99fed8914c287ff39aeaec76c0b7574a44bfd26a9c8607bb"
+        },
+        {
+          "number": 21,
+          "unitCount": 39,
+          "englishWordCount": 6153,
+          "firstUnitId": "iliad-21-0001",
+          "lastUnitId": "iliad-21-0039",
+          "narrativeSha256": "7aa3cd0a32ad23b4ee4d917f6bab7d4c2581062670e42e4516286f3649fb335b"
+        },
+        {
+          "number": 22,
+          "unitCount": 33,
+          "englishWordCount": 5430,
+          "firstUnitId": "iliad-22-0001",
+          "lastUnitId": "iliad-22-0033",
+          "narrativeSha256": "5d8256d7101bbc31b3e8df384852033adb41a58fbe4a387e0a65baccdeab76cd"
+        },
+        {
+          "number": 23,
+          "unitCount": 65,
+          "englishWordCount": 8918,
+          "firstUnitId": "iliad-23-0001",
+          "lastUnitId": "iliad-23-0065",
+          "narrativeSha256": "db1a4e6e20b5d92e54593bb2533e84cecb198e679b328c4fc8e0662fcd981a06"
+        },
+        {
+          "number": 24,
+          "unitCount": 56,
+          "englishWordCount": 8310,
+          "firstUnitId": "iliad-24-0001",
+          "lastUnitId": "iliad-24-0056",
+          "narrativeSha256": "80bb6dec10db377dee5f4c928ee5ff524083a578fc421417b888fbd20b908925"
+        }
+      ]
+    },
+    {
+      "id": "odyssey",
+      "gutenbergId": 1727,
+      "sourceUrl": "https://www.gutenberg.org/files/1727/1727-0.txt",
+      "rawSha256": "268cf938678308dbebbea0aee320567f2d9aac31087e557f43a70708676efc7a",
+      "rawByteLength": 717663,
+      "bookCount": 24,
+      "narrativeUnitCount": 1027,
+      "englishWordCount": 117033,
+      "exclusions": {
+        "editorialHeadingCount": 24,
+        "editorialHeadingSha256ByBook": [
+          "1eb3b293208482ce6a034458d4c68a3dcf25d70a1a01927ae64cd1476eaba369",
+          "911000b8d4d032f7e6bfdc5fad9a3cd659508433369ebeadfcf2bcba0f5b04d9",
+          "3a4a9b30f129d1f63ec9b0a61edf872af25c14377a14a8cabb26668f2130cc78",
+          "83e18efabb78c7ccdbb293205ba6b6ac192b91c026e9e5195efb93db782e1dae",
+          "b2241fc006e3b92f8ccff685b1e2a53809ed11c7acedd801596d5800a7f5e1c1",
+          "83be14626c5befa2d42e9c4b57dcb59d3b26f3f68ce513744cff639476fb1c51",
+          "eff1aa944b6904306ee828fa6e82812d1d60328548828001913dcb75d293c899",
+          "2390cc2bf4c61510e2c3e9b6f4893da63142a159b25910a5dffda1ef5789b3b7",
+          "d1c86ae2f72814f28bf53dc5b1be70212dba31b1fb18b0989524d37ad2deef3d",
+          "44b4361125029d387258617bf9673360f37b81087eff4103f6224a8e46db0618",
+          "32ae65ee357b5daff8cd49ab4aacbf9a514912a95eff0b59cd3a40082824d1aa",
+          "998b6f729ff513237328200ca3c6d6056f09425a33f1f891e2de17c1ac9f1901",
+          "4d15f5b3ccb8759a3c778da6e22df872e64d8010e9a16659a4c471667635f168",
+          "a7c882e3cedef24d964d866d80cd252d002d08b1bcc614110c64aceff14edd23",
+          "2f1eb17b927ad03daa86f7bb40b9ae23ac500a463fcdda16e47b6ec0c8541680",
+          "bee19b901e58918903c51c7edd8116a646270f7b5714709af126faf8640e9a53",
+          "6af42f060042938f5d1c998f594a73214183ac9ad86dec26205581dd5fad6235",
+          "de548b3e4eca0b51d252108d5348c8bc0ae551df9a735968dd0727e6e2b5800a",
+          "b7dc989df7aa033a9a9a4cba2187b59a089214076682ca4776dd127b8e8f7373",
+          "7e2e8b67c5a7b061b5fd7e3a691f54ddf940182fefabfa5758526ceee01565a3",
+          "4ed737c5ac6c04aae5eaffeaae093caaab9d1a642392881b125fca792da4bd79",
+          "1aadffc9f39c5fef591b69efc2d8c0e22650ec3390fd1cb28352c4e9e7f7c304",
+          "b653da4972942c49ffbc2424dcf7ea5e125d0321d27ced5e17f46fff908a0294",
+          "335e564f0ae89c4edbc34f59977a5a54ef9bd27e57457eb893b07e8e6ec602d3"
+        ],
+        "detachedEndnoteBlockCount": 205,
+        "detachedEndnoteReferenceCount": 187,
+        "inlineEndnoteMarkerCount": 186,
+        "postEbookBlockCount": 50
+      },
+      "books": [
+        {
+          "number": 1,
+          "unitCount": 32,
+          "englishWordCount": 4111,
+          "firstUnitId": "odyssey-01-0001",
+          "lastUnitId": "odyssey-01-0032",
+          "narrativeSha256": "eb06bcaa0d26cc7c9007f2811cbe88b8408803f22fc9de29b805e962c03c007f"
+        },
+        {
+          "number": 2,
+          "unitCount": 35,
+          "englishWordCount": 4184,
+          "firstUnitId": "odyssey-02-0001",
+          "lastUnitId": "odyssey-02-0035",
+          "narrativeSha256": "1948628bc8b3f17f703740e14809256c3b58a97bbf6b3b8d75309c4000c79510"
+        },
+        {
+          "number": 3,
+          "unitCount": 38,
+          "englishWordCount": 4702,
+          "firstUnitId": "odyssey-03-0001",
+          "lastUnitId": "odyssey-03-0038",
+          "narrativeSha256": "668deb41c4486c96d1b1d5b8198d2597e76aba8f5dcbf5af8c13dcc3a87a4ec9"
+        },
+        {
+          "number": 4,
+          "unitCount": 81,
+          "englishWordCount": 8042,
+          "firstUnitId": "odyssey-04-0001",
+          "lastUnitId": "odyssey-04-0081",
+          "narrativeSha256": "24ddd28ed214f062c5430ff51204a27d34b5b41f289ab36d6a68e7826c680fd0"
+        },
+        {
+          "number": 5,
+          "unitCount": 37,
+          "englishWordCount": 4666,
+          "firstUnitId": "odyssey-05-0001",
+          "lastUnitId": "odyssey-05-0037",
+          "narrativeSha256": "cb5d77c10a80636e56dbd6b905e9616e58f41b342d819f4232c8505ea7cb0287"
+        },
+        {
+          "number": 6,
+          "unitCount": 26,
+          "englishWordCount": 3435,
+          "firstUnitId": "odyssey-06-0001",
+          "lastUnitId": "odyssey-06-0026",
+          "narrativeSha256": "bb83cc63eaca8e26dd9df1cc46e5f886c18e1192a6e492cb8e16ece0653a7b21"
+        },
+        {
+          "number": 7,
+          "unitCount": 29,
+          "englishWordCount": 3347,
+          "firstUnitId": "odyssey-07-0001",
+          "lastUnitId": "odyssey-07-0029",
+          "narrativeSha256": "a0a74e47bc5854d9aacf223c3a1c51f9d4e1b08ccdd7c44f4965b607c030f44a"
+        },
+        {
+          "number": 8,
+          "unitCount": 50,
+          "englishWordCount": 5589,
+          "firstUnitId": "odyssey-08-0001",
+          "lastUnitId": "odyssey-08-0050",
+          "narrativeSha256": "9392d2de50d9c3da6a762b7de3dd8469797b1126aab8a4e6911a67a3f2c274ef"
+        },
+        {
+          "number": 9,
+          "unitCount": 44,
+          "englishWordCount": 5800,
+          "firstUnitId": "odyssey-09-0001",
+          "lastUnitId": "odyssey-09-0044",
+          "narrativeSha256": "16e992b6636a68eca917b1cc170021886dd776adc1a9297d6755e3fbfad41bbe"
+        },
+        {
+          "number": 10,
+          "unitCount": 49,
+          "englishWordCount": 5684,
+          "firstUnitId": "odyssey-10-0001",
+          "lastUnitId": "odyssey-10-0049",
+          "narrativeSha256": "9cccac0ea2f4ee29baa2f1ae6888ba662afccc69049d0d80ccc554ced7464693"
+        },
+        {
+          "number": 11,
+          "unitCount": 54,
+          "englishWordCount": 6016,
+          "firstUnitId": "odyssey-11-0001",
+          "lastUnitId": "odyssey-11-0054",
+          "narrativeSha256": "e2a730270021396378e00d2034d14bf4b1b07ae7d0a5d163fc50bec5879661dc"
+        },
+        {
+          "number": 12,
+          "unitCount": 39,
+          "englishWordCount": 4589,
+          "firstUnitId": "odyssey-12-0001",
+          "lastUnitId": "odyssey-12-0039",
+          "narrativeSha256": "eff06684975a16997d56c7933c04ffa36402dbab10a6ef9297e82ab92f052046"
+        },
+        {
+          "number": 13,
+          "unitCount": 38,
+          "englishWordCount": 4192,
+          "firstUnitId": "odyssey-13-0001",
+          "lastUnitId": "odyssey-13-0038",
+          "narrativeSha256": "a62574319718caf0055160c7d562a11dc3ef1c569e5a09e229e2d5822b5e91d4"
+        },
+        {
+          "number": 14,
+          "unitCount": 35,
+          "englishWordCount": 5376,
+          "firstUnitId": "odyssey-14-0001",
+          "lastUnitId": "odyssey-14-0035",
+          "narrativeSha256": "6c4223a411e527fd4d3b1b1259718f76607c56fabac277c41bbcf8f43eb09084"
+        },
+        {
+          "number": 15,
+          "unitCount": 48,
+          "englishWordCount": 5387,
+          "firstUnitId": "odyssey-15-0001",
+          "lastUnitId": "odyssey-15-0048",
+          "narrativeSha256": "de002d2140752bff783f8fb400a13dd4c2686702b4321a398ea9f7914529d72c"
+        },
+        {
+          "number": 16,
+          "unitCount": 45,
+          "englishWordCount": 4541,
+          "firstUnitId": "odyssey-16-0001",
+          "lastUnitId": "odyssey-16-0045",
+          "narrativeSha256": "205aad32e25af1c762c733fdc0a0205815a6e1b8ca8ca7751e73d225042162b0"
+        },
+        {
+          "number": 17,
+          "unitCount": 63,
+          "englishWordCount": 5812,
+          "firstUnitId": "odyssey-17-0001",
+          "lastUnitId": "odyssey-17-0063",
+          "narrativeSha256": "2ffb03d7ce37a06b3776e56c7cecda1b4c51e02e7b8a67163177b5cfbabbcfdf"
+        },
+        {
+          "number": 18,
+          "unitCount": 41,
+          "englishWordCount": 4144,
+          "firstUnitId": "odyssey-18-0001",
+          "lastUnitId": "odyssey-18-0041",
+          "narrativeSha256": "f1a889b34858124c0ce6b183b53e200a8a71c90f59593c66c30c893bbce7407d"
+        },
+        {
+          "number": 19,
+          "unitCount": 39,
+          "englishWordCount": 5989,
+          "firstUnitId": "odyssey-19-0001",
+          "lastUnitId": "odyssey-19-0039",
+          "narrativeSha256": "96e3ba842fd8c2495b6d64fb542b2a5d23411a3a8f53808fee3878c9e67ce49f"
+        },
+        {
+          "number": 20,
+          "unitCount": 36,
+          "englishWordCount": 3807,
+          "firstUnitId": "odyssey-20-0001",
+          "lastUnitId": "odyssey-20-0036",
+          "narrativeSha256": "b9de5b334d6bbf5c8f5389ed0b2f329c044f29b765356614e7aaf0344ee89869"
+        },
+        {
+          "number": 21,
+          "unitCount": 42,
+          "englishWordCount": 4237,
+          "firstUnitId": "odyssey-21-0001",
+          "lastUnitId": "odyssey-21-0042",
+          "narrativeSha256": "d2a09c0ba4e5cc857543b639497e20f3567706c5295a9c080daa9d97a6b8a3b2"
+        },
+        {
+          "number": 22,
+          "unitCount": 52,
+          "englishWordCount": 4535,
+          "firstUnitId": "odyssey-22-0001",
+          "lastUnitId": "odyssey-22-0052",
+          "narrativeSha256": "631183ab1a389313d12e6cfde2ec2fc73c74ae323b3346a1cd053858afb5e335"
+        },
+        {
+          "number": 23,
+          "unitCount": 29,
+          "englishWordCount": 3679,
+          "firstUnitId": "odyssey-23-0001",
+          "lastUnitId": "odyssey-23-0029",
+          "narrativeSha256": "5d764a2dd1759a369226cabd467b62f13cf94f65bb351dab9ac65854f7143b8c"
+        },
+        {
+          "number": 24,
+          "unitCount": 45,
+          "englishWordCount": 5169,
+          "firstUnitId": "odyssey-24-0001",
+          "lastUnitId": "odyssey-24-0045",
+          "narrativeSha256": "36fe08fdb52134d7a3f24c5bce72f66314e5b71517693b4fa3c9805dd482d3e2"
+        }
+      ]
+    }
+  ]
+}

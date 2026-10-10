@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "corrections": [
+    {
+      "unitId": "iliad-01-0002",
+      "field": "ja",
+      "find": "自分の祭司クリューセース",
+      "replace": "アポロンの祭司クリューセース",
+      "reason": "Butler's phrase 'Chryses his priest' identifies Chryses as Apollo's priest, not Agamemnon's.",
+      "reviewEvidence": "A separate cross-model sample raised the ambiguity; production cache review confirmed and corrected this unit."
+    },
+    {
+      "unitId": "iliad-04-0039",
+      "field": "noteBody",
+      "noteTitle": "修辞としての「軽んじる者はなかった」",
+      "find": "無傷で戦場を歩けた者すらいないほど激しい戦いだった、という強調の言い回し。",
+      "replace": "たとえ女神に守られて無傷で戦場を歩ける者であっても、この戦いを軽く見ることはなかっただろう、という強調の言い回し。",
+      "reason": "The Butler sentence is a counterfactual about a protected person still not making light of the fighting, not a claim that nobody could walk through uninjured.",
+      "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 d10355d1ad1cc848b83af16db8e93dc50330da6a32750029a69ae1f419897985."
+    },
+    {
+      "unitId": "iliad-08-0001",
+      "field": "ja",
+      "find": "私が思うままを語るがよい",
+      "replace": "私が思うままを語ろう",
+      "reason": "Zeus says he will speak as he is minded; the draft incorrectly turns it into an imperative to the gods.",
+      "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 d10355d1ad1cc848b83af16db8e93dc50330da6a32750029a69ae1f419897985."
+    },
+    {
+      "unitId": "iliad-11-0055",
+      "field": "ja",
+      "find": "牝牛の皮",
+      "replace": "雄牛の皮",
+      "reason": "Butler's source says bullock-skins, not cow-hide.",
+      "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 d10355d1ad1cc848b83af16db8e93dc50330da6a32750029a69ae1f419897985."
+    },
+    {
+      "unitId": "iliad-21-0039",
+      "field": "ja",
+      "find": "自分が今にも追いつくのだと絶えず思い込ませて",
+      "replace": "今にも追いつけるとアキレウスに絶えず思い込ませて",
+      "reason": "Clarifies that Apollo makes Achilles believe he is about to catch up, avoiding an ambiguous pronoun that could identify Apollo as the chaser.",
+      "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 2f2f1d9be41450a2bdbac81e93f9eabdbfc291618c88057daf3775010a14858a."
+    },
+    {
+      "unitId": "odyssey-12-0001",
+      "field": "noteBody",
+      "noteTitle": "アイアイエ島",
+      "find": "冥府から戻った一行はここへ再び立ち寄り、エルペノルの葬送を行うことになる。",
+      "replace": "冥府から戻った一行はここに上陸する。",
+      "reason": "The original note foreshadows Elpenor's funeral, which is a later scene not mentioned in this paragraph.",
+      "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 a7ec5701599accadca20816baa15a7f433c1356f2bfabf10dadd5e41db6b924c."
+    }
+  ],
+  "reviewSamples": [
+    {
+      "reviewer": "Claude Sonnet 5.5 via managed local CLI",
+      "sampleSha256": "d10355d1ad1cc848b83af16db8e93dc50330da6a32750029a69ae1f419897985",
+      "englishWordCount": 3772,
+      "reviewedUnitIds": [
+        "iliad-01-0001", "iliad-01-0054", "iliad-02-0001", "iliad-02-0083",
+        "iliad-03-0001", "iliad-03-0041", "iliad-04-0001", "iliad-04-0039",
+        "iliad-05-0001", "iliad-05-0067", "iliad-06-0001", "iliad-06-0035",
+        "iliad-07-0001", "iliad-07-0035", "iliad-08-0001", "iliad-08-0041",
+        "iliad-09-0001", "iliad-09-0034", "iliad-10-0001", "iliad-10-0048",
+        "iliad-11-0001", "iliad-11-0055", "iliad-12-0001", "iliad-12-0021",
+        "iliad-13-0001", "iliad-13-0054", "iliad-14-0001", "iliad-14-0040",
+        "iliad-15-0001", "iliad-15-0054", "iliad-16-0001", "iliad-16-0054"
+      ],
+      "adjudication": "Three findings were accepted and recorded as unit-specific corrections. The note finding on iliad-15-0054 was rejected because the preceding paragraph identifies Ajax and the line continues his speech; the context supports the note."
+    },
+    {
+      "reviewer": "Claude Sonnet 5.5 via managed local CLI",
+      "sampleSha256": "2f2f1d9be41450a2bdbac81e93f9eabdbfc291618c88057daf3775010a14858a",
+      "englishWordCount": 1808,
+      "reviewedUnitIds": [
+        "iliad-17-0001", "iliad-17-0050", "iliad-18-0001", "iliad-18-0048",
+        "iliad-19-0001", "iliad-19-0031", "iliad-20-0001", "iliad-20-0036",
+        "iliad-21-0001", "iliad-21-0039", "iliad-22-0001", "iliad-22-0033",
+        "iliad-23-0001", "iliad-23-0065", "iliad-24-0001", "iliad-24-0056"
+      ],
+      "adjudication": "One pronoun clarification in iliad-21-0039 was accepted and recorded as a unit-specific correction."
+    },
+    {
+      "reviewer": "Claude Sonnet 5.5 via managed local CLI",
+      "sampleSha256": "a7ec5701599accadca20816baa15a7f433c1356f2bfabf10dadd5e41db6b924c",
+      "englishWordCount": 6138,
+      "reviewedUnitIds": [
+        "odyssey-01-0001", "odyssey-01-0032", "odyssey-02-0001", "odyssey-02-0035",
+        "odyssey-03-0001", "odyssey-03-0038", "odyssey-04-0001", "odyssey-04-0081",
+        "odyssey-05-0001", "odyssey-05-0037", "odyssey-06-0001", "odyssey-06-0026",
+        "odyssey-07-0001", "odyssey-07-0029", "odyssey-08-0001", "odyssey-08-0050",
+        "odyssey-09-0001", "odyssey-09-0044", "odyssey-10-0001", "odyssey-10-0049",
+        "odyssey-11-0001", "odyssey-11-0054", "odyssey-12-0001", "odyssey-12-0039",
+        "odyssey-13-0001", "odyssey-13-0038", "odyssey-14-0001", "odyssey-14-0035",
+        "odyssey-15-0001", "odyssey-15-0048", "odyssey-16-0001", "odyssey-16-0045",
+        "odyssey-17-0001", "odyssey-17-0063", "odyssey-18-0001", "odyssey-18-0041",
+        "odyssey-19-0001", "odyssey-19-0039", "odyssey-20-0001", "odyssey-20-0036",
+        "odyssey-21-0001", "odyssey-21-0042", "odyssey-22-0001", "odyssey-22-0052",
+        "odyssey-23-0001", "odyssey-23-0029", "odyssey-24-0001", "odyssey-24-0045",
+        "iliad-12-0005", "odyssey-19-0019"
+      ],
+      "adjudication": "One spoiler correction in odyssey-12-0001 was accepted and recorded as a unit-specific note correction. The proposed odyssey-15-0048 note removal was rejected because the preceding source unit already describes Eumaeus's sale to Laertes; the reviewed note is supported by context."
+    }
+  ]
+}
