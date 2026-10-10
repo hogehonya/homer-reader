@@ -60,7 +60,8 @@ class ContentValidationTests(unittest.TestCase):
         for work in catalog["works"]:
             self.assertNotIn("url", work["source"]["japanese"])
             self.assertIn("AI", work["source"]["commentary"]["author"])
-            self.assertIn("48単位", work["source"]["commentary"]["reviewScope"])
+        self.assertIn("48単位", catalog["works"][0]["source"]["commentary"]["reviewScope"])
+        self.assertIn("未実施", catalog["works"][1]["source"]["commentary"]["reviewScope"])
 
     def write_published_fixture(self, public_dir):
         works = []

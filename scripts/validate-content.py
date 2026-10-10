@@ -146,6 +146,12 @@ def catalog_for(manifest: dict, source_works: dict, translated_works: dict) -> d
     for work_id in ("iliad", "odyssey"):
         source, _ = source_works[work_id]
         english = manifest["works"][work_id]
+        if work_id == "iliad":
+            translation_review_scope = "イリアス全24巻から各巻冒頭・末尾の計48単位（英文5,580語）をAIで抜取確認。別途1単位の表現も個別修正。全本文の通読校閲は未実施。"
+            commentary_review_scope = "イリアス全24巻から各巻冒頭・末尾の計48単位（英文5,580語）の解説をAIで抜取確認。全解説の通読校閲は未実施。"
+        else:
+            translation_review_scope = "オデュッセイアの翻訳サンプル確認は未実施。全本文の通読校閲も未実施。"
+            commentary_review_scope = "オデュッセイアの解説サンプル確認は未実施。全解説の通読校閲も未実施。"
         books = []
         for book in source["books"]:
             books.append({
@@ -167,12 +173,12 @@ def catalog_for(manifest: dict, source_works: dict, translated_works: dict) -> d
                 "japanese": {
                     "title": "新規AI生成訳（Butler英訳からの重訳）", "translator": "AI-generated draft",
                     "license": "Original AI-generated translation based on the public-domain English text.",
-                    "reviewScope": "イリアス全24巻から各巻冒頭・末尾の計48単位（英文5,580語）をAIで抜取確認。別途1単位の表現も個別修正。全本文の通読校閲は未実施。",
+                    "reviewScope": translation_review_scope,
                 },
                 "commentary": {
                     "author": "AI生成",
                     "method": "Butler英訳の各段落に基づきAIが作成。",
-                    "reviewScope": "イリアス全24巻から各巻冒頭・末尾の計48単位（英文5,580語）の解説をAIで抜取確認。全解説の通読校閲は未実施。",
+                    "reviewScope": commentary_review_scope,
                 },
                 "alignment": {
                     "method": "One Butler English source paragraph per stable ID; wrapped lines are joined with spaces.",
