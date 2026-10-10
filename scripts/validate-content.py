@@ -44,13 +44,26 @@ def apply_corrections(translations: dict[str, dict], corrections: list[dict]) ->
     applied = 0
     for correction in corrections:
         unit_id = correction["unitId"]
-        if correction.get("field") != "ja" or unit_id not in translations:
+        field = correction.get("field")
+        if field not in {"ja", "noteBody"} or unit_id not in translations:
             raise ValueError(f"invalid or unknown translation correction target: {unit_id}")
-        text = translations[unit_id]["ja"]
+        if field == "ja":
+            target = translations[unit_id]
+            key = "ja"
+        else:
+            notes = translations[unit_id].get("notes", [])
+            titled = [note for note in notes if note.get("title") == correction.get("noteTitle")]
+            if len(titled) != 1:
+                raise ValueError(f"reviewed note correction does not identify exactly one note: {unit_id}")
+            target = titled[0]
+            key = "body"
+        text = target.get(key)
+        if not isinstance(text, str):
+            raise ValueError(f"reviewed correction target is not text: {unit_id}")
         original, replacement = correction["find"], correction["replace"]
         matches = text.count(original)
         if matches == 1:
-            translations[unit_id]["ja"] = text.replace(original, replacement, 1)
+            target[key] = text.replace(original, replacement, 1)
             applied += 1
         elif matches != 0 or replacement not in text:
             raise ValueError(f"reviewed correction does not match current draft: {unit_id}")
@@ -154,11 +167,11 @@ def catalog_for(manifest: dict, source_works: dict, translated_works: dict) -> d
                 "japanese": {
                     "title": "新規AI生成訳（Butler英訳からの重訳）", "translator": "AI-generated draft",
                     "url": None, "license": "Original AI-generated translation based on the public-domain English text.",
-                    "reviewScope": "A separate model-comparison sample covered 4 source paragraphs / 491 English words; targeted production review confirmed one correction in iliad-01-0002. No full human review.",
+                    "reviewScope": "Production sample review covered 32 units / 3,772 English words across Iliad books 1–16; separate targeted production review corrected iliad-01-0002. No full-corpus human review.",
                 },
                 "commentary": {
                     "author": "AI-generated draft", "method": "Notes generated from the Butler English paragraphs.",
-                    "reviewScope": "No full human review; model-comparison and targeted production review scope are documented in CONTENT.md.",
+                    "reviewScope": "No full human review; model-comparison and production sample review scope are documented in CONTENT.md.",
                 },
                 "alignment": {
                     "method": "One Butler English source paragraph per stable ID; wrapped lines are joined with spaces.",

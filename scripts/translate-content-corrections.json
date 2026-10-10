@@ -7,7 +7,50 @@
       "find": "自分の祭司クリューセース",
       "replace": "アポロンの祭司クリューセース",
       "reason": "Butler's phrase 'Chryses his priest' identifies Chryses as Apollo's priest, not Agamemnon's.",
-      "reviewEvidence": "Parent's 4-paragraph / 491-English-word spot check identified the ambiguity; only this unit is changed."
+      "reviewEvidence": "A separate cross-model sample raised the ambiguity; production cache review confirmed and corrected this unit."
+    },
+    {
+      "unitId": "iliad-04-0039",
+      "field": "noteBody",
+      "noteTitle": "修辞としての「軽んじる者はなかった」",
+      "find": "無傷で戦場を歩けた者すらいないほど激しい戦いだった、という強調の言い回し。",
+      "replace": "たとえ女神に守られて無傷で戦場を歩ける者であっても、この戦いを軽く見ることはなかっただろう、という強調の言い回し。",
+      "reason": "The Butler sentence is a counterfactual about a protected person still not making light of the fighting, not a claim that nobody could walk through uninjured.",
+      "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 d10355d1ad1cc848b83af16db8e93dc50330da6a32750029a69ae1f419897985."
+    },
+    {
+      "unitId": "iliad-08-0001",
+      "field": "ja",
+      "find": "私が思うままを語るがよい",
+      "replace": "私が思うままを語ろう",
+      "reason": "Zeus says he will speak as he is minded; the draft incorrectly turns it into an imperative to the gods.",
+      "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 d10355d1ad1cc848b83af16db8e93dc50330da6a32750029a69ae1f419897985."
+    },
+    {
+      "unitId": "iliad-11-0055",
+      "field": "ja",
+      "find": "牝牛の皮",
+      "replace": "雄牛の皮",
+      "reason": "Butler's source says bullock-skins, not cow-hide.",
+      "reviewEvidence": "Claude Sonnet 5.5 production sample review; sample SHA-256 d10355d1ad1cc848b83af16db8e93dc50330da6a32750029a69ae1f419897985."
+    }
+  ],
+  "reviewSamples": [
+    {
+      "reviewer": "Claude Sonnet 5.5 via managed local CLI",
+      "sampleSha256": "d10355d1ad1cc848b83af16db8e93dc50330da6a32750029a69ae1f419897985",
+      "englishWordCount": 3772,
+      "reviewedUnitIds": [
+        "iliad-01-0001", "iliad-01-0054", "iliad-02-0001", "iliad-02-0083",
+        "iliad-03-0001", "iliad-03-0041", "iliad-04-0001", "iliad-04-0039",
+        "iliad-05-0001", "iliad-05-0067", "iliad-06-0001", "iliad-06-0035",
+        "iliad-07-0001", "iliad-07-0035", "iliad-08-0001", "iliad-08-0041",
+        "iliad-09-0001", "iliad-09-0034", "iliad-10-0001", "iliad-10-0048",
+        "iliad-11-0001", "iliad-11-0055", "iliad-12-0001", "iliad-12-0021",
+        "iliad-13-0001", "iliad-13-0054", "iliad-14-0001", "iliad-14-0040",
+        "iliad-15-0001", "iliad-15-0054", "iliad-16-0001", "iliad-16-0054"
+      ],
+      "adjudication": "Three findings were accepted and recorded as unit-specific corrections. The note finding on iliad-15-0054 was rejected because the preceding paragraph identifies Ajax and the line continues his speech; the context supports the note."
     }
   ]
 }
