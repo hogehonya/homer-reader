@@ -10,7 +10,7 @@ Issue #3専用worktreeでreader UI・テスト・CI設定を実装していま�
 | :--- | :--- |
 | 要求・仕様書 | 作成済み（[SPEC.md](SPEC.md)が機能・コンテンツ仕様の正本） |
 | アプリ実装 | Issue #3専用worktreeで実装中。13テスト・typecheck・build成功、別Agent監査と統合は未完了 |
-| 本文・日本語訳・解説データ | controller報告では英訳48巻取得・2段落pilot済み、全訳は中断中。全巻データは未完成 |
+| 本文・日本語訳・解説データ | 直近のcontent担当報告では212バッチ中54件成功・失敗0件、4 workerで進行中。2,140対訳単位・英語268,999語は集計目標で未検証。全巻データは未完成 |
 | CI | Issue #3 branchにPR検査・main公開gateを作成。実行未確認。CI repo ID 154有効・trusted volumes設定済みとのcontroller報告あり |
 | 公開 | 未実施。demo-previews PR #95はCI成功・未マージとの報告。公開・画面検証は未実施 |
 
