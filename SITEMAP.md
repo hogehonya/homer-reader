@@ -33,7 +33,7 @@ CI定義（`.woodpecker.yml`）と依存定義（`package.json`）はありま�
 | `public/fonts/` | `IBM Plex Sans JP`の自己配信資産とライセンス表示 |
 | `scripts/` | 全48巻の欠落検査など、コンテンツ検証の補助 |
 | `.woodpecker.yml` | 検査、ビルド、デプロイ |
-| `Dockerfile`、`nginx.conf`、`docker-compose.yml` | 配信構成 |
+| `static-publish.json`、`scripts/static_publish.py` | 共用配信のCI公開設定（静的SPAとして採用する場合） |
 
 ## 正本の所在
 
