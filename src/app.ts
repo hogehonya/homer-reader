@@ -32,6 +32,14 @@ const KIND_LABELS: Record<Note["kind"], string> = {
   interpretation: "解釈",
 };
 
+const KIND_LABELS_EN: Record<Note["kind"], string> = {
+  person: "Person",
+  place: "Place",
+  myth: "Myth",
+  language: "Language",
+  interpretation: "Interpretation",
+};
+
 export function createReaderApp(root: HTMLElement, options: AppOptions = {}): ReaderApp {
   const document = root.ownerDocument;
   const browserCandidate = options.window ?? document.defaultView;
@@ -242,7 +250,10 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
     article.append(columns);
     if (unit.notes.length) {
       const notes = element(root.ownerDocument, "section", "unit__notes");
-      appendText(notes, "h4", "解説");
+      const notesHeading = element(root.ownerDocument, "h4", "unit__notes-heading");
+      appendText(notesHeading, "span", "Notes").lang = "en";
+      appendText(notesHeading, "span", "解説").lang = "ja";
+      notes.append(notesHeading);
       const list = element(root.ownerDocument, "ul", "note-list");
       unit.notes.forEach((note) => list.append(renderNote(article.ownerDocument, note)));
       notes.append(list);
@@ -261,12 +272,27 @@ function renderNote(document: Document, note: Note) {
   const details = element(document, "details", "note__details");
   details.dataset.spoiler = String(note.spoiler);
   const summary = element(document, "summary", "note__summary");
-  appendText(summary, "span", KIND_LABELS[note.kind], "note__kind");
-  if (note.spoiler) appendText(summary, "span", "ネタバレを含む解説", "note__spoiler-label");
-  else appendText(summary, "span", note.title, "note__title");
+  const kind = element(document, "span", "note__kind");
+  appendText(kind, "span", KIND_LABELS_EN[note.kind]).lang = "en";
+  appendText(kind, "span", " / ", "note__separator").ariaHidden = "true";
+  appendText(kind, "span", KIND_LABELS[note.kind]).lang = "ja";
+  summary.append(kind);
+  if (note.spoiler) {
+    const spoilerLabel = element(document, "span", "note__spoiler-label");
+    appendText(spoilerLabel, "span", "Spoiler").lang = "en";
+    appendText(spoilerLabel, "span", " / ", "note__separator").ariaHidden = "true";
+    appendText(spoilerLabel, "span", "ネタバレを含む解説").lang = "ja";
+    summary.append(spoilerLabel);
+  } else {
+    const title = element(document, "span", "note__title");
+    appendText(title, "span", note.titleEn, "note__title--english").lang = "en";
+    appendText(title, "span", " / ", "note__separator").ariaHidden = "true";
+    appendText(title, "span", note.title, "note__title--japanese").lang = "ja";
+    summary.append(title);
+  }
   const body = element(document, "div", "note__body");
-  if (note.spoiler) appendText(body, "h5", note.title, "note__title");
-  appendText(body, "p", note.body);
+  body.append(renderNoteLocale(document, "english", note.spoiler ? note.titleEn : undefined, note.bodyEn));
+  body.append(renderNoteLocale(document, "japanese", note.spoiler ? note.title : undefined, note.body));
   if (note.sourceUrl) {
     const source = element(document, "p", "note__source");
     source.append(makeExternalLink(document, note.sourceUrl, "解説の出典"));
@@ -275,6 +301,15 @@ function renderNote(document: Document, note: Note) {
   details.append(summary, body);
   item.append(details);
   return item;
+}
+
+function renderNoteLocale(document: Document, language: "english" | "japanese", title: string | undefined, body: string) {
+  const english = language === "english";
+  const locale = element(document, "section", `note__locale note__locale--${language}`);
+  locale.lang = english ? "en" : "ja";
+  if (title !== undefined) appendText(locale, "h5", title, "note__locale-title");
+  appendText(locale, "p", body, "note__locale-body");
+  return locale;
 }
 
 function renderEditionDetails(document: Document, work: WorkIndex) {

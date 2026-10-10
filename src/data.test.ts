@@ -44,6 +44,24 @@ describe("reader data contract", () => {
     expect(() => parseBook(missingJapanese)).toThrow(/non-empty/);
   });
 
+  it("requires non-empty English note titles and bodies while preserving both languages", () => {
+    const parsed = parseBook(fixtureBook());
+    expect(parsed.units[0].notes[0]).toMatchObject({
+      title: "詩の呼びかけ",
+      titleEn: "Poetic invocation",
+      body: "詩人が物語を始めるための言葉です。",
+      bodyEn: "The poet calls upon the goddess to begin the tale.",
+    });
+
+    const missingTitle = structuredClone(fixtureBook());
+    delete (missingTitle.units[0].notes[0] as unknown as Record<string, unknown>).titleEn;
+    expect(() => parseBook(missingTitle)).toThrow(/titleEn.*non-empty/);
+
+    const emptyBody = structuredClone(fixtureBook());
+    (emptyBody.units[0].notes[0] as unknown as Record<string, unknown>).bodyEn = "  ";
+    expect(() => parseBook(emptyBody)).toThrow(/bodyEn.*non-empty/);
+  });
+
   it("rejects a book that does not match the catalog's selected identity and unit count", () => {
     expect(() => parseBook(fixtureBook("odyssey", 1), {
       workId: "iliad", bookNumber: 1, unitCount: 1,
