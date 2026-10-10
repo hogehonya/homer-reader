@@ -36,7 +36,7 @@ UI作業場所は`/home/honya/repos/worktrees/homer-reader-issue-3`、ブラン�
 | 順 | 作業 | 完了証拠 | 状態 |
 | :--- | :--- | :--- | :--- |
 | 0 | 本計画と実装方針をrepoの正本に記録する | PLAN・SPEC・READMEのリンクとdiff検査、計画専用docs-only commit | 完了（mainに統合済み） |
-| 1 | Issue #3でreader UI、共有JSON契約、検証スクリプト、fixtureテストを実装 | Issue #3 worktreeのcommit、test・typecheck・build結果、独立監査結果 | UI・テスト実装済み、ローカル検査成功。独立監査・統合待ち |
+| 1 | Issue #3でreader UI、共有JSON契約、検証スクリプト、fixtureテストを実装 | UI commit `d1ec6b1`は独立Claudeレビュー承認。CI #1（commit `7879ae6`）success: UI fixture 20件、Python parser/fixture 9件、typecheck、build、静的設定成功。実データ不在のためstrict content gateは未実行。 | UI・テスト実装済み、PR CI・独立レビュー成功。全巻データ統合とmain strict CIは未完了 |
 | 2 | Issue #4で48巻データを別worktreeに作成 | catalogに作品ごと24巻、全ファイル・全単位の非空日英本文、コミット済みsource manifest・再現可能な検証結果、出典・生成・抜取確認範囲 | 212バッチ中65件成功・失敗0件との直近報告。目標2,140対訳単位・英語268,999語は未検証 |
 | 3 | Issue #3と#4をcontrollerが統合して検証 | 統合commit、48巻完全性・底本照合・日英対応・出典監査、UI全条件の結果 | 未着手 |
 | 4 | demo-previews Issue #94 / PR #95で台帳登録し、controllerがCIを確認 | PR #95・CI #183成功、未マージ。CI repo ID 154有効・trusted volumes設定済みとの報告。release準備後に台帳とmain用CIを再確認 | release準備まで保留 |

@@ -4,20 +4,25 @@
 
 ## 状態
 
-SPAのUI・データ契約・CI設定を実装中です。2026-10-10、Issue #3 worktreeでNode 24.19.0を使い`npm ci --offline`、20 fixture tests、typecheck、buildが成功しました。content gateは`public/data/catalog.json`が未配置のため失敗し、公開を止めることを確認しました。S1〜S18は全巻データと実画面を含む統合検証が未完了のため未チェックです。
+SPAのUI・データ契約・CI設定を統合中です。Issue #3 worktreeではNode 24.19.0で20 fixture tests、typecheck、buildが成功し、独立Claudeレビューはcommit `d1ec6b1`を承認しました。Woodpecker CI #1（commit `7879ae6`）も成功し、20 UI tests、9 Python parser/fixture tests、typecheck、build、静的設定を確認しました。実48巻データがないため、CIのstrict content gateはskipされ、fixtureの48-book検証だけが走っています。S1〜S18は全巻データと実画面を含む統合検証が未完了のため未チェックです。詳細は[PLAN.md](PLAN.md)の品質ゲートに記録します。
 
-## 文書（Issue #1）
+## 文書（Issue #1・当時の記録）
 
-文書のみの段階で検証できる条件です。検証: 2026-10-10、Codex（相対リンク解決チェックと差分検査）。
+以下はIssue #1時点の受入結果です。D5の「コード等を含まない」とD6の「CI未構成」は当時の範囲を示し、現在のrepo状態を表しません。検証: 2026-10-10、Codex（相対リンク解決チェックと差分検査）。
 
 - [x] D1: SPEC.mdが要求IDと出所を持ち、R1〜R14を記載している。
-- [x] D2: U1〜U4の4件の発言が、要求IDと条件IDへ追跡できる（下の追跡表）。
+- [x] D2: U1〜U4の4件の発言が、Issue #1の要求IDと条件IDへ追跡できる（当時の追跡表）。
 - [x] D3: 文書内の相対リンクがすべて解決する。
 - [x] D4: 未確定の資料採用・権利・技術を確定仕様として書いていない（SPEC.md 5.3、11、16）。
 - [x] D5: アプリコード、依存パッケージ、本文データ、デプロイ設定を含まない。
 - [x] D6: CI未構成を記録し、ダミーのCIを追加していない。
 
 Issue #1の完了条件のうち、commit、PR、別Agentの監査は本リポジトリのワークフロー側が担います。
+
+## 後続依頼の追跡
+
+- [x] D7: U5の実装・公開依頼をIssue #3/#4、S1〜S18、PLANの統合・公開工程へ追跡できる。
+- [x] D8: U6の先行計画依頼をPLAN step 0と後続工程の役割・依存・証拠へ追跡できる。
 
 ## SPA（統合検証待ち）
 
@@ -46,7 +51,7 @@ Issue #1の完了条件のうち、commit、PR、別Agentの監査は本リポ�
 
 ## 追跡表
 
-ユーザーの4件の発言から要求ID、条件IDへの対応です。要求の原文は[SPEC.md](SPEC.md)の5.1に置きます。
+Issue #1のU1〜U4から要求ID・条件IDへの対応と、後続U5/U6の実装・計画工程への対応です。要求の原文は[SPEC.md](SPEC.md)の5.1に置きます。
 
 | 発言 | 要求ID | 条件ID |
 | :--- | :--- | :--- |
@@ -54,5 +59,7 @@ Issue #1の完了条件のうち、commit、PR、別Agentの監査は本リポ�
 | U2 ブラウザで日英対訳・解説 | R3、R4 | S4、S5、S6、S14、S17 |
 | U3 SPA | R5 | S18 |
 | U4 リポジトリと仕様書を先に | R6 | D1〜D6 |
+| U5 subagentで実装・公開 | SPEC §5.1の実装依頼 | PLAN step 1〜5、Issue #3/#4、S1〜S18、公開条件 |
+| U6 リポジトリに計画を先に記録 | SPEC §5.1の計画依頼 | D8、PLAN step 0〜5 |
 
 Agentが本Issueで具体化した要件（R7〜R14）は、SPEC.mdの5.2の出所と、各条件に併記した要求IDに対応します。

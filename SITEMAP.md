@@ -4,7 +4,7 @@ homer-readerの現在のファイル構成と、本文工程で追加予定の�
 
 ## 現在のファイル
 
-Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト・公開設定が存在します。本文48巻の統合・CI実行・公開は未完了です。
+Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト・公開設定が存在します。PR CI #1は成功しましたが、48巻データとの統合、main strict CI、公開は未完了です。
 
 | ファイル | 役割 |
 | :--- | :--- |
@@ -18,7 +18,7 @@ Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト�
 | `tests/content/` | 原文パーサ、翻訳バッチ、公開manifestのfixture検証 |
 | `public/fonts/` | IBM Plex Sans JP 400/700のWOFF2、OFLライセンス、出典・checksum |
 | `package.json`、`package-lock.json`、`tsconfig.json` | 開発、test、typecheck、buildの再現可能な設定 |
-| `.woodpecker.yml`、`static-publish.json`、`scripts/static_publish.py` | 品質gate後の静的公開CI（未実行） |
+| `.woodpecker.yml`、`static-publish.json`、`scripts/static_publish.py` | PR検査とmainの厳格gate後に静的公開するCI。PR CI #1成功、main公開工程は未実行 |
 | `SITEMAP.md` | 本ファイル |
 | `FLOW.md` | 読書・データ読込・対訳表示・解説表示・コンテンツ整備・公開の流れ |
 | `AGENTS.md` | リポジトリ固有の作業契約と検証手順 |
