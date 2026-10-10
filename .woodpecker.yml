@@ -30,7 +30,12 @@ steps:
     depends_on: [reader-checks, validate-static]
     commands:
       - python3 -m unittest discover -s tests/content -v
-      - if [ -d public/data ] && [ -n "$(find public/data -mindepth 1 -print -quit)" ]; then python3 scripts/validate-content.py --verify-published; else echo "SOURCE_VALIDATION_SKIPPED: no public/data artifacts yet"; fi
+      - |
+        if [ -d public/data ] && [ -n "$(find public/data -mindepth 1 -print -quit)" ]; then
+          python3 scripts/validate-content.py --verify-published
+        else
+          echo "SOURCE_VALIDATION_SKIPPED: no public/data artifacts yet"
+        fi
 
   - name: validate-source-main
     image: python:3.13-alpine

@@ -23,16 +23,10 @@ try {
 }
 
 async function containsContentArtifact(directory) {
-  let entries;
   try {
-    entries = await readdir(directory, { withFileTypes: true });
+    return (await readdir(directory)).length > 0;
   } catch (error) {
     if (error.code === "ENOENT") return false;
     throw error;
   }
-  for (const entry of entries) {
-    if (entry.isFile() || entry.isSymbolicLink()) return true;
-    if (entry.isDirectory() && await containsContentArtifact(resolve(directory, entry.name))) return true;
-  }
-  return false;
 }
