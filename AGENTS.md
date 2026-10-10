@@ -5,7 +5,7 @@
 ## 現在の工程
 
 - Issue #1の文書整備は完了しています。Issue #3はreader UI・データ契約・テスト・CI構成、Issue #4は本文48巻の整備を担当し、別worktreeで並行します。
-- UI実装と48巻データを統合し、Node/Python strict verifierは成功しました。98 distinct unitsと別途1単位を抜取確認し、6件の限定修正を記録しています。PR/main CI・実ブラウザQA・台帳登録・実公開はcontroller工程です。
+- main commit `c149af8`へUIと48巻データを統合し、初回release `r1119-b3`を公開済みです。PR CI #2、main CI #3、台帳CI #184、配信57ファイルhash一致を確認しました。最新の配信検証記録は[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。
 - 機能・コンテンツ仕様の正本は`SPEC.md`、受入条件の正本は`ACCEPTANCE.md`です。要求を変える場合は`SPEC.md`の要求IDを先に更新し、対応する条件を`ACCEPTANCE.md`へ反映します。
 - 要求の原文引用は`SPEC.md`の5.1だけに置き、他文書へ複製しません。
 
@@ -14,7 +14,7 @@
 - ユーザーの明示決定、Agentが本Issueで具体化した要件、Agent方針、Agent提案、未検証情報、確認済み事実を区別して書きます（`SPEC.md` 4）。
 - 未確定の資料採用・権利・技術を確定仕様として書きません。未取得の本文と未確認の許諾を、取得済み・確認済みとして扱いません。
 - 実装方針の全巻方針（A1）を、ユーザーの直接指定として書きません。
-- 実URLや公開済みの状態を捏造しません。公開先目標はGitea/Woodpecker経由のローカルネットワーク固定URL `homer-reader.honya.dev`です。PR #6と台帳PR #95はopen、公開と320px・キーボードの実ブラウザ確認は未実施です。CIの有無と検証結果は実態に合わせてREADME.mdへ記録します。
+- 実URLや公開済みの状態を捏造しません。公開先はGitea/Woodpecker経由のローカルネットワーク固定URL `homer-reader.honya.dev`です。PR #6、#7、台帳PR #95はマージ済みです。初回HTTP 200と画面操作を確認済みです。最新の配信検証・QA記録はREADME.mdとIssue #3完了コメントを参照してください。
 
 ## 実装・コンテンツ工程の契約
 
@@ -25,7 +25,7 @@
 
 ## 検証
 
-実装と文書を次の手順で検証します。`validate:content:if-present`は`public/data`が完全に空の場合だけskipし、厳格なPython/UI content validatorは48巻データを統合するまで失敗が期待値です。
+実装と文書を次の手順で検証します。`validate:content:if-present`は`public/data`が完全に空の場合だけskipします。統合済みデータに対して厳格なvalidatorを実行します。
 
 ```bash
 npm ci
@@ -34,7 +34,7 @@ npm run typecheck
 npm run build
 npm run validate:content:if-present
 python3 -m unittest discover -s tests/content -v
-# 48巻のファイル統合後に通る厳格ゲート
+# 全48巻を要求する厳格ゲート
 python3 scripts/validate-content.py --verify-published
 npm run validate:content
 # 相対リンクの解決確認

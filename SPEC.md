@@ -38,9 +38,9 @@
 | Agent提案 | 表示切替・しおり・テーマ切替。未採用の追加機能として扱い、必須の受入条件には含めない。 |
 | Agent決定 | Issue #4でSamuel Butler英訳からのAI日本語全訳と短い日本語解説を採用し、実施した抜取確認だけを範囲・方法・結果とともに表示する。これはユーザー要求ではない。 |
 | 確認済みの資料情報 | Issue #4の`CONTENT.md`にProject GutenbergのSamuel Butler英訳（ebook 2199、1727）、取得日・原文SHA-256・正規化と除外方針・権利確認根拠を記録。米国Public Domain表示とGutenbergの基礎テキスト再利用方針を確認し、日本の保護期間について文化庁資料を根拠に公開可能と判断したプロジェクト上の評価であり、法律意見ではない。 |
-| Agent報告による進捗 | 48巻・2,140対訳単位・英語268,999語をIssue #3 branchへ統合。212/212翻訳バッチ、Python strict verifierと12テスト、Node strict validatorが成功。98 distinct units / 11,718英語語を抜取確認し、別途1単位の確認を含む6件の限定修正を記録。PR CI・main CI・320px/キーボード実ブラウザ確認は未完了。 |
+| Agent報告による進捗 | main commit `c149af8`へ48巻・2,140対訳単位・英語268,999語を統合。212/212翻訳バッチ、Python strict verifierと12テスト、Node strict validatorが成功。98 distinct units / 11,718英語語を抜取確認し、別途1単位を含む6件の限定修正を記録。main CI #3と台帳CI #184成功。初回release `r1119-b3`、HTTP 200、配信57ファイルのhash一致を確認。320×820、両作品の第1巻表示、マウス遷移、日英横並び、Tabフォーカス移動とEnter次巻遷移を確認。最新の配信・QA証跡はIssue #3完了コメントに記録。 |
 | 整備時点の確認済み事実 | `main`と`feature/issue-1`ブランチの存在、追跡ファイルがREADMEのみだったこと、CI未構成。 |
-| 未確定事項 | 翻訳・解説の全体的品質、PR CI・main CI、公開台帳との統合・公開実行記録、320px/キーボード実ブラウザ確認。全文の人手校閲は行っていない。 |
+| 未確定事項 | 翻訳・解説の全体的品質。全文の人手校閲は行っていない。 |
 
 要求の受付日は2026-10-10 JSTです。各発言の正確な時刻は未取得で、会話の発言順を追跡参照とします。会話の外部URLは未取得です。
 
@@ -195,7 +195,7 @@ U5を受け、Issue #3で読書UI・データ契約・テスト・CIの構成を
 | データ読込 | `catalog.json`と1巻1 JSONをfetchし実行時検証 | 別工程のデータ生成と独立してUIをテストでき、壊れた・不足したデータを成功表示しない。 |
 | 翻訳 | Samuel Butler英訳をもとにしたAI日本語全訳。日本語の短い解説を付け、AI生成と抜取確認範囲を出典情報に示す。 | Issue #4のAgent決定でありユーザー要求とは区別する。商用日本語訳の転載はしない。英訳の公開判断根拠は§11.1とIssue #4 `CONTENT.md`に記録し、法律意見とは扱わない。 |
 | 見た目 | DADSを基礎にした独自CSS、自己ホストIBM Plex Sans JP、system color scheme対応 | Web UI共通基準を適用し、外部フォントに依存しない。手動テーマ切替は追加しない。 |
-| 公開 | GiteaのrepoとWoodpecker CIを使い、`homer-reader.honya.dev`へローカルネットワーク公開 | 48巻が揃わない公開をCIで拒否する。PR #95の台帳統合、main CI、2回の配信検証、実公開・公開後QAはcontrollerが担う。 |
+| 公開 | GiteaのrepoとWoodpecker CIを使い、`homer-reader.honya.dev`へローカルネットワーク公開 | 48巻が揃わない公開をCIで拒否する。main CI #3、台帳CI #184と初回公開を確認済み。最新の配信・公開後QA証跡はIssue #3完了コメントを参照する。 |
 
 しおり・続きから読む・検索・音声・公開SPAの実行時翻訳API・アカウントは実装しません。日本語訳のバッチ生成工程は別途扱います。
 
@@ -205,7 +205,7 @@ U5を受け、Issue #3で読書UI・データ契約・テスト・CIの構成を
 
 ## 15. 公開方針
 
-共用の静的公開CIをIssue #3で構成します。PRは検査のみ、mainの検査・ビルド・全48巻データ検証が通ったときだけ、ローカルネットワーク固定URL `homer-reader.honya.dev`へ公開します（U7の意図解釈）。repoはGitea `honya-dev-spa/homer-reader`です。台帳PR #95の統合・CI実行・実公開・公開後の検証はcontrollerの後続工程とし、実行記録が確認できるまで公開済みとは扱いません。
+共用の静的公開CIをIssue #3で構成しました。PRは検査のみ、mainの検査・ビルド・全48巻データ検証が通ったときだけ、ローカルネットワーク固定URL `homer-reader.honya.dev`へ公開します（U7の意図解釈）。repoはGitea `honya-dev-spa/homer-reader`です。台帳PR #95、CI #184、main CI #3は完了し、初回release `r1119-b3`を公開済みです。最新の配信・QA記録はIssue #3完了コメントを参照してください。
 
 ## 16. 未決事項
 
@@ -214,8 +214,8 @@ U5を受け、Issue #3で読書UI・データ契約・テスト・CIの構成を
 | # | 未決事項 | 影響 |
 | :--- | :--- | :--- |
 | 1 | AI日本語訳・解説の全体品質 | 212/212バッチと機械検証は完了。98 distinct unitsと別途1単位を確認し6件の限定修正を記録。全文の人手校閲は未実施。 |
-| 2 | PR/main CIと実画面QA | local branchのNode/Python strict verify、22 UI tests、typecheck、buildは成功。PR/main CIと320px・キーボード実ブラウザQAは未確認。 |
-| 3 | 公開台帳PR #95の統合、main CIと公開後検証 | PR #95は未マージ、公開は未実施。Gitea/Woodpecker CIと固定URLの配信証拠を確認する。 |
+| 2 | 実画面QA | PR CI #2、main CI #3（22 UI tests、12 Python tests、Node/Python strict verify）は成功。WebKitGTKで320×820の横はみ出しなし、両作品の巻選択・本文表示・マウス遷移、日英横並び、Tabフォーカス・Enter次巻遷移を確認。最新の結果はIssue #3完了コメントを参照。 |
+| 3 | 配信検証 | 台帳PR #95、CI #184とmain CI #3完了。初回release `r1119-b3`、配信hashとHTTP 200を確認。以降の配信検証証跡はIssue #3完了コメントに記録する。 |
 
 ## 17. 受入条件
 
