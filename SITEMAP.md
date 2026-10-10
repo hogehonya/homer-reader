@@ -14,6 +14,8 @@ Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト�
 | `PLAN.md` | Issue #3/#4・公開台帳の役割、依存順、検証ゲート、完了条件 |
 | `index.html`、`src/` | vanilla TypeScript + Viteの読書SPA、JSON契約、表示、fixtureテスト |
 | `scripts/validate-content.mjs` | 公開前に全48巻と対訳単位を検査するCIゲート |
+| `scripts/validate-content.py`、`scripts/import-content.py`、`scripts/translate-content.py` | Butler原文の取込、翻訳キャッシュ・出典manifest・公開本文の再現可能な検証 |
+| `tests/content/` | 原文パーサ、翻訳バッチ、公開manifestのfixture検証 |
 | `public/fonts/` | IBM Plex Sans JP 400/700のWOFF2、OFLライセンス、出典・checksum |
 | `package.json`、`package-lock.json`、`tsconfig.json` | 開発、test、typecheck、buildの再現可能な設定 |
 | `.woodpecker.yml`、`static-publish.json`、`scripts/static_publish.py` | 品質gate後の静的公開CI（未実行） |

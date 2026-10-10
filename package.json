@@ -8,7 +8,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit -p tsconfig.json",
     "build": "vite build",
-    "validate:content": "node --experimental-strip-types scripts/validate-content.mjs"
+    "validate:content": "node --experimental-strip-types scripts/validate-content.mjs",
+    "validate:content:if-present": "node --experimental-strip-types scripts/validate-content.mjs --if-present"
   },
   "engines": {
     "node": "^22.22.2 || ^24.15.0 || >=26.0.0"

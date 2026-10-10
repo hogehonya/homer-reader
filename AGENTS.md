@@ -25,13 +25,17 @@
 
 ## 検証
 
-実装と文書を次の手順で検証します。`validate:content`は48巻データを統合するまで失敗が期待値です。
+実装と文書を次の手順で検証します。`validate:content:if-present`は`public/data`が完全に空の場合だけskipし、厳格なPython/UI content validatorは48巻データを統合するまで失敗が期待値です。
 
 ```bash
 npm ci
 npm test
 npm run typecheck
 npm run build
+npm run validate:content:if-present
+python3 -m unittest discover -s tests/content -v
+# 48巻のファイル統合後に通る厳格ゲート
+python3 scripts/validate-content.py --verify-published
 npm run validate:content
 # 相対リンクの解決確認
 grep -rhoE '\]\([^()#]+\.md\)' *.md | sed -E 's/^\]\(//; s/\)$//' | sort -u | while read -r f; do [ -f "$f" ] || echo "missing: $f"; done

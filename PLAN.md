@@ -47,8 +47,8 @@ UI作業場所は`/home/honya/repos/worktrees/homer-reader-issue-3`、ブラン�
 ## 品質ゲート
 
 1. **UI開発**: `npm test`、`npm run typecheck`、`npm run build`。fixtureでルーティング境界、異常JSON、fetch競合、HTML文字列の安全表示、解説・ネタバレ操作、日英対応を確認する。320px幅、キーボード、ライト／ダーク、フォントfallbackを実画面で確認する。
-2. **全文データ**: `npm run validate:content`が成功すること。両作品が24巻、合計48巻であり、欠巻・欠ファイル・不正参照・空または重複ID・空日英本文・解説schema違反がない。底本全体との省略・重複照合、日英の意味的対応、利用条件は別記録で確認する。
-3. **公開前CI**: PRでは品質検査・buildだけを行い公開しない。main push/manualは全品質ゲート後に限り、`dist/index.html`、`dist/assets`、`dist/fonts`、`dist/data`を明示して公開payloadを作る。全巻が未配置ならbuildの成功にかかわらずcontent gateで停止する。
+2. **全文データ**: `python3 -m unittest discover -s tests/content -v`で原文パーサと検証器のfixture試験を行い、`python3 scripts/validate-content.py --verify-published`と`npm run validate:content`を両方通す。出典manifestと48巻の英語本文が原文の正規化結果に一致し、catalog・全巻ファイル・日英本文・ID・件数・解説schemaが揃うこと。底本全体との照合、日英の意味的対応、利用条件は別記録で確認する。
+3. **公開前CI**: PRではUIテスト・buildとparser testを行い公開しない。PRの出典manifest・48巻検査とUI content validatorは`public/data`が完全に空のときだけskipし、1つでも成果物があれば両方を厳格実行する。main push/manualでは2つのstrict validatorとparser testを常に実行し、全て成功した場合だけ`dist/index.html`、`dist/assets`、`dist/fonts`、`dist/data`を明示して公開payloadを作る。
 4. **配信確認**: static-publishのpayload hash・CI identity検査と配信metadata照合が成功し、続けて公開URLで作品選択・巻切替・再読込・前後移動・解説・エラー復帰の主要操作を確認する。更新を2回実行し、URLと共用container IDが維持されpublication metadataが各対象commitを示すことも確認する。画面確認と全巻内容の人手校閲は別の証拠とする。
 
 ## 完了条件

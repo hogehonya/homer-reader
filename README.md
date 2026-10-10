@@ -56,9 +56,13 @@ npm run dev
 npm test
 npm run typecheck
 npm run build
+npm run validate:content:if-present
+python3 -m unittest discover -s tests/content -v
+# 全48巻のファイルが統合された後に実行する厳格ゲート
+python3 scripts/validate-content.py --verify-published
 npm run validate:content
 ```
 
-`test`、`typecheck`、`build`は本文データなしで実行できます。`validate:content`は公開前ゲートで48巻すべてのデータを要求します。本文が未配置の現状では失敗するのが正しい結果です。
+`test`、`typecheck`、`build`、`validate:content:if-present`は本文データなしでも実行できます。任意版は`public/data`が空のときだけ検証をskipし、何か成果物があれば全量を検査します。`validate:content`とPythonの`--verify-published`は常に48巻を要求する厳格ゲートです。現在は本文未配置のため厳格ゲートが失敗するのが正しい結果です。Pythonのparser fixture testは外部データを使わず実行できます。
 
 UIはDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。色の役割、フォーカス、ライト／ダークテーマ、320px向けCSSを実装しました。実ブラウザでの表示・拡大・コントラスト確認は未完了です。
