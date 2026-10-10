@@ -12,7 +12,8 @@ if (process.argv.includes("--if-present") && !(await containsContentArtifact(dat
 
 try {
   const summary = await validateContent(async (relativePath) => {
-    const absolutePath = resolve(dataDirectory, relativePath);
+    const baseDirectory = relativePath === "catalog.json" ? dataDirectory : resolve(dataDirectory, "..");
+    const absolutePath = resolve(baseDirectory, relativePath);
     if (!absolutePath.startsWith(`${dataDirectory}/`)) throw new Error("data path escapes public/data");
     return JSON.parse(await readFile(absolutePath, "utf8"));
   });
