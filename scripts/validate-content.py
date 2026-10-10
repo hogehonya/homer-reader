@@ -57,39 +57,41 @@ def apply_corrections(translations: dict[str, dict], corrections: list[dict]) ->
     return applied
 
 
-def load_translations(work_id: str, units: list[dict], cache_dir: Path) -> dict[str, dict]:
+def load_translations(work_id: str, books: list[dict], cache_dir: Path) -> dict[str, dict]:
     result = {}
-    for batch in TRANSLATOR.chunks(units, 1500, 24):
-        path = TRANSLATOR.cache_path(cache_dir, batch)
-        if not path.is_file():
-            raise ValueError(f"missing translation batch: {path.name}")
-        response = json.loads(path.read_text(encoding="utf-8"))
-        rows = response.get("units")
-        if not isinstance(rows, list) or [row.get("id") for row in rows] != [row["id"] for row in batch]:
-            raise ValueError(f"{path.name}: IDs/order differ from source")
-        for source, row in zip(batch, rows):
-            ja = row.get("ja")
-            if not isinstance(ja, str) or not ja.strip():
-                raise ValueError(f"{source['id']}: empty Japanese translation")
-            source_chars = len(source["en"].strip())
-            if len(ja.strip()) < max(8, source_chars * 0.18):
-                raise ValueError(f"{source['id']}: suspiciously short translation")
-            japanese_chars = sum("\u3040" <= char <= "\u30ff" or "\u3400" <= char <= "\u9fff" for char in ja)
-            if japanese_chars / max(1, len(ja)) < 0.12:
-                raise ValueError(f"{source['id']}: translation appears to remain in English")
-            notes = row.get("notes")
-            if not isinstance(notes, list):
-                raise ValueError(f"{source['id']}: notes must be a list")
-            for note in notes:
-                check_note(note, source["id"])
-            if source["id"] in result:
-                raise ValueError(f"duplicate translated ID: {source['id']}")
-            result[source["id"]] = {"ja": ja.strip(), "notes": notes}
-    if len(result) != len(units):
-        raise ValueError(f"{work_id}: translation count mismatch ({len(result)}/{len(units)})")
+    for book in books:
+        for batch in TRANSLATOR.chunks(book["units"], 1500, 24):
+            path = TRANSLATOR.cache_path(cache_dir, batch)
+            if not path.is_file():
+                raise ValueError(f"missing translation batch: {path.name}")
+            response = json.loads(path.read_text(encoding="utf-8"))
+            rows = response.get("units")
+            if not isinstance(rows, list) or [row.get("id") for row in rows] != [row["id"] for row in batch]:
+                raise ValueError(f"{path.name}: IDs/order differ from source")
+            for source, row in zip(batch, rows):
+                ja = row.get("ja")
+                if not isinstance(ja, str) or not ja.strip():
+                    raise ValueError(f"{source['id']}: empty Japanese translation")
+                source_chars = len(source["en"].strip())
+                if len(ja.strip()) < max(8, source_chars * 0.18):
+                    raise ValueError(f"{source['id']}: suspiciously short translation")
+                japanese_chars = sum("\u3040" <= char <= "\u30ff" or "\u3400" <= char <= "\u9fff" for char in ja)
+                if japanese_chars / max(1, len(ja)) < 0.12:
+                    raise ValueError(f"{source['id']}: translation appears to remain in English")
+                notes = row.get("notes")
+                if not isinstance(notes, list):
+                    raise ValueError(f"{source['id']}: notes must be a list")
+                for note in notes:
+                    check_note(note, source["id"])
+                if source["id"] in result:
+                    raise ValueError(f"duplicate translated ID: {source['id']}")
+                result[source["id"]] = {"ja": ja.strip(), "notes": notes}
+    expected_count = sum(len(book["units"]) for book in books)
+    if len(result) != expected_count:
+        raise ValueError(f"{work_id}: translation count mismatch ({len(result)}/{expected_count})")
     correction_file = ROOT / "scripts" / "translate-content-corrections.json"
     correction_rows = json.loads(correction_file.read_text(encoding="utf-8"))["corrections"]
-    work_unit_ids = {unit["id"] for unit in units}
+    work_unit_ids = set(result)
     apply_corrections(result, [row for row in correction_rows if row["unitId"] in work_unit_ids])
     return result
 
@@ -225,7 +227,7 @@ def assemble(source_dir: Path, cache_dir: Path, raw_dir: Path, public_dir: Path)
     manifest, source_works = validate_sources(source_dir, raw_dir)
     translated_works = {}
     for work_id, (parsed, units) in source_works.items():
-        translated = load_translations(work_id, units, cache_dir)
+        translated = load_translations(work_id, parsed["books"], cache_dir)
         if len(translated) != len(units):
             raise ValueError(f"{work_id}: incomplete translations")
         for book in parsed["books"]:
@@ -349,8 +351,8 @@ def main() -> None:
         print(f"Assembled {len(catalog['works'])} works / 48 books into {args.public_dir}.")
     else:
         manifest, source_works = validate_sources(args.source_dir, args.raw_dir)
-        for work_id, (_, units) in source_works.items():
-            load_translations(work_id, units, args.cache_dir)
+        for work_id, (parsed, _) in source_works.items():
+            load_translations(work_id, parsed["books"], args.cache_dir)
         print("Source coverage and all cached translations validated.")
 
 
