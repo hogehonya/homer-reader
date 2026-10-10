@@ -25,6 +25,63 @@ class ContentValidationTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "does not match current draft"):
             validate_content.apply_corrections(ambiguous, [correction])
 
+    def test_reviewed_note_correction_is_title_scoped_and_idempotent(self):
+        translations = {
+            "iliad-04-0039": {
+                "ja": "本文",
+                "notes": [{
+                    "title": "修辞としての「軽んじる者はなかった」",
+                    "body": "無傷で歩けた者はいない、という強調。後半は保持する。",
+                }],
+            },
+        }
+        correction = {
+            "unitId": "iliad-04-0039", "field": "noteBody",
+            "noteTitle": "修辞としての「軽んじる者はなかった」",
+            "find": "無傷で歩けた者はいない、という強調。",
+            "replace": "たとえ女神に守られて無傷で歩けても軽んじなかった、という強調。",
+        }
+        self.assertEqual(validate_content.apply_corrections(translations, [correction]), 1)
+        self.assertEqual(translations["iliad-04-0039"]["notes"][0]["body"], "たとえ女神に守られて無傷で歩けても軽んじなかった、という強調。後半は保持する。")
+        self.assertEqual(validate_content.apply_corrections(translations, [correction]), 0)
+
+    def test_catalog_exposes_japanese_review_scope_and_omits_null_japanese_url(self):
+        source_works = {}
+        translated_works = {}
+        manifest_works = {}
+        for work_id in ("iliad", "odyssey"):
+            unit = {"id": f"{work_id}-01-0001", "en": "Source text."}
+            source_works[work_id] = ({"books": [{"number": 1, "units": [unit]}]}, [unit])
+            translated_works[work_id] = {unit["id"]: {"ja": "日本語本文。", "notes": []}}
+            manifest_works[work_id] = {"url": "https://example.test/source", "sha256": "a" * 64}
+        catalog = validate_content.catalog_for(
+            {"retrievedAt": "2026-10-10", "works": manifest_works}, source_works, translated_works,
+        )
+        for work in catalog["works"]:
+            self.assertNotIn("url", work["source"]["japanese"])
+            self.assertIn("AI", work["source"]["commentary"]["author"])
+        self.assertIn("49単位", catalog["works"][0]["source"]["commentary"]["reviewScope"])
+        self.assertIn("49単位", catalog["works"][1]["source"]["commentary"]["reviewScope"])
+
+    def test_public_source_manifest_uses_full_import_manifest_and_omits_excluded_text(self):
+        source_works = {}
+        source_meta = {}
+        for work_id in ("iliad", "odyssey"):
+            unit = {"id": f"{work_id}-01-0001", "en": "Narrative opening."}
+            source_works[work_id] = ({"books": [{"number": 1, "units": [unit]}]}, [unit])
+            source_meta[work_id] = {
+                "gutenbergId": 2199 if work_id == "iliad" else 1727,
+                "url": "https://example.test/source", "sha256": "a" * 64, "byteLength": 123,
+                "excludedEditorialParagraphs": 1, "excludedEditorialTextByBook": [{"text": "private synopsis"}],
+                "excludedEndnoteSection": {"paragraphCount": 0, "referenceCount": 0},
+                "removedInlineFootnoteMarkerCount": 0, "excludedPostEbookBlocks": 1,
+            }
+        manifest = validate_content.public_source_manifest(
+            {"retrievedAt": "2026-10-10", "works": source_meta}, source_works,
+        )
+        self.assertEqual(manifest["works"][0]["books"][0]["narrativeSha256"], validate_content.narrative_digest(source_works["iliad"][0]["books"][0]["units"]))
+        self.assertNotIn("private synopsis", json.dumps(manifest, ensure_ascii=False))
+
     def write_published_fixture(self, public_dir):
         works = []
         catalog_works = []

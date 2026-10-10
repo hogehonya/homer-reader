@@ -1,0 +1,359 @@
+{
+  "version": 1,
+  "works": [
+    {
+      "id": "iliad",
+      "titleJa": "イリアス",
+      "titleEn": "The Iliad",
+      "descriptionJa": "ホメロス作と伝わる叙事詩。",
+      "books": [
+        {
+          "number": 1,
+          "titleJa": "第1巻",
+          "unitCount": 54,
+          "dataFile": "data/iliad/01.json"
+        },
+        {
+          "number": 2,
+          "titleJa": "第2巻",
+          "unitCount": 83,
+          "dataFile": "data/iliad/02.json"
+        },
+        {
+          "number": 3,
+          "titleJa": "第3巻",
+          "unitCount": 41,
+          "dataFile": "data/iliad/03.json"
+        },
+        {
+          "number": 4,
+          "titleJa": "第4巻",
+          "unitCount": 39,
+          "dataFile": "data/iliad/04.json"
+        },
+        {
+          "number": 5,
+          "titleJa": "第5巻",
+          "unitCount": 67,
+          "dataFile": "data/iliad/05.json"
+        },
+        {
+          "number": 6,
+          "titleJa": "第6巻",
+          "unitCount": 35,
+          "dataFile": "data/iliad/06.json"
+        },
+        {
+          "number": 7,
+          "titleJa": "第7巻",
+          "unitCount": 35,
+          "dataFile": "data/iliad/07.json"
+        },
+        {
+          "number": 8,
+          "titleJa": "第8巻",
+          "unitCount": 41,
+          "dataFile": "data/iliad/08.json"
+        },
+        {
+          "number": 9,
+          "titleJa": "第9巻",
+          "unitCount": 34,
+          "dataFile": "data/iliad/09.json"
+        },
+        {
+          "number": 10,
+          "titleJa": "第10巻",
+          "unitCount": 48,
+          "dataFile": "data/iliad/10.json"
+        },
+        {
+          "number": 11,
+          "titleJa": "第11巻",
+          "unitCount": 55,
+          "dataFile": "data/iliad/11.json"
+        },
+        {
+          "number": 12,
+          "titleJa": "第12巻",
+          "unitCount": 21,
+          "dataFile": "data/iliad/12.json"
+        },
+        {
+          "number": 13,
+          "titleJa": "第13巻",
+          "unitCount": 54,
+          "dataFile": "data/iliad/13.json"
+        },
+        {
+          "number": 14,
+          "titleJa": "第14巻",
+          "unitCount": 40,
+          "dataFile": "data/iliad/14.json"
+        },
+        {
+          "number": 15,
+          "titleJa": "第15巻",
+          "unitCount": 54,
+          "dataFile": "data/iliad/15.json"
+        },
+        {
+          "number": 16,
+          "titleJa": "第16巻",
+          "unitCount": 54,
+          "dataFile": "data/iliad/16.json"
+        },
+        {
+          "number": 17,
+          "titleJa": "第17巻",
+          "unitCount": 50,
+          "dataFile": "data/iliad/17.json"
+        },
+        {
+          "number": 18,
+          "titleJa": "第18巻",
+          "unitCount": 48,
+          "dataFile": "data/iliad/18.json"
+        },
+        {
+          "number": 19,
+          "titleJa": "第19巻",
+          "unitCount": 31,
+          "dataFile": "data/iliad/19.json"
+        },
+        {
+          "number": 20,
+          "titleJa": "第20巻",
+          "unitCount": 36,
+          "dataFile": "data/iliad/20.json"
+        },
+        {
+          "number": 21,
+          "titleJa": "第21巻",
+          "unitCount": 39,
+          "dataFile": "data/iliad/21.json"
+        },
+        {
+          "number": 22,
+          "titleJa": "第22巻",
+          "unitCount": 33,
+          "dataFile": "data/iliad/22.json"
+        },
+        {
+          "number": 23,
+          "titleJa": "第23巻",
+          "unitCount": 65,
+          "dataFile": "data/iliad/23.json"
+        },
+        {
+          "number": 24,
+          "titleJa": "第24巻",
+          "unitCount": 56,
+          "dataFile": "data/iliad/24.json"
+        }
+      ],
+      "source": {
+        "english": {
+          "title": "The Iliad",
+          "translator": "Samuel Butler",
+          "url": "https://www.gutenberg.org/files/2199/2199-0.txt",
+          "license": "Public domain in the USA; source record and rights basis are documented in CONTENT.md.",
+          "sha256": "a7a39e3467305472fcd5ee0e42fc93d069449171cf1758f2a42cfae8b2da2774",
+          "acquiredDate": "2026-10-10"
+        },
+        "japanese": {
+          "title": "新規AI生成訳（Butler英訳からの重訳）",
+          "translator": "AI-generated draft",
+          "license": "Original AI-generated translation based on the public-domain English text.",
+          "reviewScope": "49単位（英文6,203語）をAIで抜取照合。別途1単位の表現も個別確認・修正。全本文の通読校閲は未実施。"
+        },
+        "commentary": {
+          "author": "AI生成",
+          "method": "Butler英訳の各段落に基づきAIが作成。",
+          "reviewScope": "49単位（英文6,203語）の解説をAIで抜取照合。全解説の通読校閲は未実施。"
+        },
+        "alignment": {
+          "method": "One Butler English source paragraph per stable ID; wrapped lines are joined with spaces.",
+          "scope": "All 1113 narrative paragraphs; no Greek line references are claimed."
+        }
+      }
+    },
+    {
+      "id": "odyssey",
+      "titleJa": "オデュッセイア",
+      "titleEn": "The Odyssey",
+      "descriptionJa": "ホメロス作と伝わる、オデュッセウスの帰還を描く叙事詩。",
+      "books": [
+        {
+          "number": 1,
+          "titleJa": "第1巻",
+          "unitCount": 32,
+          "dataFile": "data/odyssey/01.json"
+        },
+        {
+          "number": 2,
+          "titleJa": "第2巻",
+          "unitCount": 35,
+          "dataFile": "data/odyssey/02.json"
+        },
+        {
+          "number": 3,
+          "titleJa": "第3巻",
+          "unitCount": 38,
+          "dataFile": "data/odyssey/03.json"
+        },
+        {
+          "number": 4,
+          "titleJa": "第4巻",
+          "unitCount": 81,
+          "dataFile": "data/odyssey/04.json"
+        },
+        {
+          "number": 5,
+          "titleJa": "第5巻",
+          "unitCount": 37,
+          "dataFile": "data/odyssey/05.json"
+        },
+        {
+          "number": 6,
+          "titleJa": "第6巻",
+          "unitCount": 26,
+          "dataFile": "data/odyssey/06.json"
+        },
+        {
+          "number": 7,
+          "titleJa": "第7巻",
+          "unitCount": 29,
+          "dataFile": "data/odyssey/07.json"
+        },
+        {
+          "number": 8,
+          "titleJa": "第8巻",
+          "unitCount": 50,
+          "dataFile": "data/odyssey/08.json"
+        },
+        {
+          "number": 9,
+          "titleJa": "第9巻",
+          "unitCount": 44,
+          "dataFile": "data/odyssey/09.json"
+        },
+        {
+          "number": 10,
+          "titleJa": "第10巻",
+          "unitCount": 49,
+          "dataFile": "data/odyssey/10.json"
+        },
+        {
+          "number": 11,
+          "titleJa": "第11巻",
+          "unitCount": 54,
+          "dataFile": "data/odyssey/11.json"
+        },
+        {
+          "number": 12,
+          "titleJa": "第12巻",
+          "unitCount": 39,
+          "dataFile": "data/odyssey/12.json"
+        },
+        {
+          "number": 13,
+          "titleJa": "第13巻",
+          "unitCount": 38,
+          "dataFile": "data/odyssey/13.json"
+        },
+        {
+          "number": 14,
+          "titleJa": "第14巻",
+          "unitCount": 35,
+          "dataFile": "data/odyssey/14.json"
+        },
+        {
+          "number": 15,
+          "titleJa": "第15巻",
+          "unitCount": 48,
+          "dataFile": "data/odyssey/15.json"
+        },
+        {
+          "number": 16,
+          "titleJa": "第16巻",
+          "unitCount": 45,
+          "dataFile": "data/odyssey/16.json"
+        },
+        {
+          "number": 17,
+          "titleJa": "第17巻",
+          "unitCount": 63,
+          "dataFile": "data/odyssey/17.json"
+        },
+        {
+          "number": 18,
+          "titleJa": "第18巻",
+          "unitCount": 41,
+          "dataFile": "data/odyssey/18.json"
+        },
+        {
+          "number": 19,
+          "titleJa": "第19巻",
+          "unitCount": 39,
+          "dataFile": "data/odyssey/19.json"
+        },
+        {
+          "number": 20,
+          "titleJa": "第20巻",
+          "unitCount": 36,
+          "dataFile": "data/odyssey/20.json"
+        },
+        {
+          "number": 21,
+          "titleJa": "第21巻",
+          "unitCount": 42,
+          "dataFile": "data/odyssey/21.json"
+        },
+        {
+          "number": 22,
+          "titleJa": "第22巻",
+          "unitCount": 52,
+          "dataFile": "data/odyssey/22.json"
+        },
+        {
+          "number": 23,
+          "titleJa": "第23巻",
+          "unitCount": 29,
+          "dataFile": "data/odyssey/23.json"
+        },
+        {
+          "number": 24,
+          "titleJa": "第24巻",
+          "unitCount": 45,
+          "dataFile": "data/odyssey/24.json"
+        }
+      ],
+      "source": {
+        "english": {
+          "title": "The Odyssey",
+          "translator": "Samuel Butler",
+          "url": "https://www.gutenberg.org/files/1727/1727-0.txt",
+          "license": "Public domain in the USA; source record and rights basis are documented in CONTENT.md.",
+          "sha256": "268cf938678308dbebbea0aee320567f2d9aac31087e557f43a70708676efc7a",
+          "acquiredDate": "2026-10-10"
+        },
+        "japanese": {
+          "title": "新規AI生成訳（Butler英訳からの重訳）",
+          "translator": "AI-generated draft",
+          "license": "Original AI-generated translation based on the public-domain English text.",
+          "reviewScope": "49単位（英文5,515語）をAIで抜取照合。全本文の通読校閲は未実施。"
+        },
+        "commentary": {
+          "author": "AI生成",
+          "method": "Butler英訳の各段落に基づきAIが作成。",
+          "reviewScope": "49単位（英文5,515語）の解説をAIで抜取照合。全解説の通読校閲は未実施。"
+        },
+        "alignment": {
+          "method": "One Butler English source paragraph per stable ID; wrapped lines are joined with spaces.",
+          "scope": "All 1027 narrative paragraphs; no Greek line references are claimed."
+        }
+      }
+    }
+  ]
+}
