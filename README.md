@@ -4,14 +4,14 @@
 
 ## 現在の状態
 
-reader UI・fixtureテスト・CI設定は実装済みです。Issue #4 worktreeでは48巻・2,140単位・英語本文268,999語が揃い、strict verifierとPython 12 testsが成功しました。最終50件の抜取確認は進行中で、Issue #3への統合、PR/mainでの全ゲート、Gitea公開は未完了です。詳細は[PLAN.md](PLAN.md)。
+reader UIと48巻データがこのbranchに統合されています。48巻・2,140単位・英語本文268,999語、212/212翻訳バッチ、Python strict verifierと12 testsが成功しました。AI翻訳は98単位を抜取確認し、6件の限定修正を記録しています。PR CI/main CI、実ブラウザQA、Gitea公開は未完了です。詳細は[PLAN.md](PLAN.md)。
 
 | 項目 | 状態 |
 | :--- | :--- |
 | 要求・仕様書 | 作成済み（[SPEC.md](SPEC.md)が機能・コンテンツ仕様の正本） |
-| アプリ実装 | reader UIは実装済み。独立Claudeレビュー承認とPR CI #1成功。統合後の全巻検証・main gateは未完了 |
-| 本文・日本語訳・解説データ | Issue #4 worktreeに48巻・2,140対訳単位・英語本文268,999語。212/212バッチ成功、strict verifierとPython 12 tests成功。最終50件の抜取確認は進行中。 |
-| CI | PR CI #1（commit `7879ae6`）success: UI 20 tests、Python 9 fixture tests、typecheck、build。データ未配置だったためstrict gateはskip。Issue #4の最新データを含むPR CIとmain gateは未確認。 |
+| アプリ実装 | reader UIと48巻データを統合済み。独立ClaudeレビューはUI commit `d1ec6b1`を承認。現行branchの22 UI tests、typecheck、build、Node/Python strict content gate成功。 |
+| 本文・日本語訳・解説データ | 48巻・2,140対訳単位・英語本文268,999語。212/212バッチ成功。98単位の抜取確認と6件の限定修正を記録。全文の人手校閲は未実施。 |
+| CI | PR CI #1（commit `7879ae6`）success時はデータ未配置のためstrict gateをskip。統合後の現行branch CIとmain gateは未確認。 |
 | 公開 | 未実施。Issue #3 PR #6とdemo-previews PR #95はopen。目標はGitea/CI経由でローカルネットワーク固定URL `homer-reader.honya.dev`。公開後のURL・container ID・主要操作検証は未実施。 |
 
 ## 読書の目的
@@ -63,6 +63,6 @@ python3 scripts/validate-content.py --verify-published
 npm run validate:content
 ```
 
-`test`、`typecheck`、`build`、`validate:content:if-present`は本文データなしでも実行できます。任意版は`public/data`が空のときだけ検証をskipし、何か成果物があれば全量を検査します。`validate:content`とPythonの`--verify-published`は常に48巻を要求する厳格ゲートです。Issue #4 worktreeでは厳格検証済みですが、このbranchにはまだ本文が統合されていません。Pythonのparser fixture testは外部データを使わず実行できます。
+`test`、`typecheck`、`build`、`validate:content:if-present`は本文データなしでも実行できます。任意版は`public/data`が空のときだけ検証をskipし、何か成果物があれば全量を検査します。`validate:content`とPythonの`--verify-published`は常に48巻を要求する厳格ゲートです。現在のbranchではNodeとPython両方のstrict verifierが成功しています。Pythonのparser fixture testは外部データを使わず実行できます。
 
 UIはDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。320px幅とキーボード操作の実ブラウザ確認は未完了です。

@@ -10,7 +10,7 @@
 
 ## 現在確認できている状態
 
-2026-10-10時点で、Issue #4 worktreeにSamuel Butler英訳をもとにした48巻・2,140対訳単位・268,999英語語のデータが揃い、212/212翻訳バッチが成功しています。source manifestのstrict検証とPython 12テストも成功しました。最終50件の抜取確認は進行中で、全文の人手校閲は未実施です。これらはIssue #4側の証拠であり、Issue #3への統合後CIはまだ確認していません。英訳・権利確認の根拠と限界はIssue #4 `CONTENT.md`を参照します。demo-previews PR #95はCI #183成功・未マージ、Issue #3 PR #6も未マージです。Woodpecker repo ID 154は有効化済みとの報告がありますが、mainの厳格CI・公開・固定URL確認は未実施です。
+2026-10-10時点で、48巻・2,140対訳単位・268,999英語語のデータがIssue #3 branchに統合され、212/212翻訳バッチが成功しています。source manifestのPython strict検証と12テスト、Node strict validatorも成功しました。最終レビュー記録は98 distinct units / 11,718英語語と、6件の限定修正です。全文の人手校閲は未実施です。レビュー・権利確認の根拠と限界はIssue #4 `CONTENT.md`を参照します。demo-previews PR #95はCI #183成功・未マージ、Issue #3 PR #6も未マージです。mainのCI・公開・固定URL確認と320px/キーボード実ブラウザQAは未実施です。
 
 ## 役割と作業場所
 
@@ -36,11 +36,11 @@ UI作業場所は`/home/honya/repos/worktrees/homer-reader-issue-3`、ブラン�
 | 順 | 作業 | 完了証拠 | 状態 |
 | :--- | :--- | :--- | :--- |
 | 0 | 本計画と実装方針をrepoの正本に記録する | PLAN・SPEC・READMEのリンクとdiff検査、計画専用docs-only commit | 完了（mainに統合済み） |
-| 1 | Issue #3でreader UI、共有JSON契約、検証スクリプト、fixtureテストを実装 | UI commit `d1ec6b1`は独立Claudeレビュー承認。CI #1（commit `7879ae6`）success: UI fixture 20件、Python parser/fixture 9件、typecheck、build、静的設定成功。実データ不在のためstrict content gateは未実行。 | UI・fixture検証は完了。PR #6はopen。データ統合・統合CI・main strict CIは未完了 |
-| 2 | Issue #4で48巻データを別worktreeに作成 | catalog 2作品各24巻、全単位日英本文、source manifest、再現可能な検証結果、出典・生成・抜取確認範囲 | 212/212バッチ、48巻・2,140単位・268,999英語語。strict verifierとPython 12 tests成功。最終50件抜取確認は進行中。 |
-| 3 | Issue #3と#4をcontrollerが統合して検証 | 統合commit、48巻完全性・底本照合・日英対応・出典監査、UI全条件の結果 | データ成果物の取り込みとPR上の全ゲートは未完了 |
+| 1 | Issue #3でreader UI、共有JSON契約、検証スクリプト、fixtureテストを実装 | UI commit `d1ec6b1`は独立Claudeレビュー承認。旧CI #1（commit `7879ae6`）はUI fixture 20件、Python 9 fixture tests、typecheck、buildに成功（データ未配置のためstrict gate skip）。修正後は22 UI tests、typecheck、build、Node/Python strict gateにローカル成功。 | 実装・ローカルゲート完了。現行PR CIとmain strict CIは未確認。 |
+| 2 | Issue #4で48巻データを作成し、Issue #3へ統合 | catalog 2作品各24巻、全単位日英本文、source manifest、strict verifier、出典・生成・抜取確認範囲 | 212/212バッチ、48巻・2,140単位・268,999英語語。Python strict verifierと12 tests成功。98 distinct units / 11,718語を抜取確認し、6件の限定修正を記録。branchへ統合済み。 |
+| 3 | Issue #3と#4をcontrollerが統合して検証 | 統合commit、48巻完全性・底本照合・日英対応・出典監査、UI全条件の結果 | branch上のNode/Python厳格検証は成功。PR CI、別監査のデータ確認、320px/キーボード実ブラウザQAは未完了。 |
 | 4 | demo-previews Issue #94 / PR #95で台帳登録し、controllerがCIを確認 | PR #95・CI #183成功、未マージ。CI repo ID 154有効との報告。release準備後に台帳とmain用CIを再確認 | PR #95 open。公開統合待ち |
-| 5 | Gitea mainでCI公開し、固定URLを検証 | CIのtest/typecheck/build/content gate成功、static publishのprepare→publish→verify成功、`publication.json`のcommit/pipeline一致、2回の配信でURL/container ID維持、画面の主要操作確認 | 未実施。ローカルで確認されたブラウザQAも未完了（320px表示・キーボード操作を含む） |
+| 5 | Gitea mainでCI公開し、固定URLを検証 | CIのtest/typecheck/build/content gate成功、static publishのprepare→publish→verify成功、`publication.json`のcommit/pipeline一致、2回の配信でURL/container ID維持、画面の主要操作確認 | 未実施。320px表示・キーボード操作を含む実ブラウザQAも未完了。 |
 
 計画の記録後、Issue #3のUI、Issue #4のデータ、台帳PR/CIの準備は独立に並行できます。UIと全48巻データの統合検証は双方の作業完了後に行い、公開は統合ゲートと台帳・CI調整の完了後に限ります。Issue #3単体のbuild成功は、全文データの完成や公開条件の充足を意味しません。
 

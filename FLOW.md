@@ -1,6 +1,6 @@
 # 処理フロー
 
-homer-readerの読書と公開の流れを示します。Issue #4 worktreeでは48巻データとstrict検証が揃っていますが、最終50件の抜取確認は進行中で、Issue #3への統合、main CI、Gitea公開は未完了です。
+homer-readerの読書と公開の流れを示します。48巻データはIssue #3 branchに統合済みで、Node/Python strict検証が成功しています。98 distinct unitsと別途1単位の抜取確認、6件の限定修正を記録しました。PR/main CI、実画面QA、Gitea公開は未完了です。
 
 ## 読書フロー
 
@@ -67,7 +67,7 @@ flowchart TD
 
 ## コンテンツ整備
 
-本文の出所・利用条件の確認根拠はIssue #4 `CONTENT.md`に記録済みです。原文ハッシュと抽出・除外方針をmanifestで追跡します。品質確認とIssue #3へのデータ統合はまだ進行中です（SPEC.md 11）。
+本文の出所・利用条件の確認根拠は`CONTENT.md`に記録済みです。原文ハッシュと抽出・除外方針をmanifestで追跡します。サンプル確認は完了しましたが、全文の人手校閲ではありません（SPEC.md 11）。
 
 ```mermaid
 flowchart TD
@@ -85,7 +85,7 @@ flowchart TD
 
 ## 公開
 
-公開はGitea/Woodpecker CI経由で、ローカルネットワーク固定URL `homer-reader.honya.dev`を目標とします（SPEC U7の意図解釈）。PR #6と台帳PR #95はopen、Issue #4の完成データはIssue #3に未統合、公開は未実施です。mainでは全48巻ゲートを常時実行し、全て成功した場合だけ静的公開します。
+公開はGitea/Woodpecker CI経由で、ローカルネットワーク固定URL `homer-reader.honya.dev`を目標とします（SPEC U7の意図解釈）。PR #6と台帳PR #95はopen、公開は未実施です。mainでは全48巻ゲートを常時実行し、全て成功した場合だけ静的公開します。
 
 ```mermaid
 flowchart TD

@@ -38,9 +38,9 @@
 | Agent提案 | 表示切替・しおり・テーマ切替。未採用の追加機能として扱い、必須の受入条件には含めない。 |
 | Agent決定 | Issue #4でSamuel Butler英訳からのAI日本語全訳と短い日本語解説を採用し、実施した抜取確認だけを範囲・方法・結果とともに表示する。これはユーザー要求ではない。 |
 | 確認済みの資料情報 | Issue #4の`CONTENT.md`にProject GutenbergのSamuel Butler英訳（ebook 2199、1727）、取得日・原文SHA-256・正規化と除外方針・権利確認根拠を記録。米国Public Domain表示とGutenbergの基礎テキスト再利用方針を確認し、日本の保護期間について文化庁資料を根拠に公開可能と判断したプロジェクト上の評価であり、法律意見ではない。 |
-| Agent報告による進捗 | Issue #4 worktreeで48巻・2,140対訳単位・英語268,999語を組み立て、厳格manifest検証とPython 12テストが成功。212/212翻訳バッチ成功。最終50件の抜取確認は進行中で、Issue #3へのデータ統合・PR CI・main CIは未確認。 |
+| Agent報告による進捗 | 48巻・2,140対訳単位・英語268,999語をIssue #3 branchへ統合。212/212翻訳バッチ、Python strict verifierと12テスト、Node strict validatorが成功。98 distinct units / 11,718英語語を抜取確認し、別途1単位の確認を含む6件の限定修正を記録。PR CI・main CI・320px/キーボード実ブラウザ確認は未完了。 |
 | 整備時点の確認済み事実 | `main`と`feature/issue-1`ブランチの存在、追跡ファイルがREADMEのみだったこと、CI未構成。 |
-| 未確定事項 | 最終抜取確認と翻訳・解説の品質、Issue #3へのデータ統合後のCI、公開台帳との統合・公開実行記録。全文の人手校閲は行っていない。 |
+| 未確定事項 | 翻訳・解説の全体的品質、PR CI・main CI、公開台帳との統合・公開実行記録、320px/キーボード実ブラウザ確認。全文の人手校閲は行っていない。 |
 
 要求の受付日は2026-10-10 JSTです。各発言の正確な時刻は未取得で、会話の発言順を追跡参照とします。会話の外部URLは未取得です。
 
@@ -182,7 +182,7 @@ Issue #4のAgent決定として、Samuel Butler英訳をもとにAI全訳しま�
 | 出典の網羅 | 全巻が出典メタ情報を持つことを検査する。 |
 | 表示の境界 | 320px幅、キーボード操作、読込失敗時の再試行を確認する。 |
 
-検証工程とゲートは[PLAN.md](PLAN.md)に定めます。Issue #4 worktreeではstrict Python verifierと12件のparser/manifest fixture testsが成功しています。Issue #3 worktreeへのデータ統合と統合後のCIは未完了です。最終50件の抜取確認も進行中です。未確認の品質・公開条件を検証済みとして扱いません。
+検証工程とゲートは[PLAN.md](PLAN.md)に定めます。統合済みbranchでNode strict validator、Python strict verifier、Python 12件、UI 22 tests、typecheck、buildが成功しました。抜取確認は98 distinct units / 11,718英語語と別途1単位で実施し、6件の限定修正を記録しています。最終的な翻訳品質や公開後の表示は保証せず、全文の人手校閲は行っていません。
 
 ## 13. 実装方針（Issue #3）
 
@@ -213,8 +213,8 @@ U5を受け、Issue #3で読書UI・データ契約・テスト・CIの構成を
 
 | # | 未決事項 | 影響 |
 | :--- | :--- | :--- |
-| 1 | AI日本語訳・解説の品質と最終抜取確認 | 212/212バッチと機械検証は完了。最終50件の抜取確認が進行中。全文の人手校閲は未実施。 |
-| 2 | Issue #3へデータ・証拠を統合し、統合CIを実行 | Issue #4ではstrict verifyと12 Python testsが成功。Issue #3統合・CIは未完了。 |
+| 1 | AI日本語訳・解説の全体品質 | 212/212バッチと機械検証は完了。98 distinct unitsと別途1単位を確認し6件の限定修正を記録。全文の人手校閲は未実施。 |
+| 2 | PR/main CIと実画面QA | local branchのNode/Python strict verify、22 UI tests、typecheck、buildは成功。PR/main CIと320px・キーボード実ブラウザQAは未確認。 |
 | 3 | 公開台帳PR #95の統合、main CIと公開後検証 | PR #95は未マージ、公開は未実施。Gitea/Woodpecker CIと固定URLの配信証拠を確認する。 |
 
 ## 17. 受入条件

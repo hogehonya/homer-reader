@@ -5,7 +5,7 @@
 ## 現在の工程
 
 - Issue #1の文書整備は完了しています。Issue #3はreader UI・データ契約・テスト・CI構成、Issue #4は本文48巻の整備を担当し、別worktreeで並行します。
-- UI実装と48巻データの統合検証が済む前に、欠損データを公開しません。現時点でIssue #4 worktree側のstrict検証は成功していますが、Issue #3への統合・最終抜取確認・統合CIは未完了です。台帳登録と実公開はcontroller工程です。
+- UI実装と48巻データを統合し、Node/Python strict verifierは成功しました。98 distinct unitsと別途1単位を抜取確認し、6件の限定修正を記録しています。PR/main CI・実ブラウザQA・台帳登録・実公開はcontroller工程です。
 - 機能・コンテンツ仕様の正本は`SPEC.md`、受入条件の正本は`ACCEPTANCE.md`です。要求を変える場合は`SPEC.md`の要求IDを先に更新し、対応する条件を`ACCEPTANCE.md`へ反映します。
 - 要求の原文引用は`SPEC.md`の5.1だけに置き、他文書へ複製しません。
 

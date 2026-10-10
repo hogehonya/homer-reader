@@ -4,7 +4,7 @@
 
 ## 状態
 
-UI・fixture検証は完了しています。独立Claudeレビューはcommit `d1ec6b1`を承認し、Woodpecker CI #1（commit `7879ae6`）は20 UI tests、9 Python parser/fixture tests、typecheck、build、静的設定を成功させました。当時は実48巻データがなくstrict gateはskipされました。Issue #4 worktreeでは現在48巻・2,140単位・268,999語のstrict verifierとPython 12 testsが成功していますが、最終50件の抜取確認は進行中で、Issue #3 PRに未統合です。全条件の統合CI・main CI・Gitea公開後QAは未確認です。特に320px表示とキーボード操作の実ブラウザ確認は残っています。詳細は[PLAN.md](PLAN.md)。
+48巻データとUIはIssue #3 branchに統合済みです。Node/Python strict verifier、Python 12 tests、UI 22 tests、typecheck、buildは成功しています。Woodpecker CI #1（commit `7879ae6`）は統合前の20 UI testsと9 Python fixture testsを通過し、データ不在でstrict gateをskipしました。翻訳確認は98 distinct units / 11,718語と別途1単位、6件の限定修正です。PR CI/main CI、公開後QA、320px・キーボード実ブラウザ確認は未完了。詳細は[PLAN.md](PLAN.md)。
 
 ## 文書（Issue #1・当時の記録）
 
