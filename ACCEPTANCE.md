@@ -4,7 +4,7 @@
 
 ## 状態
 
-SPAのUI・データ契約・CI設定を統合中です。Issue #3 worktreeではNode 24.19.0で20 fixture tests、typecheck、buildが成功し、独立Claudeレビューはcommit `d1ec6b1`を承認しました。Woodpecker CI #1（commit `7879ae6`）も成功し、20 UI tests、9 Python parser/fixture tests、typecheck、build、静的設定を確認しました。実48巻データがないため、CIのstrict content gateはskipされ、fixtureの48-book検証だけが走っています。S1〜S18は全巻データと実画面を含む統合検証が未完了のため未チェックです。詳細は[PLAN.md](PLAN.md)の品質ゲートに記録します。
+UI・fixture検証は完了しています。独立Claudeレビューはcommit `d1ec6b1`を承認し、Woodpecker CI #1（commit `7879ae6`）は20 UI tests、9 Python parser/fixture tests、typecheck、build、静的設定を成功させました。当時は実48巻データがなくstrict gateはskipされました。Issue #4 worktreeでは現在48巻・2,140単位・268,999語のstrict verifierとPython 12 testsが成功していますが、最終50件の抜取確認は進行中で、Issue #3 PRに未統合です。全条件の統合CI・main CI・Gitea公開後QAは未確認です。特に320px表示とキーボード操作の実ブラウザ確認は残っています。詳細は[PLAN.md](PLAN.md)。
 
 ## 文書（Issue #1・当時の記録）
 
@@ -23,6 +23,7 @@ Issue #1の完了条件のうち、commit、PR、別Agentの監査は本リポ�
 
 - [x] D7: U5の実装・公開依頼をIssue #3/#4、S1〜S18、PLANの統合・公開工程へ追跡できる。
 - [x] D8: U6の先行計画依頼をPLAN step 0と後続工程の役割・依存・証拠へ追跡できる。
+- [x] D9: U7の公開先意図を、SPEC §5.1とPLANのGitea/固定URL公開工程へ追跡できる。公開条件の達成は未確認。
 
 ## SPA（統合検証待ち）
 
@@ -51,7 +52,7 @@ Issue #1の完了条件のうち、commit、PR、別Agentの監査は本リポ�
 
 ## 追跡表
 
-Issue #1のU1〜U4から要求ID・条件IDへの対応と、後続U5/U6の実装・計画工程への対応です。要求の原文は[SPEC.md](SPEC.md)の5.1に置きます。
+Issue #1のU1〜U4から要求ID・条件IDへの対応と、後続U5〜U7の実装・計画・公開工程への対応です。要求の原文は[SPEC.md](SPEC.md)の5.1に置きます。
 
 | 発言 | 要求ID | 条件ID |
 | :--- | :--- | :--- |
@@ -61,5 +62,6 @@ Issue #1のU1〜U4から要求ID・条件IDへの対応と、後続U5/U6の実�
 | U4 リポジトリと仕様書を先に | R6 | D1〜D6 |
 | U5 subagentで実装・公開 | SPEC §5.1の実装依頼 | PLAN step 1〜5、Issue #3/#4、S1〜S18、公開条件 |
 | U6 リポジトリに計画を先に記録 | SPEC §5.1の計画依頼 | D8、PLAN step 0〜5 |
+| U7 Giteaで公開（親Agentによる意図解釈） | SPEC §5.1の公開先依頼 | D9、PLAN step 4〜5、公開後検証 |
 
 Agentが本Issueで具体化した要件（R7〜R14）は、SPEC.mdの5.2の出所と、各条件に併記した要求IDに対応します。

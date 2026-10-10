@@ -4,15 +4,15 @@
 
 ## 現在の状態
 
-Issue #3専用worktreeでreader UI・テスト・CI設定を実装しています。fixtureによる20件のテスト、typecheck、buildは成功しました。全48巻データとの統合、mainのCI、公開は未完了です。本文の準備状況と台帳・CIの報告値は[PLAN.md](PLAN.md)に記録し、公開前に再確認します。
+reader UI・fixtureテスト・CI設定は実装済みです。Issue #4 worktreeでは48巻・2,140単位・英語本文268,999語が揃い、strict verifierとPython 12 testsが成功しました。最終50件の抜取確認は進行中で、Issue #3への統合、PR/mainでの全ゲート、Gitea公開は未完了です。詳細は[PLAN.md](PLAN.md)。
 
 | 項目 | 状態 |
 | :--- | :--- |
 | 要求・仕様書 | 作成済み（[SPEC.md](SPEC.md)が機能・コンテンツ仕様の正本） |
-| アプリ実装 | reader UIは実装済み。独立ClaudeレビューとPR CI #1成功、48巻統合検証とmain gateは未完了 |
-| 本文・日本語訳・解説データ | 直近のcontent担当報告では212バッチ中65件成功・失敗0件、4 workerで進行中。2,140対訳単位・英語268,999語は集計目標で未検証。全巻データは未完成 |
-| CI | CI #1（commit `7879ae6`）はsuccess。PRで20 UI fixture tests、9 Python parser/fixture tests、typecheck、build、静的設定を検査。実48巻がないためstrict content gateはskipされ、main gateは未検証。CI repo ID 154とtrusted volumesはcontroller報告で確認 |
-| 公開 | 未実施。demo-previews PR #95はCI成功・未マージとの報告。公開・画面検証は未実施 |
+| アプリ実装 | reader UIは実装済み。独立Claudeレビュー承認とPR CI #1成功。統合後の全巻検証・main gateは未完了 |
+| 本文・日本語訳・解説データ | Issue #4 worktreeに48巻・2,140対訳単位・英語本文268,999語。212/212バッチ成功、strict verifierとPython 12 tests成功。最終50件の抜取確認は進行中。 |
+| CI | PR CI #1（commit `7879ae6`）success: UI 20 tests、Python 9 fixture tests、typecheck、build。データ未配置だったためstrict gateはskip。Issue #4の最新データを含むPR CIとmain gateは未確認。 |
+| 公開 | 未実施。Issue #3 PR #6とdemo-previews PR #95はopen。目標はGitea/CI経由でローカルネットワーク固定URL `homer-reader.honya.dev`。公開後のURL・container ID・主要操作検証は未実施。 |
 
 ## 読書の目的
 
@@ -63,6 +63,6 @@ python3 scripts/validate-content.py --verify-published
 npm run validate:content
 ```
 
-`test`、`typecheck`、`build`、`validate:content:if-present`は本文データなしでも実行できます。任意版は`public/data`が空のときだけ検証をskipし、何か成果物があれば全量を検査します。`validate:content`とPythonの`--verify-published`は常に48巻を要求する厳格ゲートです。現在は本文未配置のため厳格ゲートが失敗するのが正しい結果です。Pythonのparser fixture testは外部データを使わず実行できます。
+`test`、`typecheck`、`build`、`validate:content:if-present`は本文データなしでも実行できます。任意版は`public/data`が空のときだけ検証をskipし、何か成果物があれば全量を検査します。`validate:content`とPythonの`--verify-published`は常に48巻を要求する厳格ゲートです。Issue #4 worktreeでは厳格検証済みですが、このbranchにはまだ本文が統合されていません。Pythonのparser fixture testは外部データを使わず実行できます。
 
-UIはDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。色の役割、フォーカス、ライト／ダークテーマ、320px向けCSSを実装しました。実ブラウザでの表示・拡大・コントラスト確認は未完了です。
+UIはDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。320px幅とキーボード操作の実ブラウザ確認は未完了です。

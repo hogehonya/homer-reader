@@ -4,7 +4,7 @@ homer-readerの現在のファイル構成と、本文工程で追加予定の�
 
 ## 現在のファイル
 
-Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト・公開設定が存在します。PR CI #1は成功しましたが、48巻データとの統合、main strict CI、公開は未完了です。
+Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト・公開設定が存在します。Issue #4 worktreeでは48巻・manifestとstrict検証が揃っていますが、最終50件確認中で、Issue #3への統合、PR全ゲート、main CI、公開は未完了です。
 
 | ファイル | 役割 |
 | :--- | :--- |
@@ -23,7 +23,7 @@ Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト�
 | `FLOW.md` | 読書・データ読込・対訳表示・解説表示・コンテンツ整備・公開の流れ |
 | `AGENTS.md` | リポジトリ固有の作業契約と検証手順 |
 
-本文データ`public/data/`は別Issue #4で整備中です。CIと公開はこのbranchで設定し、mainへの反映・実行はcontrollerが統合します。
+本文データ`public/data/`は別Issue #4 worktreeに組み立て済みで、このbranchには未統合です。PR #6と台帳PR #95はopen。mainへの反映・実行とGitea固定URLへの公開はcontrollerが統合します。
 
 ## 本文データ（後続工程）
 
