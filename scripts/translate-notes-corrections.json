@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "corrections": [
+    {
+      "key": "iliad-01-0005#note-0001",
+      "field": "bodyEn",
+      "find": "the mouse (smintheus)",
+      "replace": "the mouse (sminthos)",
+      "evidence": "Aelian, On Animals 12.5 distinguishes the mouse name sminthos from Apollo's title Smintheus.",
+      "source": "https://www.attalus.org/translate/animals12.html"
+    },
+    {
+      "key": "iliad-23-0012#note-0001",
+      "field": "bodyEn",
+      "find": "Pthia",
+      "replace": "Phthia",
+      "evidence": "Corrected to match the spelling in the adopted Butler text at iliad-01-0016 and the established Japanese rendering.",
+      "source": "public/data/iliad/01.json#iliad-01-0016"
+    }
+  ]
+}

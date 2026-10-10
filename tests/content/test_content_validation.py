@@ -45,6 +45,25 @@ class ContentValidationTests(unittest.TestCase):
         self.assertEqual(translations["iliad-04-0039"]["notes"][0]["body"], "たとえ女神に守られて無傷で歩けても軽んじなかった、という強調。後半は保持する。")
         self.assertEqual(validate_content.apply_corrections(translations, [correction]), 0)
 
+    def test_assembly_preserves_english_note_only_for_unchanged_japanese_source(self):
+        note = {"kind": "person", "title": "人物", "body": "説明。", "spoiler": False}
+        signature = validate_content.note_signature(note)
+        existing = {
+            "iliad-01-0001#note-0001": {
+                "signature": signature, "titleEn": "Person", "bodyEn": "Description.",
+            },
+        }
+        preserved = validate_content.preserve_note_translations("iliad-01-0001", [note], existing)
+        self.assertEqual(preserved[0]["titleEn"], "Person")
+        self.assertEqual(preserved[0]["bodyEn"], "Description.")
+        self.assertEqual(
+            {key: value for key, value in preserved[0].items() if key not in {"titleEn", "bodyEn"}},
+            note,
+        )
+        changed = {**note, "body": "変更された説明。"}
+        with self.assertRaisesRegex(ValueError, "Japanese note changed"):
+            validate_content.preserve_note_translations("iliad-01-0001", [changed], existing)
+
     def test_catalog_exposes_japanese_review_scope_and_omits_null_japanese_url(self):
         source_works = {}
         translated_works = {}
@@ -116,10 +135,10 @@ class ContentValidationTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             public_dir = Path(temp_dir) / "public" / "data"
             self.write_published_fixture(public_dir)
-            validate_content.verify_published(public_dir)
+            validate_content.verify_published(public_dir, expected_note_counts={"iliad": 0, "odyssey": 0})
             (public_dir / "odyssey" / "24.json").unlink()
             with self.assertRaisesRegex(ValueError, "missing published data file"):
-                validate_content.verify_published(public_dir)
+                validate_content.verify_published(public_dir, expected_note_counts={"iliad": 0, "odyssey": 0})
 
     def test_published_verifier_rejects_english_omission_or_edit(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -130,7 +149,20 @@ class ContentValidationTests(unittest.TestCase):
             payload["units"][0]["en"] = "changed narrative"
             book_path.write_text(json.dumps(payload), encoding="utf-8")
             with self.assertRaisesRegex(ValueError, "narrative digest mismatch"):
-                validate_content.verify_published(public_dir)
+                validate_content.verify_published(public_dir, expected_note_counts={"iliad": 0, "odyssey": 0})
+
+    def test_published_verifier_rejects_missing_english_note_fields(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            public_dir = Path(temp_dir) / "public" / "data"
+            self.write_published_fixture(public_dir)
+            book_path = public_dir / "iliad" / "01.json"
+            payload = json.loads(book_path.read_text(encoding="utf-8"))
+            payload["units"][0]["notes"] = [{
+                "kind": "person", "title": "人物", "body": "説明。", "spoiler": False,
+            }]
+            book_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "titleEn must be a non-empty string"):
+                validate_content.verify_published(public_dir, expected_note_counts={"iliad": 1, "odyssey": 0})
 
 
 if __name__ == "__main__":
