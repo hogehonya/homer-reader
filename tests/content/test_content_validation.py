@@ -83,7 +83,8 @@ class ContentValidationTests(unittest.TestCase):
         self.assertIn("49単位", catalog["works"][1]["source"]["commentary"]["reviewScope"])
         iliad = catalog["works"][0]["source"]
         odyssey = catalog["works"][1]["source"]
-        self.assertIn("既存の日本語注をButler英訳からAIで英訳", iliad["commentary"]["method"])
+        self.assertEqual(iliad["commentary"]["method"],
+                         "Butler英訳の各段落に基づき日本語注をAIで作成し、その日本語注をAIで英訳。")
         self.assertIn("英語注87件", iliad["commentary"]["reviewScope"])
         self.assertIn("綴り2件", iliad["commentary"]["reviewScope"])
         self.assertIn("英語注50件", odyssey["commentary"]["reviewScope"])
@@ -92,6 +93,8 @@ class ContentValidationTests(unittest.TestCase):
                          "49単位（英文6,203語）をAIで抜取照合。別途1単位の表現も個別確認・修正。全本文の通読校閲は未実施。")
         self.assertEqual(odyssey["japanese"]["reviewScope"],
                          "49単位（英文5,515語）をAIで抜取照合。全本文の通読校閲は未実施。")
+        self.assertIn("AIで抜取照合", iliad["commentary"]["reviewScope"])
+        self.assertIn("AIで抜取照合", odyssey["commentary"]["reviewScope"])
 
     def test_public_source_manifest_uses_full_import_manifest_and_omits_excluded_text(self):
         source_works = {}

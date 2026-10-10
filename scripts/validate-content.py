@@ -195,10 +195,10 @@ def catalog_for(manifest: dict, source_works: dict, translated_works: dict) -> d
         english = manifest["works"][work_id]
         if work_id == "iliad":
             translation_review_scope = "49単位（英文6,203語）をAIで抜取照合。別途1単位の表現も個別確認・修正。全本文の通読校閲は未実施。"
-            commentary_review_scope = "49単位（英文6,203語）の既存日本語注を抜取照合。英語注87件を別Codexで抜取対照し、綴り2件を限定修正。全注の人手校閲は未実施。"
+            commentary_review_scope = "49単位（英文6,203語）の既存日本語注をAIで抜取照合。英語注87件を別Codexで抜取対照し、綴り2件を限定修正。全注の人手校閲は未実施。"
         else:
             translation_review_scope = "49単位（英文5,515語）をAIで抜取照合。全本文の通読校閲は未実施。"
-            commentary_review_scope = "49単位（英文5,515語）の既存日本語注を抜取照合。英語注50件を別Codexで抜取対照。全注の人手校閲は未実施。"
+            commentary_review_scope = "49単位（英文5,515語）の既存日本語注をAIで抜取照合。英語注50件を別Codexで抜取対照。全注の人手校閲は未実施。"
         books = []
         for book in source["books"]:
             books.append({
@@ -224,7 +224,7 @@ def catalog_for(manifest: dict, source_works: dict, translated_works: dict) -> d
                 },
                 "commentary": {
                     "author": "AI生成",
-                    "method": "既存の日本語注をButler英訳からAIで英訳。",
+                    "method": "Butler英訳の各段落に基づき日本語注をAIで作成し、その日本語注をAIで英訳。",
                     "reviewScope": commentary_review_scope,
                 },
                 "alignment": {
