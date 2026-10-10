@@ -6,6 +6,8 @@
 
 『イリアス』『オデュッセイア』全48巻を収録しています。初回公開はrelease `r1119-b3`（main commit `c149af861d9f574ee3e4abafcbefcbd0c0621a47`）として完了しました。main CI #3と公開台帳CI #184は成功し、初回配信57ファイルのhashがpublication metadataと一致します。最新の配信検証と公開後QAは[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。詳細は[PLAN.md](PLAN.md)。
 
+注を英語・日本語で表示するIssue #9の変更は作業中です。既存の日本語の注を保持し、英訳の確認範囲・結果は[Issue #9](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/9)の最新記録を参照してください。この変更の統合・公開完了はまだ確認されていません。
+
 閲覧URL: https://homer-reader.honya.dev（初回公開でHTTP 200を2026-10-10 17:44:30 JSTに確認）
 
 Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/homer-reader)
@@ -13,7 +15,7 @@ Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/h
 | 項目 | 状態 |
 | :--- | :--- |
 | 要求・仕様書 | 作成済み（[SPEC.md](SPEC.md)が機能・コンテンツ仕様の正本） |
-| アプリ実装 | main commit `c149af8`にreader UIと48巻データを統合済み。独立ClaudeレビューはUI commit `d1ec6b1`を承認。 |
+| アプリ実装 | 公開中のreader UIと48巻データはmain commit `c149af8`に統合済み。注の日英表示を追加するIssue #9は実装中で、独立レビュー済み。最新状況はIssue #9を参照。 |
 | 本文・日本語訳・解説データ | 48巻・2,140対訳単位・英語本文268,999語。212/212バッチ成功。98 distinct units / 11,718語と別途1単位を抜取確認し、6件の限定修正を記録。全文の人手校閲は未実施。 |
 | CI | PR CI #2（[pipeline 2](https://ci.honya.dev/repos/154/pipeline/2)、commit `3ad028b`）は22 UI tests、12 Python tests、Node/Python strict 48-book verificationに成功。main CI #3と公開台帳CI #184も成功。 |
 | 公開 | 初回公開release `r1119-b3`を確認。HTTP 200、57配信ファイル全てのhash一致、初回登録後container ID `83485a1a23df505b9300091b8adbd9e0265c704f041eb61b8a54c01ab9ae8ea0`。最新の配信・QA証跡はIssue #3完了コメントを参照。 |
@@ -29,7 +31,7 @@ Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/h
 | 機能 | 要求ID |
 | :--- | :--- |
 | 『イリアス』と『オデュッセイア』の2作品を収録する | R1 |
-| 日本語解説を付けて読めるようにする | R2 |
+| 日英の注を付けて読めるようにする | R2、R15 |
 | ブラウザで動作するSPAとして提供する | R3、R5 |
 | 英語本文と日本語訳を同じ対訳単位で並べる（狭幅は上下） | R4、R8 |
 | 作品→巻→本文の順に読めるようにする | R7 |
@@ -43,7 +45,7 @@ Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/h
 
 | 文書 | 内容 |
 | :--- | :--- |
-| [SPEC.md](SPEC.md) | 要求と出所、読書の流れ、本文・日本語訳・日本語解説の区別、データ契約、出典と品質検証、未決事項 |
+| [SPEC.md](SPEC.md) | 要求と出所、読書の流れ、本文・日本語訳・日英の注の区別、データ契約、出典と品質検証、未決事項 |
 | [ACCEPTANCE.md](ACCEPTANCE.md) | 要求IDに対応する観察可能な受入条件 |
 | [PLAN.md](PLAN.md) | Issue #3/#4と公開台帳の役割、依存順、検証・公開ゲート、完了条件 |
 | [SITEMAP.md](SITEMAP.md) | 現在と実装予定のファイル構成 |
