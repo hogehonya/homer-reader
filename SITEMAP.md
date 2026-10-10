@@ -1,10 +1,10 @@
 # SITEMAP
 
-homer-readerのファイル構成です。現在の構成と、実装工程で追加する予定の構成を分けて示します。予定の構成は未作成です。
+homer-readerの現在のファイル構成と、本文工程で追加予定の構成です。
 
 ## 現在のファイル
 
-Issue #1の仕様・受入文書と、Issue #3実装前の統合計画が存在します。アプリコードとrepo CI設定は未着手です。
+Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト・公開設定、統合済み48巻データが存在します。Node/Python strict検証は成功しましたが、PR全ゲート、main CI、実画面QA、公開は未完了です。
 
 | ファイル | 役割 |
 | :--- | :--- |
@@ -12,29 +12,25 @@ Issue #1の仕様・受入文書と、Issue #3実装前の統合計画が存在�
 | `SPEC.md` | 要求と出所、読書の流れ、本文・訳・解説の区別、データ契約、出典、品質検証、未決事項（機能・コンテンツ仕様の正本） |
 | `ACCEPTANCE.md` | 要求IDに対応する受入条件と追跡表 |
 | `PLAN.md` | Issue #3/#4・公開台帳の役割、依存順、検証ゲート、完了条件 |
+| `index.html`、`src/` | vanilla TypeScript + Viteの読書SPA、JSON契約、表示、fixtureテスト |
+| `scripts/validate-content.mjs` | 公開前に全48巻と対訳単位を検査するCIゲート |
+| `scripts/validate-content.py`、`scripts/import-content.py`、`scripts/translate-content.py` | Butler原文の取込、翻訳キャッシュ・出典manifest・公開本文の再現可能な検証 |
+| `tests/content/` | 原文パーサ、翻訳バッチ、公開manifestのfixture検証 |
+| `public/fonts/` | IBM Plex Sans JP 400/700のWOFF2、OFLライセンス、出典・checksum |
+| `package.json`、`package-lock.json`、`tsconfig.json` | 開発、test、typecheck、buildの再現可能な設定 |
+| `.woodpecker.yml`、`static-publish.json`、`scripts/static_publish.py` | PR検査とmainの厳格gate後に静的公開するCI。PR CI #1成功、main公開工程は未実行 |
 | `SITEMAP.md` | 本ファイル |
 | `FLOW.md` | 読書・データ読込・対訳表示・解説表示・コンテンツ整備・公開の流れ |
 | `AGENTS.md` | リポジトリ固有の作業契約と検証手順 |
 
-CI定義（`.woodpecker.yml`）と依存定義（`package.json`）はありません。
+本文データ`public/data/`はIssue #4から統合済みです。98 distinct unitsと別途1単位の抜取確認、6件の限定修正は`CONTENT.md`とcorrection ledgerに記録されています。PR #6と台帳PR #95はopen。mainへの反映・実行とGitea固定URLへの公開はcontrollerが統合します。
 
-## 実装時の予定構成（未作成）
-
-技術構成の確定後に作ります。パスと名前は構成の確定で変わり得ます。
+## 本文データ（後続工程）
 
 | パス | 役割 |
 | :--- | :--- |
-| `index.html` | SPAのエントリポイント |
-| `src/` | 画面、ルーティング、読書状態、データ読込 |
-| `src/pages/` | 作品選択、巻選択、本文読書の画面 |
-| `src/components/` | 対訳単位、解説、出典表示、前後移動 |
-| `src/data/` | 作品インデックスと巻単位の本文データ |
-| `src/data/schema/` | データ契約のスキーマ定義 |
-| `src/__tests__/` | データ欠落検査、対訳対応、表示の回帰テスト |
-| `public/fonts/` | `IBM Plex Sans JP`の自己配信資産とライセンス表示 |
-| `scripts/` | 全48巻の欠落検査など、コンテンツ検証の補助 |
-| `.woodpecker.yml` | 検査、ビルド、デプロイ |
-| `static-publish.json`、`scripts/static_publish.py` | 共用配信のCI公開設定（静的SPAとして採用する場合） |
+| `public/data/catalog.json` | 2作品、各24巻、共通出典・生成・対応情報（Issue #4） |
+| `public/data/iliad/01.json` など | 1巻ずつの英語本文・日本語訳・解説（Issue #4） |
 
 ## 正本の所在
 

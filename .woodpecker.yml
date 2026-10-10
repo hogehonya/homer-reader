@@ -1,0 +1,79 @@
+when:
+  - event: pull_request
+  - event: [push, manual]
+    branch: "main"
+
+clone:
+  git:
+    image: woodpeckerci/plugin-git
+
+steps:
+  - name: reader-checks
+    image: node:24-alpine
+    commands:
+      - npm ci
+      - npm test
+      - npm run typecheck
+      - npm run build
+
+  - name: validate-static
+    image: python:3.13-alpine
+    depends_on: [reader-checks]
+    commands:
+      - python3 -m py_compile scripts/static_publish.py
+      - python3 scripts/static_publish.py check-config
+
+  - name: validate-source-pr
+    image: python:3.13-alpine
+    when:
+      - event: pull_request
+    depends_on: [reader-checks, validate-static]
+    commands:
+      - python3 -m unittest discover -s tests/content -v
+      - |
+        if [ -d public/data ] && [ -n "$(find public/data -mindepth 1 -print -quit)" ]; then
+          python3 scripts/validate-content.py --verify-published
+        else
+          echo "SOURCE_VALIDATION_SKIPPED: no public/data artifacts yet"
+        fi
+
+  - name: validate-source-main
+    image: python:3.13-alpine
+    when:
+      - event: [push, manual]
+        branch: "main"
+    depends_on: [reader-checks, validate-static]
+    commands:
+      - python3 -m unittest discover -s tests/content -v
+      - python3 scripts/validate-content.py --verify-published
+
+  - name: validate-content-pr
+    image: node:24-alpine
+    when:
+      - event: pull_request
+    depends_on: [reader-checks]
+    commands:
+      - npm run validate:content:if-present
+
+  - name: validate-content
+    image: node:24-alpine
+    when:
+      - event: [push, manual]
+        branch: "main"
+    depends_on: [reader-checks, validate-static, validate-source-main]
+    commands:
+      - npm run validate:content
+
+  - name: publish-static
+    image: python:3.13-alpine
+    depends_on: [validate-content, validate-source-main]
+    when:
+      - event: [push, manual]
+        branch: "main"
+    volumes:
+      - /mnt/8TBHDD/SERVICES/web-publish/sites/homer-reader:/publish
+      - /home/honya/web-publish:/registry:ro
+    commands:
+      - python3 scripts/static_publish.py prepare
+      - python3 scripts/static_publish.py publish
+      - python3 scripts/static_publish.py verify

@@ -4,15 +4,15 @@
 
 ## 現在の状態
 
-現在はIssue #3実装に先立って、要求・実行計画・データ境界を文書へ記録しています。アプリコードとrepo CI設定は未着手です。本文48巻の準備状況、公開台帳PRとCIの報告値は[PLAN.md](PLAN.md)に記録し、公開前に再確認します。
+reader UIと48巻データがこのbranchに統合されています。48巻・2,140単位・英語本文268,999語、212/212翻訳バッチ、Python strict verifierと12 testsが成功しました。AI翻訳は98単位を抜取確認し、6件の限定修正を記録しています。PR CI/main CI、実ブラウザQA、Gitea公開は未完了です。詳細は[PLAN.md](PLAN.md)。
 
 | 項目 | 状態 |
 | :--- | :--- |
 | 要求・仕様書 | 作成済み（[SPEC.md](SPEC.md)が機能・コンテンツ仕様の正本） |
-| アプリ実装 | 未着手。Issue #3専用worktreeで実装予定 |
-| 本文・日本語訳・解説データ | controller報告では英訳48巻取得・2段落pilot済み、全訳は中断中。全巻データは未完成 |
-| CI | repo CI設定は未作成。CI repo ID 154有効・trusted volumes設定済みとのcontroller報告あり |
-| 公開 | 未実施。demo-previews PR #95はCI成功・未マージとの報告。公開・画面検証は未実施 |
+| アプリ実装 | reader UIと48巻データを統合済み。独立ClaudeレビューはUI commit `d1ec6b1`を承認。現行branchの22 UI tests、typecheck、build、Node/Python strict content gate成功。 |
+| 本文・日本語訳・解説データ | 48巻・2,140対訳単位・英語本文268,999語。212/212バッチ成功。98単位の抜取確認と6件の限定修正を記録。全文の人手校閲は未実施。 |
+| CI | PR CI #1（commit `7879ae6`）success時はデータ未配置のためstrict gateをskip。統合後の現行branch CIとmain gateは未確認。 |
+| 公開 | 未実施。Issue #3 PR #6とdemo-previews PR #95はopen。目標はGitea/CI経由でローカルネットワーク固定URL `homer-reader.honya.dev`。公開後のURL・container ID・主要操作検証は未実施。 |
 
 ## 読書の目的
 
@@ -48,16 +48,21 @@
 
 ## 開発と検証
 
-実装後はNode.js 22以上とnpmを使う予定です。以下のコマンドはpackage scripts作成後に使う手順で、現時点ではまだ実行できません。
+Node.js 24.15以上とnpmを使います。
 
 ```bash
 npm ci
+npm run dev
 npm test
 npm run typecheck
 npm run build
+npm run validate:content:if-present
+python3 -m unittest discover -s tests/content -v
+# 全48巻のファイルが統合された後に実行する厳格ゲート
+python3 scripts/validate-content.py --verify-published
 npm run validate:content
 ```
 
-`test`、`typecheck`、`build`は本文データなしでも実行できる設計とします。`validate:content`は公開前ゲートで48巻すべてのデータを要求します。本文が未配置の間は失敗する設計です。実装前の現在は文書リンク確認と`git diff --check`を使います。
+`test`、`typecheck`、`build`、`validate:content:if-present`は本文データなしでも実行できます。任意版は`public/data`が空のときだけ検証をskipし、何か成果物があれば全量を検査します。`validate:content`とPythonの`--verify-published`は常に48巻を要求する厳格ゲートです。現在のbranchではNodeとPython両方のstrict verifierが成功しています。Pythonのparser fixture testは外部データを使わず実行できます。
 
-UI設計はDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。色の役割、フォーカス、ライト／ダークテーマ、320px幅を実装・確認します。
+UIはDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。320px幅とキーボード操作の実ブラウザ確認は未完了です。

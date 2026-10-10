@@ -6,11 +6,11 @@
 
 イリアスとオデュッセイアを、英語本文・AI日本語訳・短い日本語解説で読める静的SPAとして完成させ、全巻の完全性・出典・対応関係を検証した後に公開します。全48巻を完成条件とするのはSPECのAgent方針A1であり、U5の直接要求とは区別します。抜粋・未確認の許諾・未検証データを完成版または公開済みとして扱いません。
 
-対象repoは`honya-dev-spa/homer-reader`、公開site候補は`homer-reader`、hostは`homer-reader.honya.dev`です。公開台帳PR #95（demo-previews Issue #94）はUI実装の担当範囲外で、controllerが公開工程で統合します。
+対象repoはGiteaの`honya-dev-spa/homer-reader`、公開siteはローカルネットワーク固定URL `homer-reader.honya.dev`です（SPEC U7の親Agentによる意図解釈）。公開台帳PR #95（demo-previews Issue #94）はUI実装の担当範囲外で、controllerが公開工程で統合します。Issue #3 PR #6と台帳PR #95はいずれも未マージで、公開は未実施です。
 
 ## 現在確認できている状態
 
-controllerの2026-10-10報告では、Samuel Butler英訳48巻を取得し、2段落の日本語訳pilotを作成済みです。全巻日本語訳は中断中です。demo-previewsの台帳変更PR #95はCI #183成功、未マージです。homer-reader CI repo ID 154は有効化済みでtrusted volumesが設定済みとの報告です。Issue #3のUIコードとIssue #4の全文データは未完成で、公開は未実施です。これらの外部状態は統合・公開時に再確認します。
+2026-10-10時点で、48巻・2,140対訳単位・268,999英語語のデータがIssue #3 branchに統合され、212/212翻訳バッチが成功しています。source manifestのPython strict検証と12テスト、Node strict validatorも成功しました。最終レビュー記録は98 distinct units / 11,718英語語と、6件の限定修正です。全文の人手校閲は未実施です。レビュー・権利確認の根拠と限界はIssue #4 `CONTENT.md`を参照します。demo-previews PR #95はCI #183成功・未マージ、Issue #3 PR #6も未マージです。mainのCI・公開・固定URL確認と320px/キーボード実ブラウザQAは未実施です。
 
 ## 役割と作業場所
 
@@ -35,20 +35,20 @@ UI作業場所は`/home/honya/repos/worktrees/homer-reader-issue-3`、ブラン�
 
 | 順 | 作業 | 完了証拠 | 状態 |
 | :--- | :--- | :--- | :--- |
-| 0 | 本計画と実装方針をrepoの正本に記録する | PLAN・SPEC・READMEのリンクとdiff検査、計画専用docs-only commit | commit前 |
-| 1 | Issue #3でreader UI、共有JSON契約、検証スクリプト、fixtureテストを実装 | Issue #3 worktreeのcommit、test・typecheck・build結果、独立監査結果 | 未着手 |
-| 2 | Issue #4で48巻データを別worktreeに作成 | catalogに作品ごと24巻、全ファイル・全単位の非空日英本文、出典・生成・抜取確認範囲の検証結果 | 英訳取得・2段落pilot済み、全訳中断 |
-| 3 | Issue #3と#4をcontrollerが統合して検証 | 統合commit、48巻完全性・底本照合・日英対応・出典監査、UI全条件の結果 | 未着手 |
-| 4 | demo-previews Issue #94 / PR #95で台帳登録し、controllerがCIを確認 | PR #95・CI #183成功、未マージ。CI repo ID 154有効・trusted volumes設定済みとの報告。release準備後に台帳とmain用CIを再確認 | release準備まで保留 |
-| 5 | mainでCI公開し、配信先を検証 | CIのtest/typecheck/build/content gate成功、static publishのprepare→publish→verify成功、`publication.json`のcommit/pipeline一致、画面の主要操作確認 | 未着手 |
+| 0 | 本計画と実装方針をrepoの正本に記録する | PLAN・SPEC・READMEのリンクとdiff検査、計画専用docs-only commit | 完了（mainに統合済み） |
+| 1 | Issue #3でreader UI、共有JSON契約、検証スクリプト、fixtureテストを実装 | UI commit `d1ec6b1`は独立Claudeレビュー承認。旧CI #1（commit `7879ae6`）はUI fixture 20件、Python 9 fixture tests、typecheck、buildに成功（データ未配置のためstrict gate skip）。修正後は22 UI tests、typecheck、build、Node/Python strict gateにローカル成功。 | 実装・ローカルゲート完了。現行PR CIとmain strict CIは未確認。 |
+| 2 | Issue #4で48巻データを作成し、Issue #3へ統合 | catalog 2作品各24巻、全単位日英本文、source manifest、strict verifier、出典・生成・抜取確認範囲 | 212/212バッチ、48巻・2,140単位・268,999英語語。Python strict verifierと12 tests成功。98 distinct units / 11,718語を抜取確認し、6件の限定修正を記録。branchへ統合済み。 |
+| 3 | Issue #3と#4をcontrollerが統合して検証 | 統合commit、48巻完全性・底本照合・日英対応・出典監査、UI全条件の結果 | branch上のNode/Python厳格検証は成功。PR CI、別監査のデータ確認、320px/キーボード実ブラウザQAは未完了。 |
+| 4 | demo-previews Issue #94 / PR #95で台帳登録し、controllerがCIを確認 | PR #95・CI #183成功、未マージ。CI repo ID 154有効との報告。release準備後に台帳とmain用CIを再確認 | PR #95 open。公開統合待ち |
+| 5 | Gitea mainでCI公開し、固定URLを検証 | CIのtest/typecheck/build/content gate成功、static publishのprepare→publish→verify成功、`publication.json`のcommit/pipeline一致、2回の配信でURL/container ID維持、画面の主要操作確認 | 未実施。320px表示・キーボード操作を含む実ブラウザQAも未完了。 |
 
 計画の記録後、Issue #3のUI、Issue #4のデータ、台帳PR/CIの準備は独立に並行できます。UIと全48巻データの統合検証は双方の作業完了後に行い、公開は統合ゲートと台帳・CI調整の完了後に限ります。Issue #3単体のbuild成功は、全文データの完成や公開条件の充足を意味しません。
 
 ## 品質ゲート
 
 1. **UI開発**: `npm test`、`npm run typecheck`、`npm run build`。fixtureでルーティング境界、異常JSON、fetch競合、HTML文字列の安全表示、解説・ネタバレ操作、日英対応を確認する。320px幅、キーボード、ライト／ダーク、フォントfallbackを実画面で確認する。
-2. **全文データ**: `npm run validate:content`が成功すること。両作品が24巻、合計48巻であり、欠巻・欠ファイル・不正参照・空または重複ID・空日英本文・解説schema違反がない。底本全体との省略・重複照合、日英の意味的対応、利用条件は別記録で確認する。
-3. **公開前CI**: PRでは品質検査・buildだけを行い公開しない。main push/manualは全品質ゲート後に限り、`dist/index.html`、`dist/assets`、`dist/fonts`、`dist/data`を明示して公開payloadを作る。全巻が未配置ならbuildの成功にかかわらずcontent gateで停止する。
+2. **全文データ**: `python3 -m unittest discover -s tests/content -v`で原文パーサと検証器のfixture試験を行い、`python3 scripts/validate-content.py --verify-published`と`npm run validate:content`を両方通す。出典manifestと48巻の英語本文が原文の正規化結果に一致し、catalog・全巻ファイル・日英本文・ID・件数・解説schemaが揃うこと。底本全体との照合、日英の意味的対応、利用条件は別記録で確認する。
+3. **公開前CI**: PRではUIテスト・buildとparser testを行い公開しない。PRの出典manifest・48巻検査とUI content validatorは`public/data`が完全に空のときだけskipし、1つでも成果物があれば両方を厳格実行する。main push/manualでは2つのstrict validatorとparser testを常に実行し、全て成功した場合だけ`dist/index.html`、`dist/assets`、`dist/fonts`、`dist/data`を明示して公開payloadを作る。
 4. **配信確認**: static-publishのpayload hash・CI identity検査と配信metadata照合が成功し、続けて公開URLで作品選択・巻切替・再読込・前後移動・解説・エラー復帰の主要操作を確認する。更新を2回実行し、URLと共用container IDが維持されpublication metadataが各対象commitを示すことも確認する。画面確認と全巻内容の人手校閲は別の証拠とする。
 
 ## 完了条件

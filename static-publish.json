@@ -1,0 +1,13 @@
+{
+  "schema": "static-site-v1",
+  "repo": "honya-dev-spa/homer-reader",
+  "site": "homer-reader",
+  "host": "homer-reader.honya.dev",
+  "branch": "main",
+  "files": {
+    "index.html": "dist/index.html",
+    "assets": "dist/assets",
+    "fonts": "dist/fonts",
+    "data": "dist/data"
+  }
+}
