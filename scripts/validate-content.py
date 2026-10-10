@@ -160,7 +160,7 @@ def catalog_for(manifest: dict, source_works: dict, translated_works: dict) -> d
             "books": books,
             "source": {
                 "english": {
-                    "title": english["titleEn"], "translator": "Samuel Butler",
+                    "title": WORK_META[work_id]["titleEn"], "translator": "Samuel Butler",
                     "url": english["url"], "license": "Public domain in the USA; source record and rights basis are documented in CONTENT.md.",
                     "sha256": english["sha256"], "acquiredDate": manifest["retrievedAt"],
                 },
