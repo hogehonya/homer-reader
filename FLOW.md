@@ -1,6 +1,6 @@
 # 処理フロー
 
-homer-readerの読書と公開の流れを示します。48巻データはIssue #3 branchに統合済みで、Node/Python strict検証が成功しています。98 distinct unitsと別途1単位の抜取確認、6件の限定修正を記録しました。PR/main CI、実画面QA、Gitea公開は未完了です。
+homer-readerの読書と公開の流れを示します。48巻データはmain `c149af8`に統合済みで、初回release `r1119-b3`として公開済みです。main CI #3と台帳CI #184は成功し、初回配信57ファイルのhash一致とHTTP 200を確認しました。最新の配信検証・公開後QA記録は[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。
 
 ## 読書フロー
 
@@ -85,7 +85,7 @@ flowchart TD
 
 ## 公開
 
-公開はGitea/Woodpecker CI経由で、ローカルネットワーク固定URL `homer-reader.honya.dev`を目標とします（SPEC U7の意図解釈）。PR #6と台帳PR #95はopen、公開は未実施です。mainでは全48巻ゲートを常時実行し、全て成功した場合だけ静的公開します。
+公開はGitea/Woodpecker CI経由で、ローカルネットワーク固定URL `homer-reader.honya.dev`です（SPEC U7の意図解釈）。PR #6、#7、台帳PR #95はマージされ、main CI #3・台帳CI #184を通過して初回公開済みです。最新の配信検証と公開ページQAはIssue #3完了コメントに記録します。mainでは全48巻ゲートを常時実行し、全て成功した場合だけ静的公開します。
 
 ```mermaid
 flowchart TD
@@ -98,4 +98,4 @@ flowchart TD
     F -->|いいえ| H[未完了として記録]
 ```
 
-mainのCIと実公開はcontrollerによる統合後に行います。公開完了前に未実施の検査を成功扱いしません。
+最新の配信と公開後QAの結果はcontrollerがIssue #3完了コメントへ記録します。未実施の検査を成功扱いしません。

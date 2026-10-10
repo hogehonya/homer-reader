@@ -4,7 +4,7 @@ homer-readerの現在のファイル構成と、本文工程で追加予定の�
 
 ## 現在のファイル
 
-Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト・公開設定、統合済み48巻データが存在します。Node/Python strict検証は成功しましたが、PR全ゲート、main CI、実画面QA、公開は未完了です。
+Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト・公開設定、統合済み48巻データが存在します。PR CI #2、main CI #3、台帳CI #184は成功し、初回release `r1119-b3`を公開済みです。最新の配信と公開QA結果はIssue #3完了コメントを参照してください。
 
 | ファイル | 役割 |
 | :--- | :--- |
@@ -18,12 +18,12 @@ Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト�
 | `tests/content/` | 原文パーサ、翻訳バッチ、公開manifestのfixture検証 |
 | `public/fonts/` | IBM Plex Sans JP 400/700のWOFF2、OFLライセンス、出典・checksum |
 | `package.json`、`package-lock.json`、`tsconfig.json` | 開発、test、typecheck、buildの再現可能な設定 |
-| `.woodpecker.yml`、`static-publish.json`、`scripts/static_publish.py` | PR検査とmainの厳格gate後に静的公開するCI。PR CI #1成功、main公開工程は未実行 |
+| `.woodpecker.yml`、`static-publish.json`、`scripts/static_publish.py` | PR検査とmainの厳格gate後に静的公開するCI。PR CI #2、main CI #3、台帳CI #184成功。初回release完了。最新の配信結果はIssue #3完了コメントを参照 |
 | `SITEMAP.md` | 本ファイル |
 | `FLOW.md` | 読書・データ読込・対訳表示・解説表示・コンテンツ整備・公開の流れ |
 | `AGENTS.md` | リポジトリ固有の作業契約と検証手順 |
 
-本文データ`public/data/`はIssue #4から統合済みです。98 distinct unitsと別途1単位の抜取確認、6件の限定修正は`CONTENT.md`とcorrection ledgerに記録されています。PR #6と台帳PR #95はopen。mainへの反映・実行とGitea固定URLへの公開はcontrollerが統合します。
+本文データ`public/data/`はIssue #4 PR #7からmainへ統合済みです。98 distinct unitsと別途1単位の抜取確認、6件の限定修正は`CONTENT.md`とcorrection ledgerに記録されています。PR #6、#7、台帳PR #95はマージ済み。初回公開とhash確認は完了し、最新の配信・QA結果はcontrollerがIssue #3完了コメントに記録します。
 
 ## 本文データ（後続工程）
 

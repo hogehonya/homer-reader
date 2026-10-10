@@ -4,15 +4,19 @@
 
 ## 現在の状態
 
-reader UIと48巻データがこのbranchに統合されています。48巻・2,140単位・英語本文268,999語、212/212翻訳バッチ、Python strict verifierと12 testsが成功しました。AI翻訳は98単位を抜取確認し、6件の限定修正を記録しています。PR CI/main CI、実ブラウザQA、Gitea公開は未完了です。詳細は[PLAN.md](PLAN.md)。
+『イリアス』『オデュッセイア』全48巻を収録しています。初回公開はrelease `r1119-b3`（main commit `c149af861d9f574ee3e4abafcbefcbd0c0621a47`）として完了しました。main CI #3と公開台帳CI #184は成功し、初回配信57ファイルのhashがpublication metadataと一致します。最新の配信検証と公開後QAは[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。詳細は[PLAN.md](PLAN.md)。
+
+閲覧URL: https://homer-reader.honya.dev（初回公開でHTTP 200を2026-10-10 17:44:30 JSTに確認）
+
+Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/homer-reader)
 
 | 項目 | 状態 |
 | :--- | :--- |
 | 要求・仕様書 | 作成済み（[SPEC.md](SPEC.md)が機能・コンテンツ仕様の正本） |
-| アプリ実装 | reader UIと48巻データを統合済み。独立ClaudeレビューはUI commit `d1ec6b1`を承認。現行branchの22 UI tests、typecheck、build、Node/Python strict content gate成功。 |
-| 本文・日本語訳・解説データ | 48巻・2,140対訳単位・英語本文268,999語。212/212バッチ成功。98単位の抜取確認と6件の限定修正を記録。全文の人手校閲は未実施。 |
-| CI | PR CI #1（commit `7879ae6`）success時はデータ未配置のためstrict gateをskip。統合後の現行branch CIとmain gateは未確認。 |
-| 公開 | 未実施。Issue #3 PR #6とdemo-previews PR #95はopen。目標はGitea/CI経由でローカルネットワーク固定URL `homer-reader.honya.dev`。公開後のURL・container ID・主要操作検証は未実施。 |
+| アプリ実装 | main commit `c149af8`にreader UIと48巻データを統合済み。独立ClaudeレビューはUI commit `d1ec6b1`を承認。 |
+| 本文・日本語訳・解説データ | 48巻・2,140対訳単位・英語本文268,999語。212/212バッチ成功。98 distinct units / 11,718語と別途1単位を抜取確認し、6件の限定修正を記録。全文の人手校閲は未実施。 |
+| CI | PR CI #2（[pipeline 2](https://ci.honya.dev/repos/154/pipeline/2)、commit `3ad028b`）は22 UI tests、12 Python tests、Node/Python strict 48-book verificationに成功。main CI #3と公開台帳CI #184も成功。 |
+| 公開 | 初回公開release `r1119-b3`を確認。HTTP 200、57配信ファイル全てのhash一致、初回登録後container ID `83485a1a23df505b9300091b8adbd9e0265c704f041eb61b8a54c01ab9ae8ea0`。最新の配信・QA証跡はIssue #3完了コメントを参照。 |
 
 ## 読書の目的
 
@@ -63,6 +67,6 @@ python3 scripts/validate-content.py --verify-published
 npm run validate:content
 ```
 
-`test`、`typecheck`、`build`、`validate:content:if-present`は本文データなしでも実行できます。任意版は`public/data`が空のときだけ検証をskipし、何か成果物があれば全量を検査します。`validate:content`とPythonの`--verify-published`は常に48巻を要求する厳格ゲートです。現在のbranchではNodeとPython両方のstrict verifierが成功しています。Pythonのparser fixture testは外部データを使わず実行できます。
+`npm test`のCLI filesystem regressionは`public/data/catalog.json`を使って欠損巻を再現するため、本文データなしでは成功しません。`typecheck`、`build`、`validate:content:if-present`はデータなしでも実行できます。任意validatorは`public/data`が空のときだけskipし、何か成果物があれば全量を検査します。`validate:content`とPythonの`--verify-published`は48巻を要求する厳格ゲートです。Python parser fixture testsは外部データなしで実行できます。
 
-UIはDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。320px幅とキーボード操作の実ブラウザ確認は未完了です。
+UIはDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。WebKitGTKで320px表示、両作品の本文表示、マウスによる作品・巻移動、日英横並び、解説の開閉と注釈分類ラベルを確認しました。キーボードではTabフォーカスとEnterによる次巻遷移を確認しています。異常系や履歴移動はfixture検証です。実ブラウザでのdark mode、font fallback、全巻個別閲覧は未確認です。最新の公開後QA証跡はIssue #3完了コメントを参照してください。
