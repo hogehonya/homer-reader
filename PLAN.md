@@ -2,6 +2,8 @@
 
 この計画はIssue #3（読書UI）・Issue #4（本文データ）・demo-previews Issue #94（公開台帳）をつなぐ実行順と完了証拠の正本です。機能・データ仕様は[SPEC.md](SPEC.md)、観察可能な受入条件は[ACCEPTANCE.md](ACCEPTANCE.md)を参照します。計画を変える場合は根拠と状態を更新します。
 
+Issue #9は既存1,375注釈の日英表示を追加する変更です。要求追跡はSPEC §5.1のR15、受入条件は[ACCEPTANCE.md](ACCEPTANCE.md)のN1〜N7に記録します。
+
 ## 目的と範囲
 
 イリアスとオデュッセイアを、英語本文・AI日本語訳・短い日本語解説で読める静的SPAとして完成させ、全巻の完全性・出典・対応関係を検証した後に公開します。全48巻を完成条件とするのはSPECのAgent方針A1であり、U5の直接要求とは区別します。抜粋・未確認の許諾・未検証データを完成版または公開済みとして扱いません。
@@ -14,14 +16,18 @@
 
 ## 役割と作業場所
 
+Issue #9の作業順は、先にこの仕様・受入条件・役割をcommitし、その後UIと注釈データを独立に進め、双方の完了後に統合検証と公開へ進みます。
+
 | 役割 | 責任 | 境界 |
 | :--- | :--- | :--- |
 | controller（親Agent） | Issue #3/#4の統合、別Agent監査、Issue #94/PR #95の台帳統合、CI有効化確認、公開後QA、完了記録 | UI・データの個別worktreeで競合編集しない。公開を成功と報告する前に証拠を確認する。 |
 | UI実装担当 | Issue #3専用`feature/issue-3` worktreeで仕様、SPA、データ検証器、UIテスト、build・CIを実装し、狭い差分をcommitする | 本文全文、台帳、他repo、push・PR・merge・公開は変更しない。 |
 | コンテンツ担当 | Issue #4専用の別worktreeでIssue #3のJSON契約に沿う48巻の本文・翻訳・解説・出典情報を整備し、完全性の証拠を残す | UI実装と同じファイルを編集しない。UI側は受領後に結合検証する。 |
 | 監査担当 | UI実装とコンテンツ統合を独立にレビューし、受入条件・差分・検証証拠を確認する | 実装者の自己レビューだけでゲートを通さない。 |
+| Issue #9 UI担当 | TypeScriptの注釈契約・描画・CSS・fixtureとUI testsを更新する | `public/data`、Python importer/validator、CONTENT.mdは編集しない。データ担当の成果物に依存するintegrationは後段。 |
+| Issue #9 注釈データ担当 | 全48巻の既存日本語注1,375件に英語見出し・本文を追加し、再現可能な生成・検証・抜取確認記録を整える | 日本語本文・注釈の既存構造や順序を変えない。UI実装用ファイルを編集しない。 |
 
-UI作業場所は`/home/honya/repos/worktrees/homer-reader-issue-3`、ブランチは`feature/issue-3`です。コンテンツ担当は別のIssue #4 worktreeを使います。公開台帳Issue #94は`demo-previews`側の独立作業です。
+Issue #3/#4と公開台帳の工程は完了済みです。Issue #9ではUI担当が`feature/issue-9` worktreeでTypeScript契約・描画・CSS・fixture testsを編集し、注釈データ担当が別worktreeで48巻の注釈英訳・生成検証記録を整えます。統合と公開はcontrollerが担当します。
 
 ## 翻訳・出典方針とリスク
 
