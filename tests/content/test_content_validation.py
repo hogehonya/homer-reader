@@ -63,6 +63,25 @@ class ContentValidationTests(unittest.TestCase):
         self.assertIn("48単位", catalog["works"][0]["source"]["commentary"]["reviewScope"])
         self.assertIn("未実施", catalog["works"][1]["source"]["commentary"]["reviewScope"])
 
+    def test_public_source_manifest_uses_full_import_manifest_and_omits_excluded_text(self):
+        source_works = {}
+        source_meta = {}
+        for work_id in ("iliad", "odyssey"):
+            unit = {"id": f"{work_id}-01-0001", "en": "Narrative opening."}
+            source_works[work_id] = ({"books": [{"number": 1, "units": [unit]}]}, [unit])
+            source_meta[work_id] = {
+                "gutenbergId": 2199 if work_id == "iliad" else 1727,
+                "url": "https://example.test/source", "sha256": "a" * 64, "byteLength": 123,
+                "excludedEditorialParagraphs": 1, "excludedEditorialTextByBook": [{"text": "private synopsis"}],
+                "excludedEndnoteSection": {"paragraphCount": 0, "referenceCount": 0},
+                "removedInlineFootnoteMarkerCount": 0, "excludedPostEbookBlocks": 1,
+            }
+        manifest = validate_content.public_source_manifest(
+            {"retrievedAt": "2026-10-10", "works": source_meta}, source_works,
+        )
+        self.assertEqual(manifest["works"][0]["books"][0]["narrativeSha256"], validate_content.narrative_digest(source_works["iliad"][0]["books"][0]["units"]))
+        self.assertNotIn("private synopsis", json.dumps(manifest, ensure_ascii=False))
+
     def write_published_fixture(self, public_dir):
         works = []
         catalog_works = []

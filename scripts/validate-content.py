@@ -273,7 +273,7 @@ def assemble(source_dir: Path, cache_dir: Path, raw_dir: Path, public_dir: Path)
             path.write_text(json.dumps(output, ensure_ascii=False, separators=(",", ":")) + "\n", encoding="utf-8")
     public_dir.mkdir(parents=True, exist_ok=True)
     (public_dir / "catalog.json").write_text(json.dumps(catalog, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    source_manifest = public_source_manifest(manifest["works"], source_works)
+    source_manifest = public_source_manifest(manifest, source_works)
     (public_dir / "source-manifest.json").write_text(json.dumps(source_manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     return catalog
 
