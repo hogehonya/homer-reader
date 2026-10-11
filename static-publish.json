@@ -8,6 +8,7 @@
     "index.html": "dist/index.html",
     "assets": "dist/assets",
     "fonts": "dist/fonts",
-    "data": "dist/data"
+    "data": "dist/data",
+    "audio-samples": "dist/audio-samples"
   }
 }

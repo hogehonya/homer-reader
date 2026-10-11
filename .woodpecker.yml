@@ -22,6 +22,8 @@ steps:
     commands:
       - python3 -m py_compile scripts/static_publish.py
       - python3 scripts/static_publish.py check-config
+      - python3 -m py_compile scripts/validate-audio-samples.py
+      - python3 scripts/validate-audio-samples.py
 
   - name: validate-source-pr
     image: python:3.13-alpine
