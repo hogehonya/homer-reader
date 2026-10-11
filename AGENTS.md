@@ -9,6 +9,7 @@
 - Issue #9の日英注釈はPR #10でmainに統合済みです。受入・配信証拠は[Gitea Issue #9](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/9)の完了コメントを参照します。
 - Issue #11はブラウザー標準SpeechSynthesisによる読み上げを追加します。外部TTS API・音声ファイル生成を追加せず、オフライン動作を保証しません。受入・実音声確認は[Gitea Issue #11](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/11)の完了記録を参照します。
 - Issue #13では`#/voices`の固定試聴サンプル比較を追加します。SPAは再生時に外部TTS APIを呼ばず、音声・manifestの受入と公開結果は[Gitea Issue #13](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/13)の最新記録を参照します。
+- Issue #15ではGitHub Actions PR gateとmain成功後のGitHub Pages配信を追加します。既存Gitea/Woodpecker経路は維持し、GitHub公開状態とPagesの配信証拠は[Gitea Issue #15](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/15)を参照します。
 - 機能・コンテンツ仕様の正本は`SPEC.md`、受入条件の正本は`ACCEPTANCE.md`です。要求を変える場合は`SPEC.md`の要求IDを先に更新し、対応する条件を`ACCEPTANCE.md`へ反映します。
 - 要求の原文引用は`SPEC.md`の5.1だけに置き、他文書へ複製しません。
 
@@ -35,6 +36,7 @@ npm ci
 npm test
 npm run typecheck
 npm run build
+npm run build -- --base=/homer-reader/
 npm run validate:content:if-present
 python3 -m unittest discover -s tests/content -v
 python3 scripts/validate-audio-samples.py
