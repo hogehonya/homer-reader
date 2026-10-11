@@ -22,6 +22,8 @@ Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト�
 | `public/audio-samples/` | 共通原稿で作成した日英音声サンプルと出典・hash・生成情報manifest |
 | `scripts/generate-audio-samples.py`、`scripts/validate-audio-samples.py`、`tests/content/test_audio_samples.py` | 試聴サンプルの再現可能な生成・ファイル検証とfixtureテスト。生成時の利用条件・結果はIssue #13を参照 |
 | `.woodpecker.yml`、`static-publish.json`、`scripts/static_publish.py` | PR検査とmainの厳格gate後に静的公開するCI。PR CI #2、main CI #3、台帳CI #184成功。初回release完了。追加機能の最新配信結果は各Issue完了コメントを参照 |
+| `.github/workflows/pages.yml` | GitHub PR品質ゲートと、main成功後のGitHub Pages公開（Issue #15） |
+| `src/app-base-path.test.ts` | Pages subpath下でcatalog、巻データ、音声manifest、試聴音声のURL prefixを検証 |
 | `SITEMAP.md` | 本ファイル |
 | `FLOW.md` | 読書・データ読込・対訳表示・解説表示・コンテンツ整備・公開の流れ |
 | `AGENTS.md` | リポジトリ固有の作業契約と検証手順 |
