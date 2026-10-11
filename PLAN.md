@@ -16,6 +16,12 @@ UIとサンプル成果物は独立して準備し、統合時にmanifest・フ�
 
 統合後はW1〜W5のUI・manifest・操作条件と既存48巻ゲートをPR CIで同時に実行し、公開後はW6に従いサンプルの配信一致とブラウザー再生を確かめます。公開結果はIssue #13完了記録へまとめます。
 
+## Issue #15 GitHub Pages
+
+Issue #15はU11/R18とU12/R19に基づき、既存Giteaソースと`homer-reader.honya.dev`を維持したままGitHub `hogehonya/homer-reader`とGitHub Pagesを追加します。予定URLは`https://hogehonya.github.io/homer-reader/`です。要件はSPEC §5.1・§5.2、受入条件は[ACCEPTANCE.md](ACCEPTANCE.md) P1〜P5に記録します。外部repo作成、同期設定、Pages設定と公開は親Agent担当です。
+
+実装はViteのbase pathと`src/main.ts`のデータrootを連動させ、CSS font URLもbase path配下へ解決します。GitHub ActionsはPRでnpm test・typecheck・root/subpath build・Python tests・音声validator・Node/Python strict 48巻検証を実行し、mainの全gate成功後だけPagesへdeployします。Gitea/Woodpeckerの既存CIは維持します。GitHub上の実配信と画面確認が完了するまでは「予定・未公開」と記録します。
+
 ## 目的と範囲
 
 イリアスとオデュッセイアを、英語本文・AI日本語訳・短い日本語解説で読める静的SPAとして完成させ、全巻の完全性・出典・対応関係を検証した後に公開します。全48巻を完成条件とするのはSPECのAgent方針A1であり、U5の直接要求とは区別します。抜粋・未確認の許諾・未検証データを完成版または公開済みとして扱いません。

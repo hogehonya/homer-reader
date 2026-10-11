@@ -61,6 +61,16 @@ R17の追加受入条件です。配信する候補・生成根拠はmanifestと
 - [ ] W5: 320px幅・キーボード操作・フォーカス・aria statusを確認し、audio controlsが横にはみ出さない。
 - [ ] W6: UI tests、typecheck、build、音声manifest validator、既存のPython content tests、Node/Python strict 48-book validatorが成功し、CI公開後の実ブラウザーでサンプル再生を確認する。機械検査と実聴評価を区別する。
 
+## Issue #15 GitHub Pages
+
+R18・R19の追加受入条件です。Giteaソースと`homer-reader.honya.dev`の公開を維持し、GitHub `hogehonya/homer-reader`と`https://hogehonya.github.io/homer-reader/`を追加します。実際のrepo作成・設定・公開確認は親Agentが行い、未実施の外部操作を完了済みと記録しません。
+
+- [ ] P1: GitHub repoのowner/nameと公開設定を確認し、既定ブランチの対象commitがGitea mainと一致する。親Agentが作成・同期の証拠をIssue #15へ記録。
+- [ ] P2: GitHub Actions PR gateがnpm UI tests、型検査、通常build、Python content tests、音声validator、Node/Python strict 48巻検査を実行し、Gitea/Woodpecker CIを維持する。
+- [ ] P3: mainの全gate成功後だけGitHub Pagesをdeployし、PRでは公開しない。
+- [ ] P4: `/homer-reader/`でhash route、data、audio samples、IBM Plex Sans JP fontを正しく取得し、root base `/`でも既存のローカル配信動作を維持する。
+- [ ] P5: 配信後にGitHub Pages URLのHTTP応答と公開画面を確認し、CI・対象commit・主要assetの実測をIssue #15へ記録する。
+
 ## SPA（2026-10-10検証）
 
 以下は観察可能な受入条件です。合格は条件ごとにUI fixture、content gate、公開hash、または実画面の証拠を付けて記録し、証拠が不足する項目は未チェックのままにします。
@@ -100,5 +110,7 @@ Issue #1のU1〜U4から要求ID・条件IDへの対応と、後続U5〜U7の実
 | U6 リポジトリに計画を先に記録 | SPEC §5.1の計画依頼 | D8、PLAN step 0〜5 |
 | U7 Giteaで公開（親Agentによる意図解釈） | SPEC §5.1の公開先依頼 | D9、PLAN step 4〜5、公開後検証 |
 | U8 注釈を英語と日本語で表示 | R15 | N1〜N7、PLAN Issue #9工程 |
+| U11 hogehonyaで公開 | R18 | P1〜P3、PLAN Issue #15工程 |
+| U12 GitHub Pagesで公開 | R19 | P3〜P5、PLAN Issue #15工程 |
 
 Agentが本Issueで具体化した要件（R7〜R14）は、SPEC.mdの5.2の出所と、各条件に併記した要求IDに対応します。
