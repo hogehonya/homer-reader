@@ -12,7 +12,7 @@ Issue #9の日英注釈対応はPR #10で統合済みです。読み上げ操作
 
 Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/homer-reader)
 
-GitHubソースは[hogehonya/homer-reader](https://github.com/hogehonya/homer-reader)で公開しています。GitHub PagesはIssue #15で準備中で、予定URLは`https://hogehonya.github.io/homer-reader/`です（Pagesはまだ未公開）。既存のGitea公開URLは引き続き利用します。
+GitHubソースは[hogehonya/homer-reader](https://github.com/hogehonya/homer-reader)で公開しています。GitHub Pagesの配信先は`https://hogehonya.github.io/homer-reader/`に設定済みです。配信状況・対象commit・検証結果は[Gitea Issue #15の最新記録](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/15)を参照してください。既存のGitea公開URLは引き続き利用します。
 
 | 項目 | 状態 |
 | :--- | :--- |
