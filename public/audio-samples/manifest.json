@@ -1,0 +1,61 @@
+{
+  "schema": "homer-voice-samples-v1",
+  "generatedAt": "2026-10-11T08:24:51+00:00",
+  "provider": "Microsoft Edge online TTS (edge-tts)",
+  "source": {
+    "workId": "iliad",
+    "bookNumber": 1,
+    "unitId": "iliad-01-0001",
+    "reference": "Butler Iliad 1, paragraph 1"
+  },
+  "texts": {
+    "en": "Sing, O goddess, the anger of Achilles son of Peleus, that brought countless ills upon the Achaeans. Many a brave soul did it send hurrying down to Hades, and many a hero did it yield a prey to dogs and vultures, for so were the counsels of Jove fulfilled from the day on which the son of Atreus, king of men, and great Achilles, first fell out with one another.",
+    "ja": "女神よ、歌え、ペーレウスの子アキレウスの怒りを。その怒りはアカイア勢に数え切れない災いをもたらした。多くの勇敢な魂をハデスへと急ぎ送り、多くの英雄の屍を犬や禿鷹の餌食とした。ゼウスの定めがそう成就したのだ、アトレウスの子にして人の王たる者と、偉大なるアキレウスとが初めて争いを始めたその日から。"
+  },
+  "samples": [
+    {
+      "id": "en-ava",
+      "language": "en",
+      "label": "Ava",
+      "voice": "en-US-AvaMultilingualNeural",
+      "rate": "+0%",
+      "src": "audio-samples/en-ava.mp3",
+      "textSha256": "c126af86867262cd0f9b4c64b8394044ff318d44749b98e3e0935ca1e456daee",
+      "audioSha256": "21d661fae17e8f7e1f92360177c987f228909e7e1b6f43da32d58bcfd6770e48",
+      "durationSeconds": 23.592
+    },
+    {
+      "id": "en-andrew",
+      "language": "en",
+      "label": "Andrew",
+      "voice": "en-US-AndrewMultilingualNeural",
+      "rate": "+0%",
+      "src": "audio-samples/en-andrew.mp3",
+      "textSha256": "c126af86867262cd0f9b4c64b8394044ff318d44749b98e3e0935ca1e456daee",
+      "audioSha256": "ae3a4e36432db15e3933cca0d1ea2f23d3dab9215113551dcf39d07c641d59ad",
+      "durationSeconds": 24.648
+    },
+    {
+      "id": "ja-nanami",
+      "language": "ja",
+      "label": "Nanami",
+      "voice": "ja-JP-NanamiNeural",
+      "rate": "+0%",
+      "src": "audio-samples/ja-nanami.mp3",
+      "textSha256": "ee38541ed7aceac7ba3db9d890c83283d55d749b7e1ba6b463e6435c6946deac",
+      "audioSha256": "d67caa6a93f4ec628d0c22e8d612a7857c6ad21dc39b2b2faea5c0331f415b17",
+      "durationSeconds": 28.752
+    },
+    {
+      "id": "ja-keita",
+      "language": "ja",
+      "label": "Keita",
+      "voice": "ja-JP-KeitaNeural",
+      "rate": "+0%",
+      "src": "audio-samples/ja-keita.mp3",
+      "textSha256": "ee38541ed7aceac7ba3db9d890c83283d55d749b7e1ba6b463e6435c6946deac",
+      "audioSha256": "29842c733cc272a80abc39877ff9f60fa9d3908565f1209e00fdfe4b90aa1f31",
+      "durationSeconds": 24.912
+    }
+  ]
+}
