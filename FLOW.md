@@ -1,6 +1,6 @@
 # 処理フロー
 
-homer-readerの読書と公開の流れを示します。48巻データはmain `c149af8`に統合済みで、初回release `r1119-b3`として公開済みです。main CI #3と台帳CI #184は成功し、初回配信57ファイルのhash一致とHTTP 200を確認しました。最新の配信検証・公開後QA記録は[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。
+homer-readerの読書と公開の流れを示します。48巻データはmain `c149af8`に統合済みで、初回release `r1119-b3`として公開済みです。main CI #3と台帳CI #184は成功し、初回配信57ファイルのhash一致とHTTP 200を確認しました。注釈日英対応は[Gitea Issue #9](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/9)、読み上げ変更の配信・QAは[Gitea Issue #11](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/11)の完了記録を参照してください。
 
 ## 読書フロー
 
@@ -63,6 +63,24 @@ flowchart TD
     G --> J{推測に基づく?}
     J -->|はい| K[解釈として表示]
     J -->|いいえ| L[事実として表示]
+```
+
+## 音声読み上げ
+
+本文の英語・日本語段落、または開いた注釈の言語別表示から、ブラウザー標準APIへ表示文字列全体を渡します。再生中のボタンで停止し、別の対象を開始した場合は前の発話を取り消します。画面遷移・アプリ破棄・ページ離脱でも停止します。端末・ブラウザーで音声を利用できない場合も、読書と注釈の操作は続けられます（R16）。
+
+```mermaid
+flowchart TD
+    A[読み上げボタンを押す] --> B{同じ対象・言語が再生中?}
+    B -->|はい| C[発話を取り消す]
+    B -->|いいえ| D{SpeechSynthesis APIあり?}
+    D -->|なし| E[利用不可を知らせる]
+    D -->|あり| F[前の発話を取り消す]
+    F --> G[全文を指定言語で発話]
+    G --> H{終了・失敗・画面離脱?}
+    H -->|終了| I[再生状態を解除]
+    H -->|失敗| J[失敗を知らせ再試行可能にする]
+    H -->|離脱| C
 ```
 
 ## コンテンツ整備

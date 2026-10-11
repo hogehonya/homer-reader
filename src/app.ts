@@ -10,6 +10,7 @@ import {
   type WorkIndex,
   type WorkId,
 } from "./data-contract";
+import { createSpeechController, type SpeechState, type SpeechSynthesisPort, type SpeechUtteranceFactory } from "./speech";
 
 type Fetcher = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 
@@ -22,6 +23,8 @@ interface AppOptions {
   fetcher?: Fetcher;
   window?: Window;
   dataRoot?: string;
+  speechSynthesis?: SpeechSynthesisPort | null;
+  speechUtteranceFactory?: SpeechUtteranceFactory;
 }
 
 const KIND_LABELS: Record<Note["kind"], string> = {
@@ -47,6 +50,10 @@ export function createReaderApp(root: HTMLElement, options: AppOptions = {}): Re
   const browser: Window = browserCandidate;
   const fetcher = options.fetcher ?? browser.fetch.bind(browser);
   const dataRoot = (options.dataRoot ?? "").replace(/\/$/, "");
+  const speechSynthesis = options.speechSynthesis === undefined
+    ? getSpeechSynthesis(browser)
+    : options.speechSynthesis ?? undefined;
+  const speech = createSpeechController(speechSynthesis, options.speechUtteranceFactory ?? getUtteranceFactory(browser), (state) => updateSpeechControls(root, state));
   let catalog: Catalog | undefined;
   let catalogError: string | undefined;
   let routeGeneration = 0;
@@ -93,7 +100,7 @@ export function createReaderApp(root: HTMLElement, options: AppOptions = {}): Re
         unitCount: bookIndex.unitCount,
       });
       if (!isCurrent(generation, route)) return;
-      renderBookPage(root, catalog!, work, bookIndex, book);
+      renderBookPage(root, catalog!, work, bookIndex, book, speech);
     } catch {
       if (!isCurrent(generation, route)) return;
       renderBookError(root, catalog!, work, bookIndex, route, () => {
@@ -126,18 +133,23 @@ export function createReaderApp(root: HTMLElement, options: AppOptions = {}): Re
   }
 
   const onHashChange = () => {
+    speech.stop();
     routeGeneration += 1;
     render();
   };
+  const onPageHide = () => speech.stop();
   browser.addEventListener("hashchange", onHashChange);
+  browser.addEventListener("pagehide", onPageHide);
   const ready = retryCatalog();
 
   return {
     ready,
     destroy() {
       destroyed = true;
+      speech.stop();
       routeGeneration += 1;
       browser.removeEventListener("hashchange", onHashChange);
+      browser.removeEventListener("pagehide", onPageHide);
     },
   };
 }
@@ -228,7 +240,7 @@ function renderBookError(root: HTMLElement, catalog: Catalog, work: WorkIndex, b
   finishPage(root, `ホメロス読書室 | ${work.titleJa} ${bookIndex.titleJa ?? `${bookIndex.number}巻`} の読込エラー`);
 }
 
-function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bookIndex: WorkIndex["books"][number], book: BookData) {
+function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bookIndex: WorkIndex["books"][number], book: BookData, speech: ReturnType<typeof createSpeechController>) {
   const page = createReaderShell(root.ownerDocument, catalog, work, bookIndex, {
     kind: "book", workId: book.workId, bookNumber: book.bookNumber,
   });
@@ -243,9 +255,11 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
     english.lang = "en";
     appendText(english, "h4", "English").lang = "en";
     appendText(english, "p", unit.en, "unit__english");
+    appendSpeechControl(english, unit.en, `unit:${unit.id}:en`, "en-US", "英語", speech);
     const japanese = element(root.ownerDocument, "section", "translation translation--japanese");
     appendText(japanese, "h4", "日本語訳");
     appendText(japanese, "p", unit.ja, "unit__japanese");
+    appendSpeechControl(japanese, unit.ja, `unit:${unit.id}:ja`, "ja-JP", "日本語", speech);
     columns.append(english, japanese);
     article.append(columns);
     if (unit.notes.length) {
@@ -255,7 +269,7 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
       appendText(notesHeading, "span", "解説").lang = "ja";
       notes.append(notesHeading);
       const list = element(root.ownerDocument, "ul", "note-list");
-      unit.notes.forEach((note) => list.append(renderNote(article.ownerDocument, note)));
+      unit.notes.forEach((note, noteIndex) => list.append(renderNote(article.ownerDocument, note, unit.id, noteIndex, speech)));
       notes.append(list);
       article.append(notes);
     }
@@ -267,7 +281,7 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
   finishPage(root, `ホメロス読書室 | ${work.titleJa} ${bookIndex.titleJa ?? `${book.bookNumber}巻`}`);
 }
 
-function renderNote(document: Document, note: Note) {
+function renderNote(document: Document, note: Note, unitId: string, noteIndex: number, speech: ReturnType<typeof createSpeechController>) {
   const item = element(document, "li", "note");
   const details = element(document, "details", "note__details");
   details.dataset.spoiler = String(note.spoiler);
@@ -291,8 +305,12 @@ function renderNote(document: Document, note: Note) {
     summary.append(title);
   }
   const body = element(document, "div", "note__body");
-  body.append(renderNoteLocale(document, "english", note.spoiler ? note.titleEn : undefined, note.bodyEn));
-  body.append(renderNoteLocale(document, "japanese", note.spoiler ? note.title : undefined, note.body));
+  const noteTarget = `note:${unitId}:${noteIndex}`;
+  body.append(renderNoteLocale(document, "english", note.spoiler ? note.titleEn : undefined, note.bodyEn, `${noteTarget}:en`, "en-US", "英語", note.titleEn, details, speech));
+  body.append(renderNoteLocale(document, "japanese", note.spoiler ? note.title : undefined, note.body, `${noteTarget}:ja`, "ja-JP", "日本語", note.title, details, speech));
+  details.addEventListener("toggle", () => {
+    if (!details.open) speech.stopIfTargetStartsWith(`${noteTarget}:`);
+  });
   if (note.sourceUrl) {
     const source = element(document, "p", "note__source");
     source.append(makeExternalLink(document, note.sourceUrl, "解説の出典"));
@@ -303,13 +321,73 @@ function renderNote(document: Document, note: Note) {
   return item;
 }
 
-function renderNoteLocale(document: Document, language: "english" | "japanese", title: string | undefined, body: string) {
+function renderNoteLocale(document: Document, language: "english" | "japanese", title: string | undefined, body: string, target: string, voiceLocale: "en-US" | "ja-JP", label: string, speechTitle: string, details: HTMLDetailsElement, speech: ReturnType<typeof createSpeechController>) {
   const english = language === "english";
   const locale = element(document, "section", `note__locale note__locale--${language}`);
   locale.lang = english ? "en" : "ja";
   if (title !== undefined) appendText(locale, "h5", title, "note__locale-title");
   appendText(locale, "p", body, "note__locale-body");
+  const speechText = voiceLocale === "ja-JP" ? `${speechTitle}。${body}` : `${speechTitle}. ${body}`;
+  appendSpeechControl(locale, speechText, target, voiceLocale, label, speech, details);
   return locale;
+}
+
+function appendSpeechControl(parent: HTMLElement, text: string, target: string, locale: "en-US" | "ja-JP", label: string, speech: ReturnType<typeof createSpeechController>, disclosure?: HTMLDetailsElement) {
+  const controls = element(parent.ownerDocument, "div", "speech-control");
+  const control = button(parent.ownerDocument, `${label}を読み上げる`, "speech");
+  control.lang = "ja";
+  control.dataset.speechLabel = label;
+  control.dataset.speechTarget = target;
+  control.setAttribute("aria-pressed", "false");
+  const status = element(parent.ownerDocument, "span", "speech-status");
+  status.dataset.speechStatus = target;
+  status.lang = "ja";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+  status.id = `speech-status-${target.replace(/[^a-z0-9-]/gi, "-")}`;
+  control.setAttribute("aria-describedby", status.id);
+  control.addEventListener("click", () => {
+    if (disclosure && !disclosure.open) return;
+    speech.toggle(target, text, locale);
+  });
+  controls.append(control, status);
+  parent.append(controls);
+}
+
+function updateSpeechControls(root: HTMLElement, state: SpeechState) {
+  for (const control of root.querySelectorAll<HTMLButtonElement>("[data-speech-target]")) {
+    const target = control.dataset.speechTarget;
+    if (!target) continue;
+    const active = state.activeTarget === target;
+    control.setAttribute("aria-pressed", String(active));
+    const label = control.dataset.speechLabel ?? "文章";
+    control.textContent = active ? `${label}の読み上げを停止` : `${label}を読み上げる`;
+    const status = root.querySelector<HTMLElement>(`#speech-status-${target.replace(/[^a-z0-9-]/gi, "-")}`);
+    if (!status) continue;
+    status.textContent = state.errorTarget === target
+      ? (state.error ?? "")
+      : active ? "読み上げ中です。停止するにはボタンを押してください。" : "";
+    status.classList.toggle("speech-status--error", state.errorTarget === target);
+  }
+}
+
+function getSpeechSynthesis(browser: Window): SpeechSynthesisPort | undefined {
+  try {
+    return "speechSynthesis" in browser ? browser.speechSynthesis : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+function getUtteranceFactory(browser: Window): SpeechUtteranceFactory | undefined {
+  try {
+    if (!("SpeechSynthesisUtterance" in browser)) return undefined;
+    const Constructor = (browser as Window & { SpeechSynthesisUtterance?: typeof SpeechSynthesisUtterance }).SpeechSynthesisUtterance;
+    if (!Constructor) return undefined;
+    return (text) => new Constructor(text);
+  } catch {
+    return undefined;
+  }
 }
 
 function renderEditionDetails(document: Document, work: WorkIndex) {
