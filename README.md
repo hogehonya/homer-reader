@@ -1,12 +1,12 @@
 # homer-reader
 
-ホメロスの『イリアス』と『オデュッセイア』を、ブラウザ上で日英対訳・日本語解説付きで読むSPAです。この変更では、既存1,375注の日本語を保ち、英語見出し・本文を追加します。
+ホメロスの『イリアス』と『オデュッセイア』を、ブラウザー上で日英対訳・注釈・読み上げ操作付きで読むSPAです。
 
 ## 現在の状態
 
 『イリアス』『オデュッセイア』全48巻を収録しています。初回公開はrelease `r1119-b3`（main commit `c149af861d9f574ee3e4abafcbefcbd0c0621a47`）として完了しました。main CI #3と公開台帳CI #184は成功し、初回配信57ファイルのhashがpublication metadataと一致します。初回配信の検証と公開後QAは[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。詳細は[PLAN.md](PLAN.md)。
 
-Issue #9では既存1,375注の日本語を保持し、英語見出し・本文を追加します。英訳確認の範囲と、統合受入・CI・公開結果は[Issue #9](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/9)の最新記録を参照してください。下記のURLと公開証跡は今回の変更を含まない初回公開のものです。
+Issue #9の日英注釈対応はPR #10で統合済みです。今回追加する読み上げ操作の統合受入・CI・公開結果は[Issue #11](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/11)の最新記録を参照してください。下記の初回公開証跡は読み上げ機能の公開を示すものではありません。
 
 閲覧URL: https://homer-reader.honya.dev（初回公開でHTTP 200を2026-10-10 17:44:30 JSTに確認）
 
@@ -15,16 +15,16 @@ Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/h
 | 項目 | 状態 |
 | :--- | :--- |
 | 要求・仕様書 | 作成済み（[SPEC.md](SPEC.md)が機能・コンテンツ仕様の正本） |
-| アプリ実装 | 公開中のreader UIと48巻データはmain commit `c149af8`に統合済み。この変更では既存1,375注の英語見出し・本文を追加し、日本語を保持します。統合受入・CI・公開結果はIssue #9を参照。 |
+| アプリ実装 | 既存1,375注の日英対応はIssue #9 PR #10で統合済み。Issue #11では表示中の本文と開いた注釈に日英の読み上げ操作を追加し、実画面・CI・公開の結果は同Issueを参照。 |
 | 本文・日本語訳・注釈データ | 本文は48巻・2,140対訳単位・英語本文268,999語。全1,375注に英語見出し・本文を追加し、親Agentのbaseline比較で既存日本語注・属性・順序・件数・source manifestの不変を確認。英訳確認の範囲・結果はIssue #9の最新記録を参照。本文・訳の既存抜取確認は98 distinct units / 11,718語と別途1単位、6件の限定修正を記録。全文の人手校閲は未実施。 |
 | CI | PR CI #2（[pipeline 2](https://ci.honya.dev/repos/154/pipeline/2)、commit `3ad028b`）は22 UI tests、12 Python tests、Node/Python strict 48-book verificationに成功。main CI #3と公開台帳CI #184も成功。 |
-| 公開 | 初回公開release `r1119-b3`を確認。HTTP 200、57配信ファイル全てのhash一致、初回登録後container ID `83485a1a23df505b9300091b8adbd9e0265c704f041eb61b8a54c01ab9ae8ea0`。この証跡はIssue #9の変更を含みません。最新のIssue #9配信・QA結果は同Issueの完了記録を参照。 |
+| 公開 | 初回公開release `r1119-b3`を確認。HTTP 200、57配信ファイル全てのhash一致、初回登録後container ID `83485a1a23df505b9300091b8adbd9e0265c704f041eb61b8a54c01ab9ae8ea0`。この証跡はIssue #11の読み上げ機能を含みません。最新のIssue #11配信・QA結果は同Issue完了記録を参照。 |
 
 ## 読書の目的
 
 『イリアス』『オデュッセイア』の両方を、作品→巻→本文の順に辿り、英語本文と日本語訳を同じ対訳単位で並べて読み進められる状態を目指します。全巻を読み通せることを達成条件とし、抜粋のみを完成扱いしません。この全巻方針はユーザーの直接指定ではなく、リポジトリ側の実装方針です（[SPEC.md](SPEC.md)のA1）。
 
-## 予定する機能
+## 主な機能
 
 要求IDの詳細はSPEC.mdへ集約しています。
 
@@ -36,8 +36,9 @@ Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/h
 | 英語本文と日本語訳を同じ対訳単位で並べる（狭幅は上下） | R4、R8 |
 | 作品→巻→本文の順に読めるようにする | R7 |
 | 出典・訳者・AI生成有無・確認範囲を確認できるようにする | R12 |
+| 本文段落と開いた注釈を日英それぞれ読み上げる | R16 |
 
-検索、音声、公開SPAでの翻訳API呼出し、アカウントは今回追加しません。
+検索、外部TTS API、音声ファイル生成、公開SPAでの翻訳API呼出し、アカウントは今回追加しません。読み上げはブラウザー標準SpeechSynthesis APIを利用し、音声の利用可否・品質は端末とブラウザーに依存します。オフライン動作は保証しません。
 
 ## 文書
 

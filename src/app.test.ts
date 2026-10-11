@@ -2,6 +2,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createReaderApp, type ReaderApp } from "./app";
 import { fixtureBook, fixtureCatalog } from "./fixtures";
+import type { SpeechSynthesisPort } from "./speech";
 
 describe("reader app", () => {
   let root: HTMLElement;
@@ -285,6 +286,91 @@ describe("reader app", () => {
     await vi.waitFor(() => expect(root.querySelector(".unit__english")).not.toBeNull());
     expect(attempts).toBe(2);
   });
+
+  it("adds full-text English and Japanese speech controls and keeps only one target active", async () => {
+    const speech = speechHarness();
+    window.history.replaceState({}, "", "/#/iliad/1");
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window, ...speech.options });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector(".unit__english")).not.toBeNull());
+
+    const speechButtons = root.querySelectorAll<HTMLButtonElement>("[data-speech-target^='unit:iliad-01-0001']");
+    const englishButton = speechButtons[0]!;
+    const japaneseButton = speechButtons[1]!;
+    englishButton.click();
+    expect(speech.utterances[0]?.text).toBe("Sing, goddess.");
+    expect(speech.utterances[0]?.lang).toBe("en-US");
+    expect(englishButton.getAttribute("aria-pressed")).toBe("true");
+    expect(englishButton.lang).toBe("ja");
+    expect(englishButton.textContent).toBe("英語の読み上げを停止");
+
+    japaneseButton.click();
+    expect(speech.engine.cancel).toHaveBeenCalledTimes(1);
+    expect(speech.utterances[1]?.text).toBe("女神よ、歌いたまえ。");
+    expect(speech.utterances[1]?.lang).toBe("ja-JP");
+    expect(englishButton.getAttribute("aria-pressed")).toBe("false");
+    expect(englishButton.textContent).toBe("英語を読み上げる");
+    expect(japaneseButton.getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("speaks notes only while their own disclosure is open and stops when it closes", async () => {
+    const speech = speechHarness();
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window, ...speech.options });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector(".note")).not.toBeNull());
+    const note = root.querySelector<HTMLDetailsElement>('details[data-spoiler="false"]')!;
+    const button = note.querySelector<HTMLButtonElement>('.note__locale--english [data-speech-target]')!;
+
+    button.click();
+    expect(speech.engine.speak).not.toHaveBeenCalled();
+
+    note.open = true;
+    note.dispatchEvent(new Event("toggle"));
+    button.click();
+    expect(speech.utterances[0]?.text).toBe("Poetic invocation. The poet calls upon the goddess to begin the tale.");
+    expect(speech.utterances[0]?.lang).toBe("en-US");
+
+    const japaneseButton = note.querySelector<HTMLButtonElement>('.note__locale--japanese [data-speech-target]')!;
+    japaneseButton.click();
+    expect(speech.engine.cancel).toHaveBeenCalledTimes(1);
+    expect(speech.utterances[1]?.text).toBe("詩の呼びかけ。詩人が物語を始めるための言葉です。");
+    expect(speech.utterances[1]?.lang).toBe("ja-JP");
+
+    note.open = false;
+    note.dispatchEvent(new Event("toggle"));
+    expect(speech.engine.cancel).toHaveBeenCalledTimes(2);
+    expect(japaneseButton.getAttribute("aria-pressed")).toBe("false");
+  });
+
+  it.each(["hashchange", "pagehide"])("stops speech on %s", async (eventName) => {
+    const speech = speechHarness();
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window, ...speech.options });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector("[data-speech-target]")).not.toBeNull());
+    root.querySelector<HTMLButtonElement>("[data-speech-target]")!.click();
+    window.dispatchEvent(new Event(eventName));
+    expect(speech.engine.cancel).toHaveBeenCalledTimes(1);
+  });
+
+  it("stops speech when the app is destroyed", async () => {
+    const speech = speechHarness();
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window, ...speech.options });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector("[data-speech-target]")).not.toBeNull());
+    root.querySelector<HTMLButtonElement>("[data-speech-target]")!.click();
+    app.destroy();
+    expect(speech.engine.cancel).toHaveBeenCalledTimes(1);
+    app = undefined;
+  });
+
+  it("explains unavailable speech without hiding reader text", async () => {
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window, speechSynthesis: null });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector(".unit__english")).not.toBeNull());
+    root.querySelector<HTMLButtonElement>("[data-speech-target]")!.click();
+    expect(root.querySelector(".unit__english")?.textContent).toBe("Sing, goddess.");
+    expect(root.querySelector('[role="status"]')?.textContent).toContain("対応していません");
+  });
 });
 
 function mockedFetcher() {
@@ -303,4 +389,15 @@ function jsonResponse(value: unknown) {
     status: 200,
     headers: { "Content-Type": "application/json" },
   });
+}
+
+function speechHarness() {
+  const utterances: Array<{ text: string; lang: string; onend: (() => void) | null; onerror: ((event: { error: string }) => void) | null }> = [];
+  const engine: SpeechSynthesisPort = { speak: vi.fn(), cancel: vi.fn() };
+  const speechUtteranceFactory = vi.fn((text: string) => {
+    const utterance = { text, lang: "", onend: null, onerror: null };
+    utterances.push(utterance);
+    return utterance as unknown as SpeechSynthesisUtterance;
+  });
+  return { options: { speechSynthesis: engine, speechUtteranceFactory }, engine, utterances };
 }

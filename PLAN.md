@@ -2,19 +2,23 @@
 
 この計画はIssue #3（読書UI）・Issue #4（本文データ）・demo-previews Issue #94（公開台帳）をつなぐ実行順と完了証拠の正本です。機能・データ仕様は[SPEC.md](SPEC.md)、観察可能な受入条件は[ACCEPTANCE.md](ACCEPTANCE.md)を参照します。計画を変える場合は根拠と状態を更新します。
 
-Issue #9は既存1,375注釈の日英表示を追加する変更です。要求追跡はSPEC §5.1のR15、受入条件は[ACCEPTANCE.md](ACCEPTANCE.md)のN1〜N7に記録します。
+Issue #9の日英注釈対応はPR #10でmainに統合済みです。N1〜N7の最終証拠は[Gitea Issue #9](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/9)の完了記録を参照します。
+
+Issue #11はU9/R16の読み上げ操作を追加します。受入条件V1〜V6と本Issueの最終CI・実画面確認は[Gitea Issue #11](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/11)に記録します。
 
 ## 目的と範囲
 
 イリアスとオデュッセイアを、英語本文・AI日本語訳・短い日本語解説で読める静的SPAとして完成させ、全巻の完全性・出典・対応関係を検証した後に公開します。全48巻を完成条件とするのはSPECのAgent方針A1であり、U5の直接要求とは区別します。抜粋・未確認の許諾・未検証データを完成版または公開済みとして扱いません。
 
-対象repoはGiteaの`honya-dev-spa/homer-reader`、公開先はローカルネットワーク固定URL `homer-reader.honya.dev`です（SPEC U7の親Agentによる意図解釈）。Issue #3 PR #6、Issue #4 PR #7、公開台帳PR #95はmainにマージ済みです。main CI #3とCI #184は成功し、初回公開と記載範囲の画面QAも完了しました。Issue #9の統合・公開・画面検証の最終結果は同Issueの完了記録を正本とします。
+対象repoはGiteaの`honya-dev-spa/homer-reader`、公開先はローカルネットワーク固定URL `homer-reader.honya.dev`です（SPEC U7の親Agentによる意図解釈）。Issue #3 PR #6、Issue #4 PR #7、公開台帳PR #95、Issue #9 PR #10はmainにマージ済みです。Issue #11更新後の統合・公開・画面検証の最終結果はIssue #11完了記録を正本とします。
 
 ## 現在確認できている状態
 
 2026-10-10時点で、main commit `c149af861d9f574ee3e4abafcbefcbd0c0621a47`にreader UIと48巻・2,140対訳単位・268,999英語語のデータが統合され、初回公開release `r1119-b3`として配信済みです。main CI #3と公開台帳CI #184は成功。CI metadataの`created_at_jst`は`2026-10-10T17:30:23+09:00`（CI作成時刻）で、公開後HTTP 200を`2026-10-10 17:44:30 JST`に実測しました。配信57ファイルのhashがpublication metadataに一致し、初回登録後container IDは`83485a1a23df505b9300091b8adbd9e0265c704f041eb61b8a54c01ab9ae8ea0`です。この初回公開はIssue #9の注英訳を含みません。Issue #9更新後の最終CI・配信・実画面確認結果は同Issueの完了記録に集約し、証跡追記だけを目的にした追加配信は行いません。WebKitGTKで320×820、両作品の第1巻表示とマウス遷移、1280pxで日英横並び、解説の開閉と5種の注釈ラベル、Tabによるフォーカス移動、Enterによる次巻遷移を確認しました。異常系・back/forward等はfixtureで検証し、実ブラウザでのdark mode、font fallback、全48巻の個別閲覧は未確認です。翻訳・出典の根拠と限界は`CONTENT.md`を参照します。
 
-Issue #9では全1,375注の英語見出し・本文を追加し、既存の日本語・属性・順序・件数とsource manifestが基準版から変わっていないことを比較確認しました。注釈英訳の標本監査で見つかった2件の表記修正は反映し、独立エージェントの確認も完了しています。UI実装は独立レビュー済みです。統合受入・CI・公開結果はIssue #9の完了記録を正本とします。
+Issue #9で全1,375注の日英表示をmainに統合しました。N1〜N7の受入証拠はIssue #9完了記録を参照してください。
+
+Issue #11ではブラウザー標準SpeechSynthesisを使って本文と開いた注釈を読み上げます。端末・ブラウザーによる利用可否や音声品質は保証せず、オフライン動作とも断定しません。
 
 ## 役割と作業場所
 
@@ -48,16 +52,17 @@ Issue #3/#4と公開台帳の工程は完了済みです。Issue #9ではUI担�
 | 2 | Issue #4で48巻データを作成し、Issue #3へ統合 | catalog 2作品各24巻、source manifest、strict verifier、出典・生成・抜取確認範囲 | 完了。212/212バッチ、48巻・2,140単位・268,999英語語。98 distinct units / 11,718語と別途1単位を抜取確認、6件の限定修正を記録。PR #7はmainにマージ済み。 |
 | 3 | Issue #3と#4を統合し、CI検証する | main commit `c149af8`、PR CI #2とmain CI #3の全ゲート成功。WebKitGTKで320px表示、作品選択・巻遷移・日英横並び・注釈開閉を確認。異常系と履歴移動はfixture検証。 | コード・データ統合、main CIと定義した画面QA完了。 |
 | 4 | demo-previews Issue #94 / PR #95で台帳登録し、controllerがCIを確認 | PR #95 merged、CI #184 success。 | 完了。 |
-| 5 | Gitea mainでCI公開し、固定URLを検証 | 初回release `r1119-b3`、main commit `c149af861d9f574ee3e4abafcbefcbd0c0621a47`。HTTP 200 at 2026-10-10 17:44:30 JST。metadataの`created_at_jst` `2026-10-10T17:30:23+09:00`はCI作成時刻。57配信file hashes全件一致。 | 初回公開成功。初回登録後container ID `83485a1a23df505b9300091b8adbd9e0265c704f041eb61b8a54c01ab9ae8ea0`。Issue #9更新後の最終配信・CI・実画面検証は[Gitea Issue #9](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/9)の完了記録を正本とする。初回登録前IDは比較対象外。結果記録だけを目的とした追加配信は要求しない。 |
+| 5 | Gitea mainでCI公開し、固定URLを検証 | 初回release `r1119-b3`、main commit `c149af861d9f574ee3e4abafcbefcbd0c0621a47`。HTTP 200 at 2026-10-10 17:44:30 JST。metadataの`created_at_jst` `2026-10-10T17:30:23+09:00`はCI作成時刻。57配信file hashes全件一致。 | 初回公開成功。Issue #11更新後の最新配信結果・受入証拠は[Gitea Issue #11](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/11)を参照。記録更新だけを目的とした追加配信は要求しない。 |
 
 計画の記録後、Issue #3のUI、Issue #4のデータ、台帳PR/CIの準備は独立に並行できます。UIと全48巻データの統合検証は双方の作業完了後に行い、公開は統合ゲートと台帳・CI調整の完了後に限ります。Issue #3単体のbuild成功は、全文データの完成や公開条件の充足を意味しません。
 
 ## 品質ゲート
 
 1. **UI開発**: `npm test`、`npm run typecheck`、`npm run build`。fixtureでルーティング境界、異常JSON、fetch競合、HTML文字列の安全表示、解説・ネタバレ操作、日英対応を確認する。320px幅、キーボード、ライト／ダーク、フォントfallbackを実画面で確認する。
+   Issue #11ではSpeechSynthesisをfixtureで制御し、言語・全文・開始停止・単一発話・終了/失敗・古いイベント・ルート/破棄/離脱でのcancelを検証する。実音声の確認可否は実画面結果と分けて記録する。
 2. **全文データ**: `python3 -m unittest discover -s tests/content -v`で原文パーサと検証器のfixture試験を行い、`python3 scripts/validate-content.py --verify-published`と`npm run validate:content`を両方通す。出典manifestと48巻の英語本文が原文の正規化結果に一致し、catalog・全巻ファイル・日英本文・ID・件数・解説schemaが揃うこと。底本全体との照合、日英の意味的対応、利用条件は別記録で確認する。
 3. **公開前CI**: PRではUIテスト・buildとparser testを行い公開しない。PRの出典manifest・48巻検査とUI content validatorは`public/data`が完全に空のときだけskipし、1つでも成果物があれば両方を厳格実行する。main push/manualでは2つのstrict validatorとparser testを常に実行し、全て成功した場合だけ`dist/index.html`、`dist/assets`、`dist/fonts`、`dist/data`を明示して公開payloadを作る。
-4. **配信確認**: static-publishのpayload hash・CI identity検査と配信metadata照合が成功し、公開URLで作品選択・巻切替・再読込・前後移動・解説・エラー復帰の主要操作を確認する。URL、container ID、publication metadataの対象commitを照合し、HTTP 200の公開確認時刻と`created_at_jst`（CI作成時刻）を分けて記録する。Issue #9更新後の実施結果はIssue #9完了記録へ集約し、結果を追記するだけの追加配信は行わない。画面確認と全巻内容の人手校閲は別の証拠とする。
+4. **配信確認**: static-publishのpayload hash・CI identity検査と配信metadata照合が成功し、公開URLで作品選択・巻切替・再読込・前後移動・解説・エラー復帰の主要操作を確認する。URL、container ID、publication metadataの対象commitを照合し、HTTP 200の公開確認時刻と`created_at_jst`（CI作成時刻）を分けて記録する。Issue #11更新後の最新配信・検証結果はIssue #11完了記録へ集約し、結果を追記するだけの追加配信は行わない。画面確認と全巻内容の人手校閲は別の証拠とする。
 
 ## 完了条件
 
@@ -66,3 +71,4 @@ Issue #3/#4と公開台帳の工程は完了済みです。Issue #9ではUI担�
 - Issue #94の台帳登録がrepo、site、hostと一致し、mainのCI公開が成功している。
 - 公開`publication.json`が対象commitとCI実行に一致し、公開画面の主要操作が確認済みである。
 - 未実施の検査、人手未確認の範囲、残るリスクを明示し、抜粋や部分工程を完了として扱わない。
+- Issue #11のV1〜V6をテストと実画面で確認し、端末・ブラウザーと実音声の利用可否を記録する。

@@ -306,6 +306,30 @@ h4 {
   line-height: 1.8;
 }
 
+.speech-control {
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.65rem;
+  margin-top: 0.65rem;
+}
+
+.speech-control .control {
+  min-height: 2.75rem;
+  flex: 0 0 auto;
+}
+
+.speech-status {
+  min-width: 0;
+  align-self: center;
+  color: var(--color-muted);
+  overflow-wrap: anywhere;
+}
+
+.speech-status--error {
+  color: var(--color-warning);
+}
+
 .unit__notes {
   margin-top: 1.25rem;
 }
