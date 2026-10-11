@@ -29,6 +29,7 @@ Issue #1の仕様・受入文書、Issue #3統合計画、読書SPA・テスト�
 | `SITEMAP.md` | 本ファイル |
 | `FLOW.md` | 読書・データ読込・対訳表示・解説表示・コンテンツ整備・公開の流れ |
 | `AGENTS.md` | リポジトリ固有の作業契約と検証手順 |
+| `docs/annotation-platform-concept.md` | Git型共同注釈・学術的編集・運営モデルの構想メモ（未採用） |
 
 本文データ`public/data/`はIssue #4 PR #7からmainへ統合済みです。98 distinct unitsと別途1単位の抜取確認、6件の限定修正は`CONTENT.md`とcorrection ledgerに記録されています。PR #6、#7、台帳PR #95はマージ済み。初回公開とhash確認は完了し、最新の配信・QA結果はcontrollerがIssue #3完了コメントに記録します。
 

@@ -56,6 +56,7 @@ GitHubソースは[hogehonya/homer-reader](https://github.com/hogehonya/homer-re
 | [SITEMAP.md](SITEMAP.md) | 現在と実装予定のファイル構成 |
 | [FLOW.md](FLOW.md) | 読書・データ読込・対訳表示・解説表示・コンテンツ整備・公開の流れ |
 | [AGENTS.md](AGENTS.md) | リポジトリ固有の作業契約と検証手順 |
+| [docs/annotation-platform-concept.md](docs/annotation-platform-concept.md) | Wiki型注釈・PR査読・運営主体・事業化の将来構想（未採用） |
 
 ## 開発と検証
 
