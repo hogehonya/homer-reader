@@ -6,6 +6,16 @@ Issue #9の日英注釈対応はPR #10でmainに統合済みです。N1〜N7の�
 
 Issue #11はU9/R16の読み上げ操作を追加します。受入条件V1〜V6と本Issueの最終CI・実画面確認は[Gitea Issue #11](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/11)に記録します。
 
+## Issue #13 音声サンプル比較
+
+Issue #13はU10/R17の承諾に基づき、同じ冒頭原稿の日英サンプルを試聴する画面を追加します。仕様はSPEC §5.1・§5.2、完了条件は[ACCEPTANCE.md](ACCEPTANCE.md) W1〜W6に記録します。声を選ぶ、既存読み上げへ採用する、全巻を音声化する作業は含みません。
+
+UIとサンプル成果物は独立して準備し、統合時にmanifest・ファイル・UI契約を検査します。UI担当は`feature/issue-13`で`#/voices`、サイト内入口、再生制御、テスト、公開設定を変更し、本文データや音声ファイルは変更しません。音声担当は同一の先頭対訳本文を用いた日英各2音声、`public/audio-samples/manifest.json`、音声検証器を別worktreeで作成します。現worktreeのbaselineには`public/audio-samples/`がなく、統合前の成果物を配信済みと扱いません。
+
+確認されたvoice IDはEdge TTSのAvaMultilingualNeural / AndrewMultilingualNeural / NanamiNeural / KeitaNeuralです。ElevenLabsの利用認証は既存metadataに確認できないため、認証済みの代替候補として表示しません。試聴後の音質評価は利用者に委ね、実聴した証拠なしに優劣を記録しません。
+
+統合後はW1〜W5のUI・manifest・操作条件と既存48巻ゲートをPR CIで同時に実行し、公開後はW6に従いサンプルの配信一致とブラウザー再生を確かめます。公開結果はIssue #13完了記録へまとめます。
+
 ## 目的と範囲
 
 イリアスとオデュッセイアを、英語本文・AI日本語訳・短い日本語解説で読める静的SPAとして完成させ、全巻の完全性・出典・対応関係を検証した後に公開します。全48巻を完成条件とするのはSPECのAgent方針A1であり、U5の直接要求とは区別します。抜粋・未確認の許諾・未検証データを完成版または公開済みとして扱いません。
