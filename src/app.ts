@@ -485,6 +485,7 @@ function renderReadingTabs(document: Document, panel: HTMLElement, speech: Retur
   tablist.setAttribute("aria-label", "本文の表示");
   const tabs = modes.map(({ id, label }) => {
     const tab = button(document, label, "reading-tab");
+    tab.classList.add("reading-tab");
     tab.id = `reading-tab-${id}`;
     tab.dataset.readingMode = id;
     tab.setAttribute("role", "tab");
