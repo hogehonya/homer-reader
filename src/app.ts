@@ -46,6 +46,8 @@ const KIND_LABELS_EN: Record<Note["kind"], string> = {
   interpretation: "Interpretation",
 };
 
+type ReadingMode = "bilingual" | "english" | "japanese";
+
 export function createReaderApp(root: HTMLElement, options: AppOptions = {}): ReaderApp {
   const document = root.ownerDocument;
   const browserCandidate = options.window ?? document.defaultView;
@@ -425,9 +427,15 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
   const page = createReaderShell(root.ownerDocument, catalog, work, bookIndex, {
     kind: "book", workId: book.workId, bookNumber: book.bookNumber,
   });
+  const readingPanelId = `reading-panel-${work.id}-${book.bookNumber}`;
+  const readingPanel = element(root.ownerDocument, "div", "reading-panel");
+  readingPanel.id = readingPanelId;
+  readingPanel.setAttribute("role", "tabpanel");
+  const tabControls = renderReadingTabs(root.ownerDocument, readingPanel, speech);
   const units = element(root.ownerDocument, "div", "units");
   book.units.forEach((unit, index) => {
     const article = element(root.ownerDocument, "article", "unit");
+    article.id = unit.id;
     article.setAttribute("aria-labelledby", `unit-heading-${index}`);
     const heading = appendText(article, "h3", unit.reference, "unit__reference");
     heading.id = `unit-heading-${index}`;
@@ -438,6 +446,7 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
     appendText(english, "p", unit.en, "unit__english");
     appendSpeechControl(english, unit.en, `unit:${unit.id}:en`, "en-US", "英語", speech);
     const japanese = element(root.ownerDocument, "section", "translation translation--japanese");
+    japanese.lang = "ja";
     appendText(japanese, "h4", "日本語訳");
     appendText(japanese, "p", unit.ja, "unit__japanese");
     appendSpeechControl(japanese, unit.ja, `unit:${unit.id}:ja`, "ja-JP", "日本語", speech);
@@ -456,10 +465,74 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
     }
     units.append(article);
   });
-  page.main.append(units, renderEditionDetails(root.ownerDocument, work));
+  readingPanel.append(units);
+  page.main.append(tabControls.tablist, readingPanel, renderEditionDetails(root.ownerDocument, work));
   page.main.append(createAdjacentBookNavigation(root.ownerDocument, work, book.bookNumber));
+  tabControls.setMode("bilingual");
   root.replaceChildren(page.element);
   finishPage(root, `ホメロス読書室 | ${work.titleJa} ${bookIndex.titleJa ?? `${book.bookNumber}巻`}`);
+}
+
+function renderReadingTabs(document: Document, panel: HTMLElement, speech: ReturnType<typeof createSpeechController>) {
+  const panelId = panel.id;
+  const modes: Array<{ id: ReadingMode; label: string }> = [
+    { id: "bilingual", label: "対訳" },
+    { id: "english", label: "英語" },
+    { id: "japanese", label: "日本語" },
+  ];
+  const tablist = element(document, "div", "reading-tabs");
+  tablist.setAttribute("role", "tablist");
+  tablist.setAttribute("aria-label", "本文の表示");
+  const tabs = modes.map(({ id, label }) => {
+    const tab = button(document, label, "reading-tab");
+    tab.id = `reading-tab-${id}`;
+    tab.dataset.readingMode = id;
+    tab.setAttribute("role", "tab");
+    tab.setAttribute("aria-controls", panelId);
+    tablist.append(tab);
+    return tab;
+  });
+
+  const setMode = (mode: ReadingMode, focus = false) => {
+    const selectedIndex = modes.findIndex((item) => item.id === mode);
+    for (const [index, tab] of tabs.entries()) {
+      const selected = index === selectedIndex;
+      tab.setAttribute("aria-selected", String(selected));
+      tab.tabIndex = selected ? 0 : -1;
+    }
+    const activeTab = tabs[selectedIndex]!;
+    panel?.setAttribute("aria-labelledby", activeTab.id);
+    if (panel) {
+      panel.dataset.readingMode = mode;
+      for (const localized of panel.querySelectorAll<HTMLElement>("[lang='en'], [lang='ja']")) {
+        localized.hidden = mode !== "bilingual" && localized.lang !== (mode === "english" ? "en" : "ja");
+      }
+      for (const separator of panel.querySelectorAll<HTMLElement>(".note__separator")) {
+        separator.hidden = mode !== "bilingual";
+      }
+    }
+    const activeTarget = speech.getState().activeTarget;
+    const hiddenLanguage = mode === "english" ? ":ja" : mode === "japanese" ? ":en" : undefined;
+    if (hiddenLanguage && activeTarget?.endsWith(hiddenLanguage)) speech.stop();
+    if (focus) activeTab.focus();
+  };
+
+  for (const [index, tab] of tabs.entries()) {
+    tab.setAttribute("aria-selected", String(index === 0));
+    tab.tabIndex = index === 0 ? 0 : -1;
+    tab.addEventListener("click", () => setMode(modes[index]!.id));
+    tab.addEventListener("keydown", (event) => {
+      let nextIndex: number | undefined;
+      if (event.key === "ArrowRight") nextIndex = (index + 1) % tabs.length;
+      if (event.key === "ArrowLeft") nextIndex = (index - 1 + tabs.length) % tabs.length;
+      if (event.key === "Home") nextIndex = 0;
+      if (event.key === "End") nextIndex = tabs.length - 1;
+      if (nextIndex === undefined) return;
+      event.preventDefault();
+      setMode(modes[nextIndex]!.id, true);
+    });
+  }
+  return { tablist, setMode };
 }
 
 function renderNote(document: Document, note: Note, unitId: string, noteIndex: number, speech: ReturnType<typeof createSpeechController>) {

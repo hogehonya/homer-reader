@@ -45,6 +45,65 @@ describe("reader app", () => {
     expect(edition.textContent).toContain("英訳の段落単位");
   });
 
+  it("switches every passage and note locale across bilingual, English, and Japanese tabs", async () => {
+    window.history.replaceState({}, "", "/#/iliad/1");
+    app = createReaderApp(root, { fetcher: twoUnitFetcher(), window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelectorAll(".unit__english")).toHaveLength(2));
+
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[role='tab']")];
+    const panel = root.querySelector<HTMLElement>("[role='tabpanel']")!;
+    expect(tabs.map((tab) => tab.textContent)).toEqual(["対訳", "英語", "日本語"]);
+    expect(tabs.map((tab) => tab.getAttribute("aria-selected"))).toEqual(["true", "false", "false"]);
+    expect(tabs.every((tab) => tab.getAttribute("aria-controls") === panel.id)).toBe(true);
+    expect(panel.getAttribute("aria-labelledby")).toBe(tabs[0]?.id);
+    expect(root.querySelectorAll(".translation--english:not([hidden])")).toHaveLength(2);
+    expect(root.querySelectorAll(".translation--japanese:not([hidden])")).toHaveLength(2);
+
+    tabs[2]!.click();
+    expect(tabs[2]!.getAttribute("aria-selected")).toBe("true");
+    expect(root.querySelectorAll(".translation--english[hidden]")).toHaveLength(2);
+    expect(root.querySelectorAll(".translation--japanese:not([hidden])")).toHaveLength(2);
+    expect(root.querySelectorAll(".note__locale--english[hidden]")).toHaveLength(2);
+    expect(root.querySelectorAll(".note__locale--japanese:not([hidden])")).toHaveLength(2);
+    expect(root.querySelectorAll(".note__separator[hidden]")).not.toHaveLength(0);
+    expect(root.querySelector("#iliad-01-0002 .unit__english")?.textContent).toBe("The second passage.");
+
+    tabs[1]!.click();
+    expect(root.querySelectorAll(".translation--english:not([hidden])")).toHaveLength(2);
+    expect(root.querySelectorAll(".translation--japanese[hidden]")).toHaveLength(2);
+    expect(root.querySelectorAll(".note__locale--english:not([hidden])")).toHaveLength(2);
+    expect(root.querySelectorAll(".note__locale--japanese[hidden]")).toHaveLength(2);
+  });
+
+  it("supports roving tab keyboard controls and stops speech hidden by a language tab", async () => {
+    window.history.replaceState({}, "", "/#/odyssey/1");
+    const speech = speechHarness();
+    app = createReaderApp(root, { fetcher: twoUnitFetcher("odyssey"), window, ...speech.options });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector("[role='tablist']")).not.toBeNull());
+
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[role='tab']")];
+    expect(root.querySelector("[data-view='reader']")).not.toBeNull();
+    expect(root.querySelector("#odyssey-01-0002")).not.toBeNull();
+    tabs[1]!.focus();
+    tabs[1]!.click();
+    root.querySelector<HTMLButtonElement>("[data-speech-target='unit:odyssey-01-0001:en']")!.click();
+    expect(speech.utterances[0]?.text).toBe("Sing, goddess.");
+
+    tabs[1]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+    expect(document.activeElement).toBe(tabs[2]);
+    expect(tabs[2]!.getAttribute("aria-selected")).toBe("true");
+    expect(speech.engine.cancel).toHaveBeenCalledTimes(1);
+    expect(root.querySelector<HTMLButtonElement>("[data-speech-target='unit:odyssey-01-0001:en']")?.getAttribute("aria-pressed")).toBe("false");
+
+    tabs[2]!.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true }));
+    expect(document.activeElement).toBe(tabs[0]);
+    expect(tabs[0]!.getAttribute("aria-selected")).toBe("true");
+    tabs[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "End", bubbles: true }));
+    expect(document.activeElement).toBe(tabs[2]);
+  });
+
   it("keeps spoiler notes concealed in details until explicitly opened", async () => {
     app = createReaderApp(root, { fetcher: mockedFetcher(), window });
     await app.ready;
@@ -479,6 +538,25 @@ function mockedFetcher() {
     if (!workId || !file) return new Response("missing", { status: 404 });
     const number = Number(file);
     return jsonResponse(fixtureBook(workId as "iliad" | "odyssey", number));
+  });
+}
+
+function twoUnitFetcher(workId: "iliad" | "odyssey" = "iliad") {
+  const book = fixtureBook(workId);
+  const catalog = structuredClone(fixtureCatalog);
+  catalog.works.find((work) => work.id === workId)!.books[0]!.unitCount = 2;
+  const first = book.units[0]!;
+  book.units.push({
+    ...first,
+    id: `${workId}-01-0002`,
+    reference: "Book 1, paragraph 2",
+    en: "The second passage.",
+    ja: "第二の段落です。",
+    notes: [],
+  });
+  return vi.fn(async (input: RequestInfo | URL) => {
+    if (String(input).endsWith("catalog.json")) return jsonResponse(catalog);
+    return jsonResponse(book);
   });
 }
 

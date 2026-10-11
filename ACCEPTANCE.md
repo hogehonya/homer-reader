@@ -24,6 +24,7 @@ Issue #1の完了条件のうち、commit、PR、別Agentの監査は本リポ�
 - [x] D7: U5の実装・公開依頼をIssue #3/#4、S1〜S18、PLANの統合・公開工程へ追跡できる。
 - [x] D8: U6の先行計画依頼をPLAN step 0と後続工程の役割・依存・証拠へ追跡できる。
 - [x] D9: U7の公開先意図を、SPEC §5.1とPLANのGitea/固定URL公開工程へ追跡できる。固定URLでHTTP 200を確認し、配信hash一致を検証済み。
+- [x] D10: U13の表示改善・対象作品・タブ要求をSPEC §5.1のR20〜R22とIssue #16のT1〜T7へ追跡し、巻全体の連続表示等の採用詳細をAgent具体化として区別する。
 
 ## Issue #9 注釈の日英対応
 
@@ -71,6 +72,18 @@ R18・R19の追加受入条件です。Giteaソースと`homer-reader.honya.dev`
 - [ ] P4: `/homer-reader/`でhash route、data、audio samples、IBM Plex Sans JP fontを正しく取得し、root base `/`でも既存のローカル配信動作を維持する。
 - [ ] P5: 配信後にGitHub Pages URLのHTTP応答と公開画面を確認し、CI・対象commit・主要assetの実測をIssue #15へ記録する。
 
+## Issue #16 連続読書とタブ
+
+U13 / R20〜R22を実装する追加条件です。3つの表示モードと巻全体の連続表示は親Agentが具体化した設計です。両作品の本文データは変更しません。
+
+- [ ] T1: 各巻に「対訳」「英語」「日本語」の3タブがあり、初期表示は対訳。選択タブとtabpanelの関係をrole・`aria-selected`・`aria-controls`等で伝える。
+- [ ] T2: タブ切替で巻全体の表示言語が変わり、選択外の言語本文と注釈領域が非表示になる。表示本文の順序・文字列・対訳単位との対応は元データと一致する。
+- [ ] T3: タブを矢印キー、Home、Endで操作できる。選択外になった言語のSpeechSynthesisを停止する。
+- [ ] T4: 段落ごとの大きなカード枠・余白を外し、同じ対訳単位の本文と既存の注釈detailsを連続して読める。ネタバレ開閉・出典・各巻への直接リンクを保つ。
+- [ ] T5: 共通readerがイリアス・オデュッセイア双方で動作し、既存の音声サンプル比較画面と音声再生制御を維持する。
+- [ ] T6: 320px幅でも本文やtablistが横にはみ出さず、フォーカスと操作状態が確認できる。日本語書体はIBM Plex Sans JP。
+- [ ] T7: UI tests、typecheck、build、Python content tests、音声validator、Node/Python strict 48巻validatorに成功し、実画面QAの証拠をIssue #16完了記録へ残す。
+
 ## SPA（2026-10-10検証）
 
 以下は観察可能な受入条件です。合格は条件ごとにUI fixture、content gate、公開hash、または実画面の証拠を付けて記録し、証拠が不足する項目は未チェックのままにします。
@@ -94,7 +107,7 @@ R18・R19の追加受入条件です。Giteaソースと`homer-reader.honya.dev`
 - [x] S17: 全対訳単位に非空の英文・日本語訳があり、対応未確定が0件である。日本語訳の省略・取り違えを本文と照合した方法・範囲・結果を記録し、検出した問題を解消している（R4、R8、A1）。strict content gateが全2,140単位の形状・空欄を検査。98 distinct units / 11,718語と別途1単位を抜取照合し、6件の限定修正と棄却理由を[CONTENT.md](CONTENT.md)に記録。全文の人手校閲ではない。
 - [x] S18: 作品・巻の切替と戻る・進む操作が、ページ全体の再読込を伴わずに動作する（R5）。`src/app.test.ts`のhashchange・back/forward fixtureでroute transitionと表示更新を検証。WebKitGTKでもカタログ→Iliad 1→カタログ→Odyssey 1の遷移で`performance.timeOrigin`が同一であり、ページ再読込なしを確認。
 
-しおり・続きから読む・表示言語切替・テーマ切替は未採用の提案です。採用する場合はSPEC.mdの提案区分と受入条件を同時に更新します。
+しおり・続きから読む・テーマ切替は未採用の提案です。表示言語切替はU13を受けたIssue #16のT1〜T7で受け入れます。その他の提案を採用する場合はSPEC.mdの区分と受入条件を同時に更新します。
 
 ## 追跡表
 
@@ -112,5 +125,6 @@ Issue #1のU1〜U4から要求ID・条件IDへの対応と、後続U5〜U7の実
 | U8 注釈を英語と日本語で表示 | R15 | N1〜N7、PLAN Issue #9工程 |
 | U11 hogehonyaで公開 | R18 | P1〜P3、PLAN Issue #15工程 |
 | U12 GitHub Pagesで公開 | R19 | P3〜P5、PLAN Issue #15工程 |
+| U13 段落表示の見直し・イリアスにも適用・タブ採用 | R20〜R22 | T1〜T7、Issue #16の実装・公開QA工程 |
 
 Agentが本Issueで具体化した要件（R7〜R14）は、SPEC.mdの5.2の出所と、各条件に併記した要求IDに対応します。
