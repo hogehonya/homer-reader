@@ -1,8 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createReaderApp, type ReaderApp } from "./app";
-import { fixtureBook, fixtureCatalog, fixtureVoiceManifest } from "./fixtures";
-import type { SpeechSynthesisPort } from "./speech";
+import { fixtureBook, fixtureCatalog } from "./fixtures";
 
 describe("reader app", () => {
   let root: HTMLElement;
@@ -33,9 +32,9 @@ describe("reader app", () => {
     expect(root.querySelector(".unit__english")?.textContent).toBe("Sing, goddess.");
     expect(root.querySelector(".translation--english")?.getAttribute("lang")).toBe("en");
     expect(root.querySelector(".unit__japanese")?.textContent).toBe("女神よ、歌いたまえ。");
-    expect(root.querySelector(".unit__notes")?.getAttribute("aria-label")).toBe("解説");
+    expect(root.querySelector(".reference-toolbar")).not.toBeNull();
     expect(root.querySelector("script")).toBeNull();
-    expect(root.querySelector(".note__body")?.textContent).not.toContain("bad()");
+    expect(root.querySelector(".unit__notes")).toBeNull();
 
     const edition = root.querySelector<HTMLDetailsElement>(".edition-details")!;
     expect(edition.open).toBe(false);
@@ -72,28 +71,36 @@ describe("reader app", () => {
     expect(headings.hidden).toBe(false);
   });
 
-  it("offers edition details before reading and preserves the mode, passages, and speech on disclosure", async () => {
-    const speech = speechHarness();
-    app = createReaderApp(root, { fetcher: twoUnitFetcher(), window, ...speech.options });
+  it("offers edition details before reading and preserves the mode and passage on disclosure", async () => {
+    app = createReaderApp(root, { fetcher: twoUnitFetcher(), window });
     await app.ready;
     await vi.waitFor(() => expect(root.querySelector(".unit")).not.toBeNull());
     const edition = root.querySelector<HTMLDetailsElement>(".edition-details")!;
     const panel = root.querySelector<HTMLElement>(".reading-panel")!;
     expect(edition.compareDocumentPosition(panel) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(edition.querySelector("summary")?.textContent).toBe("版・出典・翻訳について");
     expect(edition.open).toBe(false);
-    root.querySelector<HTMLButtonElement>("[role='tab'][data-reading-mode='japanese']")!.click();
-    const passage = root.querySelector(".unit__japanese")!;
-    const control = root.querySelector<HTMLButtonElement>("[data-speech-target='unit:iliad-01-0001:ja']")!;
-    control.click();
-    for (const open of [true, false]) {
-      edition.open = open;
-      edition.dispatchEvent(new Event("toggle"));
-      expect(panel.dataset.readingMode).toBe("japanese");
-      expect(root.querySelector(".unit__japanese")).toBe(passage);
-      expect(control.getAttribute("aria-pressed")).toBe("true");
-    }
-    expect(speech.engine.cancel).not.toHaveBeenCalled();
+    root.querySelector<HTMLButtonElement>("[data-reading-mode='japanese']")!.click();
+    const passage = root.querySelector(".unit__japanese");
+    edition.open = true;
+    edition.dispatchEvent(new Event("toggle"));
+    expect(panel.dataset.readingMode).toBe("japanese");
+    expect(root.querySelector(".unit__japanese")).toBe(passage);
+  });
+
+  it("supports roving keyboard controls for the three reader tabs", async () => {
+    window.history.replaceState({}, "", "/#/odyssey/1");
+    app = createReaderApp(root, { fetcher: twoUnitFetcher("odyssey"), window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector("[role='tablist']")).not.toBeNull());
+    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[role='tab']")];
+    tabs[1]!.focus();
+    tabs[1]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+    expect(document.activeElement).toBe(tabs[2]);
+    expect(tabs[2]!.getAttribute("aria-selected")).toBe("true");
+    tabs[2]!.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true }));
+    expect(document.activeElement).toBe(tabs[0]);
+    tabs[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "End", bubbles: true }));
+    expect(document.activeElement).toBe(tabs[2]);
   });
 
   it("switches every passage and note locale across bilingual, English, and Japanese tabs", async () => {
@@ -115,124 +122,26 @@ describe("reader app", () => {
     expect(tabs[2]!.getAttribute("aria-selected")).toBe("true");
     expect(root.querySelectorAll(".translation--english[hidden]")).toHaveLength(2);
     expect(root.querySelectorAll(".translation--japanese:not([hidden])")).toHaveLength(2);
-    expect(root.querySelectorAll(".note__locale--english[hidden]")).toHaveLength(2);
-    expect(root.querySelectorAll(".note__locale--japanese:not([hidden])")).toHaveLength(2);
-    expect(root.querySelectorAll(".note__separator[hidden]")).not.toHaveLength(0);
     expect(root.querySelector("#iliad-01-0002 .unit__english")?.textContent).toBe("The second passage.");
+
+    root.querySelector<HTMLButtonElement>('[data-reference-open="notes"]')!.click();
+    const notesDialog = root.querySelector<HTMLDialogElement>('[data-reference-panel="notes"]')!;
+    expect(notesDialog.querySelector(".note__locale--english")?.hasAttribute("hidden")).toBe(true);
+    expect(notesDialog.querySelector(".note__locale--japanese")?.hasAttribute("hidden")).toBe(false);
 
     tabs[1]!.click();
     expect(root.querySelectorAll(".translation--english:not([hidden])")).toHaveLength(2);
     expect(root.querySelectorAll(".translation--japanese[hidden]")).toHaveLength(2);
-    expect(root.querySelectorAll(".note__locale--english:not([hidden])")).toHaveLength(2);
-    expect(root.querySelectorAll(".note__locale--japanese[hidden]")).toHaveLength(2);
-  });
-
-  it("supports roving tab keyboard controls and stops speech hidden by a language tab", async () => {
-    window.history.replaceState({}, "", "/#/odyssey/1");
-    const speech = speechHarness();
-    app = createReaderApp(root, { fetcher: twoUnitFetcher("odyssey"), window, ...speech.options });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelector("[role='tablist']")).not.toBeNull());
-
-    const tabs = [...root.querySelectorAll<HTMLButtonElement>("[role='tab']")];
-    expect(root.querySelector("[data-view='reader']")).not.toBeNull();
-    expect(root.querySelector("#odyssey-01-0002")).not.toBeNull();
-    tabs[1]!.focus();
-    tabs[1]!.click();
-    root.querySelector<HTMLButtonElement>("[data-speech-target='unit:odyssey-01-0001:en']")!.click();
-    expect(speech.utterances[0]?.text).toBe("Sing, goddess.");
-
-    tabs[1]!.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
-    expect(document.activeElement).toBe(tabs[2]);
-    expect(tabs[2]!.getAttribute("aria-selected")).toBe("true");
-    expect(speech.engine.cancel).toHaveBeenCalledTimes(1);
-    expect(root.querySelector<HTMLButtonElement>("[data-speech-target='unit:odyssey-01-0001:en']")?.getAttribute("aria-pressed")).toBe("false");
-
-    tabs[2]!.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true }));
-    expect(document.activeElement).toBe(tabs[0]);
-    expect(tabs[0]!.getAttribute("aria-selected")).toBe("true");
-    expect(tabs.every((tab) => tab.classList.contains("reading-tab"))).toBe(true);
-    tabs[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "End", bubbles: true }));
-    expect(document.activeElement).toBe(tabs[2]);
-  });
-
-  it("keeps English passage and note speech controls visible in the English tab", async () => {
-    const speech = speechHarness();
-    app = createReaderApp(root, { fetcher: mockedFetcher(), window, ...speech.options });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelector("[role='tablist']")).not.toBeNull());
-    root.querySelector<HTMLButtonElement>("[data-reading-mode='english'][role='tab']")!.click();
-    const note = root.querySelector<HTMLDetailsElement>('details[data-spoiler="false"]')!;
-    note.open = true;
-    for (const target of ["unit:iliad-01-0001:en", "note:iliad-01-0001:0:en"]) {
-      const control = root.querySelector<HTMLButtonElement>(`[data-speech-target='${target}']`)!;
-      const status = root.querySelector<HTMLElement>(`[data-speech-status='${target}']`)!;
-      expect(control.closest("[hidden]")).toBeNull();
-      expect(status.closest("[hidden]")).toBeNull();
-      expect(control.lang).toBe("ja");
-      control.focus();
-      control.click();
-      expect(control.getAttribute("aria-pressed")).toBe("true");
-      expect(status.textContent).toContain("読み上げ中");
-      expect(document.activeElement).toBe(control);
-      control.click();
-      expect(control.getAttribute("aria-pressed")).toBe("false");
-    }
-  });
-
-  it("names speech targets and retains focus through start, failure, retry, and stop", async () => {
-    const speech = speechHarness();
-    app = createReaderApp(root, { fetcher: twoUnitFetcher(), window, ...speech.options });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelectorAll(".unit")).toHaveLength(2));
-    const control = root.querySelector<HTMLButtonElement>("[data-speech-target='unit:iliad-01-0002:en']")!;
-    const noteControl = root.querySelector<HTMLButtonElement>("[data-speech-target='note:iliad-01-0001:0:en']")!;
-    expect(control.getAttribute("aria-label")).toBe("Book 1, paragraph 2：英語を読み上げる");
-    expect(noteControl.getAttribute("aria-label")).toContain("Poetic invocation");
-    control.focus();
-    control.click();
-    expect(control.getAttribute("aria-label")).toBe("Book 1, paragraph 2：英語の読み上げを停止");
-    expect(document.activeElement).toBe(control);
-    speech.utterances[0]!.onerror!({ error: "network" });
-    expect(root.querySelector("[data-speech-status='unit:iliad-01-0002:en']")!.textContent).toContain("もう一度");
-    expect(control.getAttribute("aria-label")).toContain("英語を読み上げる");
-    expect(document.activeElement).toBe(control);
-    control.click();
-    expect(speech.utterances).toHaveLength(2);
-    control.click();
-    expect(control.getAttribute("aria-pressed")).toBe("false");
-    expect(document.activeElement).toBe(control);
-  });
-
-  it("distinguishes same-title notes by their passage without adding that reference to speech", async () => {
-    const book = fixtureBook();
-    const first = book.units[0]!;
-    book.units.push({ ...first, id: "iliad-01-0002", reference: "Book 1, paragraph 2" });
-    const catalog = structuredClone(fixtureCatalog);
-    catalog.works[0]!.books[0]!.unitCount = 2;
-    const speech = speechHarness();
-    app = createReaderApp(root, {
-      fetcher: async (input) => jsonResponse(String(input).endsWith("catalog.json") ? catalog : book),
-      window, ...speech.options,
-    });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelectorAll(".unit")).toHaveLength(2));
-    const controls = ["iliad-01-0001", "iliad-01-0002"].map((id) =>
-      root.querySelector<HTMLButtonElement>(`[data-speech-target='note:${id}:0:en']`)!,
-    );
-    expect(controls[0]!.getAttribute("aria-label")).toBe("Book 1, paragraph 1・Poetic invocation：英語を読み上げる");
-    expect(controls[1]!.getAttribute("aria-label")).toBe("Book 1, paragraph 2・Poetic invocation：英語を読み上げる");
-    controls[1]!.closest<HTMLDetailsElement>("details")!.open = true;
-    controls[1]!.click();
-    expect(speech.utterances[0]!.text).toBe("Poetic invocation. The poet calls upon the goddess to begin the tale.");
-    expect(controls[1]!.getAttribute("aria-label")).toBe("Book 1, paragraph 2・Poetic invocation：英語の読み上げを停止");
+    expect(notesDialog.querySelector(".note__locale--english")?.hasAttribute("hidden")).toBe(false);
+    expect(notesDialog.querySelector(".note__locale--japanese")?.hasAttribute("hidden")).toBe(true);
   });
 
   it("provides a non-color disclosure cue and keeps the native note and focus on close", async () => {
     app = createReaderApp(root, { fetcher: mockedFetcher(), window });
     await app.ready;
-    await vi.waitFor(() => expect(root.querySelector(".note__summary")).not.toBeNull());
-    const note = root.querySelector<HTMLDetailsElement>('details[data-spoiler="false"]')!;
+    await vi.waitFor(() => expect(root.querySelector(".unit")).not.toBeNull());
+    root.querySelector<HTMLButtonElement>('[data-reference-open="notes"]')!.click();
+    const note = root.querySelector<HTMLDetailsElement>('.reference-note[data-spoiler="false"] details')!;
     const summary = note.querySelector<HTMLElement>("summary")!;
     const cue = summary.querySelector<HTMLElement>(".note__disclosure-icon")!;
     expect(cue).not.toBeNull();
@@ -253,8 +162,9 @@ describe("reader app", () => {
   it("keeps spoiler notes concealed in details until explicitly opened", async () => {
     app = createReaderApp(root, { fetcher: mockedFetcher(), window });
     await app.ready;
-    await vi.waitFor(() => expect(root.querySelector("[data-spoiler='true']")).not.toBeNull());
-    const spoiler = root.querySelector<HTMLDetailsElement>('details[data-spoiler="true"]')!;
+    await vi.waitFor(() => expect(root.querySelector(".unit")).not.toBeNull());
+    root.querySelector<HTMLButtonElement>('[data-reference-open="notes"]')!.click();
+    const spoiler = root.querySelector<HTMLDetailsElement>('.reference-note[data-spoiler="true"] details')!;
     const body = spoiler.querySelector<HTMLElement>(".note__body")!;
 
     expect(spoiler.open).toBe(false);
@@ -270,12 +180,12 @@ describe("reader app", () => {
   it("renders bilingual note labels, titles, and bodies with language metadata", async () => {
     app = createReaderApp(root, { fetcher: mockedFetcher(), window });
     await app.ready;
-    await vi.waitFor(() => expect(root.querySelector(".note")).not.toBeNull());
+    await vi.waitFor(() => expect(root.querySelector(".unit")).not.toBeNull());
+    root.querySelector<HTMLButtonElement>('[data-reference-open="notes"]')!.click();
 
-    const note = root.querySelector<HTMLElement>("details[data-spoiler='false']")!;
+    const note = root.querySelector<HTMLDetailsElement>(".reference-note[data-spoiler='false'] details")!;
     const summary = note.querySelector("summary")!;
-    expect(summary.querySelector(".note__kind [lang='en']")?.textContent).toBe("Person");
-    expect(summary.querySelector(".note__kind [lang='ja']")?.textContent).toBe("人物");
+    expect(summary.querySelector(".note__kind")?.textContent).toBe("Person / 人物");
     expect(summary.querySelector(".note__title [lang='en']")?.textContent).toBe("Poetic invocation");
     expect(summary.querySelector(".note__title [lang='ja']")?.textContent).toBe("詩の呼びかけ");
 
@@ -291,20 +201,20 @@ describe("reader app", () => {
   it("keeps both spoiler note titles and bodies inside the closed disclosure", async () => {
     app = createReaderApp(root, { fetcher: mockedFetcher(), window });
     await app.ready;
-    await vi.waitFor(() => expect(root.querySelector("details[data-spoiler='true']")).not.toBeNull());
+    await vi.waitFor(() => expect(root.querySelector(".unit")).not.toBeNull());
+    root.querySelector<HTMLButtonElement>('[data-reference-open="notes"]')!.click();
 
-    const spoiler = root.querySelector<HTMLDetailsElement>('details[data-spoiler="true"]')!;
+    const spoiler = root.querySelector<HTMLDetailsElement>('.reference-note[data-spoiler="true"] details')!;
     const summary = spoiler.querySelector("summary")!;
     expect(spoiler.open).toBe(false);
-    expect(summary.querySelector(".note__spoiler-label [lang='en']")?.textContent).toBe("Spoiler");
-    expect(summary.querySelector(".note__spoiler-label [lang='ja']")?.textContent).toBe("ネタバレを含む解説");
+    expect(summary.querySelector(".note__spoiler-label")?.textContent).toBe("Spoiler / ネタバレを含む解説");
     expect(summary.textContent).not.toContain("Foreshadowing Patroclus's death");
     expect(summary.textContent).not.toContain("パトロクロスの死の伏線");
 
     const english = spoiler.querySelector<HTMLElement>(".note__locale--english")!;
     const japanese = spoiler.querySelector<HTMLElement>(".note__locale--japanese")!;
-    expect(english.querySelector("h5")?.textContent).toBe("Foreshadowing Patroclus's death");
-    expect(japanese.querySelector("h5")?.textContent).toBe("パトロクロスの死の伏線");
+    expect(english.querySelector(".note__locale-title")?.textContent).toBe("Foreshadowing Patroclus's death");
+    expect(japanese.querySelector(".note__locale-title")?.textContent).toBe("パトロクロスの死の伏線");
     expect(english.querySelector("p")?.textContent).toBe("<script>bad()</script>");
     expect(japanese.querySelector("p")?.textContent).toBe("<script>bad()</script>");
     expect(spoiler.querySelector("script, img, iframe")).toBeNull();
@@ -419,104 +329,6 @@ describe("reader app", () => {
     expect(card.textContent).toContain("短い背景説明を生成");
   });
 
-  it("opens the voice comparison directly and shows the shared bilingual source and native controls", async () => {
-    window.history.replaceState({}, "", "/#/voices");
-    const fetcher = voiceMockedFetcher();
-    app = createReaderApp(root, { fetcher, window });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelectorAll(".voice-sample-card")).toHaveLength(4));
-
-    expect(window.location.hash).toBe("#/voices");
-    expect(fetcher).toHaveBeenCalledWith("/audio-samples/manifest.json");
-    expect(root.querySelector("[data-view='voices'] h1")?.textContent).toBe("音声を聴き比べる");
-    expect(root.querySelector(".voice-source--english")?.textContent).toContain("Shared English sample.");
-    expect(root.querySelector(".voice-source--japanese")?.textContent).toContain("共通の日本語サンプル。");
-    expect(root.querySelector(".voice-provider")?.textContent).toContain("Microsoft Edge online TTS");
-    expect(root.querySelector("[data-voice-sample='en-ava']")?.textContent).toContain("en-US-AvaMultilingualNeural");
-
-    const audios = root.querySelectorAll<HTMLAudioElement>(".voice-sample-card audio");
-    expect(audios).toHaveLength(4);
-    const ava = root.querySelector<HTMLAudioElement>("[data-voice-sample='en-ava'] audio")!;
-    expect(ava.controls).toBe(true);
-    expect(ava.preload).toBe("none");
-    expect(ava.hasAttribute("autoplay")).toBe(false);
-    expect(ava.getAttribute("src")).toBe("/audio-samples/en-ava.mp3");
-    expect(root.querySelector("[data-voice-entry]")?.getAttribute("href")).toBe("#/voices");
-  });
-
-  it("allows one sample at a time and stops all samples on pagehide and route change", async () => {
-    window.history.replaceState({}, "", "/#/voices");
-    const fetcher = voiceMockedFetcher();
-    app = createReaderApp(root, { fetcher, window });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelectorAll(".voice-sample-card audio")).toHaveLength(4));
-
-    const paused = new Set<HTMLMediaElement>();
-    const pause = vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(function (this: HTMLMediaElement) {
-      paused.add(this);
-    });
-    const audio = (id: string) => root.querySelector<HTMLAudioElement>(`[data-voice-sample='${id}'] audio`)!;
-    const ava = audio("en-ava");
-    const andrew = audio("en-andrew");
-    const nanami = audio("ja-nanami");
-    const keita = audio("ja-keita");
-    ava.dispatchEvent(new Event("play"));
-    paused.clear();
-    andrew.dispatchEvent(new Event("play"));
-    andrew.dispatchEvent(new Event("playing"));
-    expect(paused.has(ava)).toBe(true);
-    expect(paused.has(andrew)).toBe(false);
-    expect(root.querySelector<HTMLElement>("[data-audio-status='en-andrew']")?.textContent).toContain("再生中");
-
-    nanami.dispatchEvent(new Event("error"));
-    expect(root.querySelector<HTMLElement>("[data-audio-status='ja-nanami']")?.textContent).toContain("再度お試し");
-
-    window.dispatchEvent(new Event("pagehide"));
-    expect(paused.has(andrew)).toBe(true);
-    expect(paused.has(nanami)).toBe(true);
-
-    paused.clear();
-    keita.dispatchEvent(new Event("play"));
-    window.location.hash = "#/";
-    window.dispatchEvent(new Event("hashchange"));
-    expect(paused.has(keita)).toBe(true);
-  });
-
-  it("renders manifest text as text rather than markup", async () => {
-    window.history.replaceState({}, "", "/#/voices");
-    const manifest = structuredClone(fixtureVoiceManifest);
-    manifest.texts.en = "<img src=x onerror=alert(1)>";
-    app = createReaderApp(root, { fetcher: voiceMockedFetcher(manifest), window });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelector(".voice-source--english")).not.toBeNull());
-
-    expect(root.querySelector(".voice-source--english")?.textContent).toBe("<img src=x onerror=alert(1)>");
-    expect(root.querySelector(".voice-source--english img")).toBeNull();
-  });
-
-  it("reports a missing manifest with a retry path rather than inventing samples", async () => {
-    window.history.replaceState({}, "", "/#/voices");
-    let attempts = 0;
-    const fetcher = vi.fn(async (input: RequestInfo | URL) => {
-      if (String(input).endsWith("catalog.json")) return jsonResponse(fixtureCatalog);
-      if (String(input).endsWith("manifest.json")) {
-        attempts += 1;
-        return attempts === 1 ? new Response("missing", { status: 404 }) : jsonResponse(fixtureVoiceManifest);
-      }
-      return jsonResponse(fixtureBook());
-    });
-    app = createReaderApp(root, { fetcher, window });
-    await app.ready;
-    await vi.waitFor(() => expect(root.textContent).toContain("試聴データを読み込めませんでした"));
-    await new Promise((resolve) => window.setTimeout(resolve, 0));
-    expect(root.querySelector(".voice-sample-card")).toBeNull();
-    const attemptsBeforeRetry = attempts;
-
-    root.querySelector<HTMLButtonElement>("[data-action='voice-retry']")!.click();
-    await vi.waitFor(() => expect(root.querySelectorAll(".voice-sample-card")).toHaveLength(4));
-    expect(attempts).toBeGreaterThan(attemptsBeforeRetry);
-  });
-
   it("renders the next-volume control at the end of the reading page", async () => {
     window.history.replaceState({}, "", "/#/iliad/1");
     app = createReaderApp(root, { fetcher: mockedFetcher(), window });
@@ -590,90 +402,6 @@ describe("reader app", () => {
     expect(attempts).toBe(2);
   });
 
-  it("adds full-text English and Japanese speech controls and keeps only one target active", async () => {
-    const speech = speechHarness();
-    window.history.replaceState({}, "", "/#/iliad/1");
-    app = createReaderApp(root, { fetcher: mockedFetcher(), window, ...speech.options });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelector(".unit__english")).not.toBeNull());
-
-    const speechButtons = root.querySelectorAll<HTMLButtonElement>("[data-speech-target^='unit:iliad-01-0001']");
-    const englishButton = speechButtons[0]!;
-    const japaneseButton = speechButtons[1]!;
-    englishButton.click();
-    expect(speech.utterances[0]?.text).toBe("Sing, goddess.");
-    expect(speech.utterances[0]?.lang).toBe("en-US");
-    expect(englishButton.getAttribute("aria-pressed")).toBe("true");
-    expect(englishButton.lang).toBe("ja");
-    expect(englishButton.textContent).toBe("英語の読み上げを停止");
-
-    japaneseButton.click();
-    expect(speech.engine.cancel).toHaveBeenCalledTimes(1);
-    expect(speech.utterances[1]?.text).toBe("女神よ、歌いたまえ。");
-    expect(speech.utterances[1]?.lang).toBe("ja-JP");
-    expect(englishButton.getAttribute("aria-pressed")).toBe("false");
-    expect(englishButton.textContent).toBe("英語を読み上げる");
-    expect(japaneseButton.getAttribute("aria-pressed")).toBe("true");
-  });
-
-  it("speaks notes only while their own disclosure is open and stops when it closes", async () => {
-    const speech = speechHarness();
-    app = createReaderApp(root, { fetcher: mockedFetcher(), window, ...speech.options });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelector(".note")).not.toBeNull());
-    const note = root.querySelector<HTMLDetailsElement>('details[data-spoiler="false"]')!;
-    const button = note.querySelector<HTMLButtonElement>('.note__locale--english [data-speech-target]')!;
-
-    button.click();
-    expect(speech.engine.speak).not.toHaveBeenCalled();
-
-    note.open = true;
-    note.dispatchEvent(new Event("toggle"));
-    button.click();
-    expect(speech.utterances[0]?.text).toBe("Poetic invocation. The poet calls upon the goddess to begin the tale.");
-    expect(speech.utterances[0]?.lang).toBe("en-US");
-
-    const japaneseButton = note.querySelector<HTMLButtonElement>('.note__locale--japanese [data-speech-target]')!;
-    japaneseButton.click();
-    expect(speech.engine.cancel).toHaveBeenCalledTimes(1);
-    expect(speech.utterances[1]?.text).toBe("詩の呼びかけ。詩人が物語を始めるための言葉です。");
-    expect(speech.utterances[1]?.lang).toBe("ja-JP");
-
-    note.open = false;
-    note.dispatchEvent(new Event("toggle"));
-    expect(speech.engine.cancel).toHaveBeenCalledTimes(2);
-    expect(japaneseButton.getAttribute("aria-pressed")).toBe("false");
-  });
-
-  it.each(["hashchange", "pagehide"])("stops speech on %s", async (eventName) => {
-    const speech = speechHarness();
-    app = createReaderApp(root, { fetcher: mockedFetcher(), window, ...speech.options });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelector("[data-speech-target]")).not.toBeNull());
-    root.querySelector<HTMLButtonElement>("[data-speech-target]")!.click();
-    window.dispatchEvent(new Event(eventName));
-    expect(speech.engine.cancel).toHaveBeenCalledTimes(1);
-  });
-
-  it("stops speech when the app is destroyed", async () => {
-    const speech = speechHarness();
-    app = createReaderApp(root, { fetcher: mockedFetcher(), window, ...speech.options });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelector("[data-speech-target]")).not.toBeNull());
-    root.querySelector<HTMLButtonElement>("[data-speech-target]")!.click();
-    app.destroy();
-    expect(speech.engine.cancel).toHaveBeenCalledTimes(1);
-    app = undefined;
-  });
-
-  it("explains unavailable speech without hiding reader text", async () => {
-    app = createReaderApp(root, { fetcher: mockedFetcher(), window, speechSynthesis: null });
-    await app.ready;
-    await vi.waitFor(() => expect(root.querySelector(".unit__english")).not.toBeNull());
-    root.querySelector<HTMLButtonElement>("[data-speech-target]")!.click();
-    expect(root.querySelector(".unit__english")?.textContent).toBe("Sing, goddess.");
-    expect(root.querySelector('[role="status"]')?.textContent).toContain("対応していません");
-  });
 });
 
 function mockedFetcher() {
@@ -706,31 +434,9 @@ function twoUnitFetcher(workId: "iliad" | "odyssey" = "iliad") {
   });
 }
 
-function voiceMockedFetcher(manifest = fixtureVoiceManifest) {
-  return vi.fn(async (input: RequestInfo | URL) => {
-    const url = String(input);
-    if (url.endsWith("catalog.json")) return jsonResponse(fixtureCatalog);
-    if (url.endsWith("audio-samples/manifest.json")) return jsonResponse(manifest);
-    const [, workId, file] = url.match(/data\/(iliad|odyssey)\/(\d+)\.json$/) ?? [];
-    if (!workId || !file) return new Response("missing", { status: 404 });
-    return jsonResponse(fixtureBook(workId as "iliad" | "odyssey", Number(file)));
-  });
-}
-
 function jsonResponse(value: unknown) {
   return new Response(JSON.stringify(value), {
     status: 200,
     headers: { "Content-Type": "application/json" },
   });
-}
-
-function speechHarness() {
-  const utterances: Array<{ text: string; lang: string; onend: (() => void) | null; onerror: ((event: { error: string }) => void) | null }> = [];
-  const engine: SpeechSynthesisPort = { speak: vi.fn(), cancel: vi.fn() };
-  const speechUtteranceFactory = vi.fn((text: string) => {
-    const utterance = { text, lang: "", onend: null, onerror: null };
-    utterances.push(utterance);
-    return utterance as unknown as SpeechSynthesisUtterance;
-  });
-  return { options: { speechSynthesis: engine, speechUtteranceFactory }, engine, utterances };
 }

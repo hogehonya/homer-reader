@@ -1,4 +1,4 @@
-import type { BookData, Catalog, VoiceSampleManifest } from "./data-contract";
+import type { BookData, Catalog } from "./data-contract";
 
 export const fixtureCatalog: Catalog = {
   version: 1,
@@ -60,20 +60,6 @@ export const fixtureCatalog: Catalog = {
         alignment: { method: "英訳の段落単位", scope: "この試験データ1件" },
       },
     },
-  ],
-};
-
-export const fixtureVoiceManifest: VoiceSampleManifest = {
-  schema: "homer-voice-samples-v1",
-  generatedAt: "2026-10-11T08:24:51+00:00",
-  provider: "Microsoft Edge online TTS (edge-tts)",
-  source: { workId: "iliad", bookNumber: 1, unitId: "iliad-01-0001", reference: "Butler Iliad 1, paragraph 1" },
-  texts: { en: "Shared English sample.", ja: "共通の日本語サンプル。" },
-  samples: [
-    { id: "en-ava", language: "en", label: "Ava", voice: "en-US-AvaMultilingualNeural", rate: "+0%", src: "audio-samples/en-ava.mp3", textSha256: "a".repeat(64), audioSha256: "1".repeat(64), durationSeconds: 23.592 },
-    { id: "en-andrew", language: "en", label: "Andrew", voice: "en-US-AndrewMultilingualNeural", rate: "+0%", src: "audio-samples/en-andrew.mp3", textSha256: "a".repeat(64), audioSha256: "2".repeat(64), durationSeconds: 24.648 },
-    { id: "ja-nanami", language: "ja", label: "Nanami", voice: "ja-JP-NanamiNeural", rate: "+0%", src: "audio-samples/ja-nanami.mp3", textSha256: "b".repeat(64), audioSha256: "3".repeat(64), durationSeconds: 28.752 },
-    { id: "ja-keita", language: "ja", label: "Keita", voice: "ja-JP-KeitaNeural", rate: "+0%", src: "audio-samples/ja-keita.mp3", textSha256: "b".repeat(64), audioSha256: "4".repeat(64), durationSeconds: 24.912 },
   ],
 };
 

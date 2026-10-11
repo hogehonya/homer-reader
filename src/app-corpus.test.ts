@@ -11,7 +11,7 @@ function readData(path: string): unknown {
   return JSON.parse(corpusFiles[`../public/${path}`]!);
 }
 
-describe("published corpus in the reader DOM", () => {
+describe("published corpus in the reader and reference panels", () => {
   let app: ReaderApp | undefined;
   afterEach(() => {
     app?.destroy();
@@ -19,7 +19,7 @@ describe("published corpus in the reader DOM", () => {
     document.body.replaceChildren();
   });
 
-  it.each(books)("preserves $work.id book $book.number across all three reading tabs", async ({ work, book }) => {
+  it.each(books)("preserves all $work.id book $book.number passages and notes in the reader DOM", async ({ work, book }) => {
     const data = parseBook(readData(book.dataFile), {
       workId: work.id, bookNumber: book.number, unitCount: book.unitCount,
     });
@@ -29,52 +29,48 @@ describe("published corpus in the reader DOM", () => {
     const fetcher = async (input: RequestInfo | URL) => new Response(JSON.stringify(
       String(input).endsWith("catalog.json") ? catalog : data,
     ));
-    app = createReaderApp(root, { fetcher, window, speechSynthesis: null });
+    app = createReaderApp(root, { fetcher, window });
     await app.ready;
     await vi.waitFor(() => expect(root.querySelectorAll(".unit")).toHaveLength(data.units.length));
 
-    const originalNodes = [...root.querySelectorAll<HTMLElement>(".unit")];
-    const expected = data.units.map((unit) => ({
+    expect([...root.querySelectorAll<HTMLElement>(".unit")].map((unit) => ({
       id: unit.id,
-      reference: unit.reference,
-      en: unit.en,
-      ja: unit.ja,
-      notes: unit.notes.map((note) => ({
-        spoiler: String(note.spoiler),
-        titleEn: note.titleEn,
-        title: note.title,
-        bodyEn: note.bodyEn,
-        body: note.body,
-        sourceUrl: note.sourceUrl ?? null,
-      })),
-    }));
+      en: unit.querySelector(".unit__english")!.textContent,
+      ja: unit.querySelector(".unit__japanese")!.textContent,
+    }))).toEqual(data.units.map((unit) => ({ id: unit.id, en: unit.en, ja: unit.ja })));
+    expect(root.querySelector(".unit__notes")).toBeNull();
 
-    for (const mode of ["bilingual", "english", "japanese"]) {
+    root.querySelector<HTMLButtonElement>('[data-reference-open="notes"]')!.click();
+    const entries = [...root.querySelectorAll<HTMLElement>(".reference-note")];
+    const notes = data.units.flatMap((unit) => unit.notes.map((note) => ({ unit, note })));
+    expect(entries).toHaveLength(notes.length);
+    expect(entries.map((entry) => ({
+      unit: entry.dataset.noteUnit,
+      spoiler: entry.dataset.spoiler,
+      titleEn: entry.querySelector(".note__title--english, .note__locale--english .note__locale-title")?.textContent,
+      title: entry.querySelector(".note__title--japanese, .note__locale--japanese .note__locale-title")?.textContent,
+      bodyEn: entry.querySelector(".note__locale--english .note__locale-body")?.textContent,
+      body: entry.querySelector(".note__locale--japanese .note__locale-body")?.textContent,
+      sourceUrl: entry.querySelector<HTMLAnchorElement>("a[href^='https://']")?.href ?? null,
+    }))).toEqual(notes.map(({ unit, note }) => ({
+      unit: unit.id,
+      spoiler: String(note.spoiler),
+      titleEn: note.titleEn,
+      title: note.title,
+      bodyEn: note.bodyEn,
+      body: note.body,
+      sourceUrl: note.sourceUrl ?? null,
+    })));
+
+    for (const mode of ["english", "japanese", "bilingual"]) {
       root.querySelector<HTMLButtonElement>(`[role='tab'][data-reading-mode='${mode}']`)!.click();
-      const nodes = [...root.querySelectorAll<HTMLElement>(".unit")];
-      expect(nodes.every((node, index) => node === originalNodes[index])).toBe(true);
-      const actual = nodes.map((unit) => ({
-        id: unit.id,
-        reference: unit.querySelector(".unit__reference")!.textContent,
-        en: unit.querySelector(".unit__english")!.textContent,
-        ja: unit.querySelector(".unit__japanese")!.textContent,
-        notes: [...unit.querySelectorAll<HTMLDetailsElement>(".note__details")].map((note) => ({
-          spoiler: note.dataset.spoiler,
-          titleEn: note.querySelector(".note__title--english, .note__locale--english .note__locale-title")!.textContent,
-          title: note.querySelector(".note__title--japanese, .note__locale--japanese .note__locale-title")!.textContent,
-          bodyEn: note.querySelector(".note__locale--english .note__locale-body")!.textContent,
-          body: note.querySelector(".note__locale--japanese .note__locale-body")!.textContent,
-          sourceUrl: note.querySelector(".note__source a")?.getAttribute("href") ?? null,
-        })),
-      }));
-      expect(actual).toEqual(expected);
-      for (const unit of nodes) {
-        expect(unit.querySelector<HTMLElement>(".translation--english")!.hidden).toBe(mode === "japanese");
-        expect(unit.querySelector<HTMLElement>(".translation--japanese")!.hidden).toBe(mode === "english");
-        for (const note of unit.querySelectorAll<HTMLDetailsElement>(".note__details")) {
-          expect(note.open).toBe(false);
-        }
+      const noteDialog = root.querySelector<HTMLDialogElement>('[data-reference-panel="notes"]')!;
+      expect(noteDialog.querySelectorAll(".reference-note")).toHaveLength(notes.length);
+      for (const entry of entries) {
+        expect(entry.querySelector<HTMLElement>(".note__locale--english")!.hidden).toBe(mode === "japanese");
+        expect(entry.querySelector<HTMLElement>(".note__locale--japanese")!.hidden).toBe(mode === "english");
       }
+      expect([...root.querySelectorAll<HTMLElement>(".unit")].map((unit) => unit.id)).toEqual(data.units.map((unit) => unit.id));
     }
   });
 });

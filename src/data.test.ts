@@ -6,7 +6,7 @@ describe("reader data contract", () => {
   it("parses supported routes and rejects unknown works and volume boundaries", () => {
     expect(parseRoute("#/iliad/1")).toEqual({ kind: "book", workId: "iliad", bookNumber: 1 });
     expect(parseRoute("#/odyssey/24")).toEqual({ kind: "book", workId: "odyssey", bookNumber: 24 });
-    expect(parseRoute("#/voices")).toEqual({ kind: "voices" });
+    expect(parseRoute("#/voices").kind).toBe("invalid");
     expect(parseRoute("#/unknown/1").kind).toBe("invalid");
     expect(parseRoute("#/iliad/0").kind).toBe("invalid");
     expect(parseRoute("#/iliad/25").kind).toBe("invalid");
