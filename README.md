@@ -77,4 +77,4 @@ npm run validate:content
 
 `npm test`のCLI filesystem regressionは`public/data/catalog.json`を使って欠損巻を再現するため、本文データなしでは成功しません。`typecheck`、`build`、`validate:content:if-present`はデータなしでも実行できます。任意validatorは`public/data`が空のときだけskipし、何か成果物があれば全量を検査します。`validate:content`とPythonの`--verify-published`は48巻を要求する厳格ゲートです。Python parser fixture testsは外部データなしで実行できます。
 
-UIはDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。WebKitGTKで320px表示、両作品の本文表示、マウスによる作品・巻移動、日英横並び、解説の開閉と注釈分類ラベルを確認しました。キーボードではTabフォーカスとEnterによる次巻遷移を確認しています。異常系や履歴移動はfixture検証です。実ブラウザでのdark mode、font fallback、全巻個別閲覧は未確認です。最新の公開後QA証跡はIssue #3完了コメントを参照してください。
+UIはDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。B1〜B5改善はWebKitGTK 2.52.6で両テーマ・320〜1280px・200%拡大・フォント404時の代替表示、主要キーボードflow、root/Pages経路を確認しました。全48巻・2,140単位のDOM/データ照合と既存ゲートも成功しています。AT-SPIで名前・言語・タブ選択・注釈開閉・statusを取得しましたが、Orcaの実操作・実聴、日本語実音声、20分の利用者比較は未実施です。詳細と限界は[ACCEPTANCE.md](ACCEPTANCE.md)。既定経路への反映は承認済みで、統合・CI・公開結果は[Issue #21の最新記録](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/21)へ追跡します。公開前のQAを公開済みの証拠として扱いません。
