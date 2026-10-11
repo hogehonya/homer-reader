@@ -12,6 +12,8 @@ Issue #9の日英注釈対応はPR #10で統合済みです。読み上げ操作
 
 Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/homer-reader)
 
+GitHub公開とPagesはIssue #15で準備中です。予定repoは[hogehonya/homer-reader](https://github.com/hogehonya/homer-reader)、予定URLは`https://hogehonya.github.io/homer-reader/`です（まだ未公開）。既存のGitea公開URLは引き続き利用します。
+
 | 項目 | 状態 |
 | :--- | :--- |
 | 要求・仕様書 | 作成済み（[SPEC.md](SPEC.md)が機能・コンテンツ仕様の正本） |
