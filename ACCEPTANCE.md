@@ -131,6 +131,7 @@ Issue #1のU1〜U4から要求ID・条件IDへの対応と、後続U5〜U7の実
 | U16 読書体験の設計監査・文書更新 | R29 | DA1〜DA5（当時の記録）、B/Q/DA/E/Cは元監査IDを保持 |
 | U17 B1〜B5実装・独立レビュー承認 | R30 | E1〜E7、既存T1〜T7の回帰保護。Q1〜Q4は今回範囲で保留 |
 | U18 既定経路への反映承認 | R31 | CI・マージ・公開検証、Issue #21最新記録 |
+| U19〜U22 メタ反復・情報配置・新基準監査・実装承認 | R32〜R35 | H1〜H5、Issue #25 |
 
 Agentが本Issueで具体化した要件（R7〜R14）は、SPEC.mdの5.2の出所と、各条件に併記した要求IDに対応します。
 
@@ -219,3 +220,28 @@ mainと他のworktreeの既存変更には触れず、3文書を専用worktree�
 QA初期のスクロール待機・hash遷移driver・zoom時の境界色過渡値の失敗はアプリ修正根拠にせず、driver調整と再検証で切り分けています。QAは既存WebKit手順を`/tmp`で拡張し、依存を追加していません。専用lint／formatterスクリプトは既存package/CIにないため実行していません。
 
 U18/R31により既定経路への反映・公開が承認されました。今回の公開対象はB1〜B5で、Qの保留はIssue #19の別作業を否定しません。統合調整と公開結果・対象commit・CI・配信検証は[Issue #21の最新記録](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/21)へ追跡します。公開検証は現時点では未実施で、ローカルQAを公開成功の証拠へ転用しません。
+
+## Issue #25 情報の表示優先度（ローカル検証済み）
+
+旧99 testsとB1〜B5 QAは基準版の記録です。H条件は今回の差分で別に検証し、未実施を合格扱いしません。
+
+- [x] H1（監査1→SPEC §19、R32/R33）：全48巻・全3タブで本文のID・順序・文字列・注釈所属を照合。短い段落識別、完全参照accessible heading、langと領域名を維持し、段落ごとの言語名を視覚反復しない。対訳の共通言語説明を確認する。titleのみや色のみで識別しない。
+- [x] H2（監査2/3→SPEC §19、R33/R35）：段落ごとの言語・解説見出しの視覚反復を除き、毎段落の音声・注釈へキーボードで到達できる。同名注の所属識別、単一発話・全停止境界・エラー再試行・ネタバレ遮蔽を維持。停止・対象・エラーは必要時に見え、主要操作44×44 CSS px以上。
+- [x] H3（監査2→SPEC §19、R32/R35）：320/390/700/701/1280 CSS pxと1280pxの200%拡大、両テーマ・全3タブで本文16px・行高1.8、320px本文幅256px以上、単言語コンテナ最大JP42rem/EN68chを実測。本文と背景4.5:1、必要な非テキスト3:1、欠落・重なり・意図しない横スクロールなしを確認。幅・computed styleと比較画像を記録し、画面占有率を固定合格値にしない。
+- [x] H4（監査4→SPEC §19、R12/R35）：巻冒頭の版detailsが初期閉で、意味の分かるsummaryからキーボードで開閉できる。版・訳者・AI生成・確認範囲は不変。読書開始位置→詳細→閉じる→同じ本文へ進む課題で巻・モード・本文・フォーカス関係を保ち、永続位置保存へ広げない。
+- [ ] H5（全所見→R35）：独立レビュー、UI/corpus tests、typecheck、root/Pages build、Python content tests、Node/Python strict 48巻・音声validatorとデータ不変確認を行う。支援技術での名前・言語・参照・状態、既存ルート・タブ・再試行を確認。実音声と人間の比較が未実施なら限界を記録。CI・公開後検証は親AgentのIssue #25記録へ追跡する。
+
+### Issue #25の検証記録（2026-10-11 JST）
+
+| 対象 | 結果・証拠 | 未確認・限界 |
+| :--- | :--- | :--- |
+| 自動検証 | UI/corpus tests 101件、typecheck、root/Pages build成功。親AgentのPython26件、Node/Python strict48巻・2,140単位、音声validator成功。 | 実画面・AT・実音声を代替しない。 |
+| 独立レビュー | critical 0、code必須指摘0。文書表の分断2件は修正済み。 | 実利用者の評価を代替しない。 |
+| H1/H3：表示・識別 | `/tmp/homer-reader-issue-25-qa/layout-final.log` ALL_PASS。Iliad1の両テーマ×6幅・拡大条件×3mode=36、Odyssey1の両テーマ×320/1280×3mode=12、計48表示。完全参照・反復言語h4・解説見出しの視覚反復0、短番号は全unit。本文16px/28.8px、320本文256px、390日本語326px、1280日本語640px/英語648px。overflowなし、主要targets44px、本文contrast light14.89/dark16.14、実線control境界min4.21/4.34。 | 基準と同じ1例の比較では1280本文1216→640px・unit303.95→231.17px、390本文358→326px・unit476.73→375.95px。疲労・速度改善の実証ではない。 |
+| H2/H4：操作・詳細往復 | native版details開閉（対訳/日本語）・Tab復帰・注釈Enter開閉・focusを16組確認。版の情報と巻・モード・本文を保持。Iliad390/1280pxの明暗スクリーンショットを保存し、親Agentが明暗390pxと明1280pxの本文を目視。 | `long-notes.log`追加6caseもALL_PASS。Iliad12unit5/22unit3/23unit12×両テーマ・320pxで長注のnative pointer開→Space閉→Enter再開、focus-visible、本文256px、overflowなし、controls44px、contrastを確認。音声停止・エラーは既存回帰テストと併せて確認し、実聴成功とは区別する。 |
+| H1/H5：実AT-SPI | 実WebKitで完全参照heading、English/日本語訳/解説region、本文en/ja言語属性、版summary、選択tab、statusの取得とassertがPASS。 | Orcaによる人間の操作・実聴は未実施。 |
+| H5：整合・不変 | 相対リンクとdiff check成功。本文・注釈・音声データ、依存、data contract、corpus testの変更なし。 | CI・公開後検証は下記Issue最新記録へ追跡。 |
+
+H1〜H4は上記ローカル表示・操作・自動照合の範囲で確認済みです。H5のローカルゲート・AT・独立レビューは成功し、CIと公開後検証は[Issue #25の最新記録](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/25)へ追跡します。本記録のcommit時点では公開未実施で、完了証拠は実施後にIssueへ追記します。実際の音・音質、Orca人間実聴、20分の人間比較は未実施です。
+
+初期QAのcontrast失敗は透明な未選択タブ境界を不透明黒として計算したdriver側の誤りで、実装不具合とせず計測を修正しました。

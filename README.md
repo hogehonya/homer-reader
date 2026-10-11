@@ -78,3 +78,7 @@ npm run validate:content
 `npm test`のCLI filesystem regressionは`public/data/catalog.json`を使って欠損巻を再現するため、本文データなしでは成功しません。`typecheck`、`build`、`validate:content:if-present`はデータなしでも実行できます。任意validatorは`public/data`が空のときだけskipし、何か成果物があれば全量を検査します。`validate:content`とPythonの`--verify-published`は48巻を要求する厳格ゲートです。Python parser fixture testsは外部データなしで実行できます。
 
 UIはDADSの読みやすさ・アクセシビリティを基本にし、`IBM Plex Sans JP`を自己ホストします。B1〜B5改善はWebKitGTK 2.52.6で両テーマ・320〜1280px・200%拡大・フォント404時の代替表示、主要キーボードflow、root/Pages経路を確認しました。全48巻・2,140単位のDOM/データ照合と既存ゲートも成功しています。AT-SPIで名前・言語・タブ選択・注釈開閉・statusを取得しましたが、Orcaの実操作・実聴、日本語実音声、20分の利用者比較は未実施です。詳細と限界は[ACCEPTANCE.md](ACCEPTANCE.md)。既定経路への反映は承認済みで、統合・CI・公開結果は[Issue #21の最新記録](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/21)へ追跡します。公開前のQAを公開済みの証拠として扱いません。
+
+Issue #25で情報の表示優先度に沿って共通メタ情報の反復・補助操作の配置・単言語行幅・版情報入口を整理しました。仕様とローカル検証結果は[SPEC.md](SPEC.md) §19と[ACCEPTANCE.md](ACCEPTANCE.md) H1〜H5を参照してください。基準版のQAを今回の合格として扱いません。
+
+Issue #25はローカルWebKitの48表示条件・版情報と注釈のnative開閉・AT-SPI識別・101テスト等のゲートを確認済みです。実聴と人間の読書比較は未実施。CI・公開後の完了証拠は[Issue #25の最新記録](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/25)へ記録します（本文書のcommit時点では公開未実施）。
