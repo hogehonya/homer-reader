@@ -20,7 +20,7 @@ UIとサンプル成果物は独立して準備し、統合時にmanifest・フ�
 
 Issue #15はU11/R18とU12/R19に基づき、既存Giteaソースと`homer-reader.honya.dev`を維持したままGitHub `hogehonya/homer-reader`とGitHub Pagesを追加します。予定URLは`https://hogehonya.github.io/homer-reader/`です。要件はSPEC §5.1・§5.2、受入条件は[ACCEPTANCE.md](ACCEPTANCE.md) P1〜P5に記録します。外部repo作成、同期設定、Pages設定と公開は親Agent担当です。
 
-実装はViteのbase pathと`src/main.ts`のデータrootを連動させ、CSS font URLもbase path配下へ解決します。GitHub ActionsはPRでnpm test・typecheck・root/subpath build・Python tests・音声validator・Node/Python strict 48巻検証を実行し、mainの全gate成功後だけPagesへdeployします。Gitea/Woodpeckerの既存CIは維持します。GitHub上の実配信と画面確認が完了するまでは「予定・未公開」と記録します。
+実装はViteのbase pathと`src/main.ts`のデータrootを連動させ、CSS font URLもbase path配下へ解決します。GitHub ActionsはPRでnpm test・typecheck・root/subpath build・Python tests・音声validator・Node/Python strict 48巻検証を実行し、mainの全gate成功後だけPagesへdeployします。Gitea/Woodpeckerの既存CIは維持します。GitHub Pagesの実配信と画面確認が完了するまでは、Pagesを「予定・未公開」と記録します。Gitea公開とGitHubソース公開の状態はSPEC §5.3 A4を参照します。
 
 ## 目的と範囲
 
