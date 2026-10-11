@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createReaderApp, type ReaderApp } from "./app";
-import { fixtureBook, fixtureCatalog } from "./fixtures";
+import { fixtureBook, fixtureCatalog, fixtureVoiceManifest } from "./fixtures";
 import type { SpeechSynthesisPort } from "./speech";
 
 describe("reader app", () => {
@@ -214,6 +214,104 @@ describe("reader app", () => {
     expect(card.textContent).toContain("短い背景説明を生成");
   });
 
+  it("opens the voice comparison directly and shows the shared bilingual source and native controls", async () => {
+    window.history.replaceState({}, "", "/#/voices");
+    const fetcher = voiceMockedFetcher();
+    app = createReaderApp(root, { fetcher, window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelectorAll(".voice-sample-card")).toHaveLength(4));
+
+    expect(window.location.hash).toBe("#/voices");
+    expect(fetcher).toHaveBeenCalledWith("/audio-samples/manifest.json");
+    expect(root.querySelector("[data-view='voices'] h1")?.textContent).toBe("音声を聴き比べる");
+    expect(root.querySelector(".voice-source--english")?.textContent).toContain("Shared English sample.");
+    expect(root.querySelector(".voice-source--japanese")?.textContent).toContain("共通の日本語サンプル。");
+    expect(root.querySelector(".voice-provider")?.textContent).toContain("Microsoft Edge online TTS");
+    expect(root.querySelector("[data-voice-sample='en-ava']")?.textContent).toContain("en-US-AvaMultilingualNeural");
+
+    const audios = root.querySelectorAll<HTMLAudioElement>(".voice-sample-card audio");
+    expect(audios).toHaveLength(4);
+    const ava = root.querySelector<HTMLAudioElement>("[data-voice-sample='en-ava'] audio")!;
+    expect(ava.controls).toBe(true);
+    expect(ava.preload).toBe("none");
+    expect(ava.hasAttribute("autoplay")).toBe(false);
+    expect(ava.getAttribute("src")).toBe("/audio-samples/en-ava.mp3");
+    expect(root.querySelector("[data-voice-entry]")?.getAttribute("href")).toBe("#/voices");
+  });
+
+  it("allows one sample at a time and stops all samples on pagehide and route change", async () => {
+    window.history.replaceState({}, "", "/#/voices");
+    const fetcher = voiceMockedFetcher();
+    app = createReaderApp(root, { fetcher, window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelectorAll(".voice-sample-card audio")).toHaveLength(4));
+
+    const paused = new Set<HTMLMediaElement>();
+    const pause = vi.spyOn(HTMLMediaElement.prototype, "pause").mockImplementation(function (this: HTMLMediaElement) {
+      paused.add(this);
+    });
+    const audio = (id: string) => root.querySelector<HTMLAudioElement>(`[data-voice-sample='${id}'] audio`)!;
+    const ava = audio("en-ava");
+    const andrew = audio("en-andrew");
+    const nanami = audio("ja-nanami");
+    const keita = audio("ja-keita");
+    ava.dispatchEvent(new Event("play"));
+    paused.clear();
+    andrew.dispatchEvent(new Event("play"));
+    andrew.dispatchEvent(new Event("playing"));
+    expect(paused.has(ava)).toBe(true);
+    expect(paused.has(andrew)).toBe(false);
+    expect(root.querySelector<HTMLElement>("[data-audio-status='en-andrew']")?.textContent).toContain("再生中");
+
+    nanami.dispatchEvent(new Event("error"));
+    expect(root.querySelector<HTMLElement>("[data-audio-status='ja-nanami']")?.textContent).toContain("再度お試し");
+
+    window.dispatchEvent(new Event("pagehide"));
+    expect(paused.has(andrew)).toBe(true);
+    expect(paused.has(nanami)).toBe(true);
+
+    paused.clear();
+    keita.dispatchEvent(new Event("play"));
+    window.location.hash = "#/";
+    window.dispatchEvent(new Event("hashchange"));
+    expect(paused.has(keita)).toBe(true);
+  });
+
+  it("renders manifest text as text rather than markup", async () => {
+    window.history.replaceState({}, "", "/#/voices");
+    const manifest = structuredClone(fixtureVoiceManifest);
+    manifest.texts.en = "<img src=x onerror=alert(1)>";
+    app = createReaderApp(root, { fetcher: voiceMockedFetcher(manifest), window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector(".voice-source--english")).not.toBeNull());
+
+    expect(root.querySelector(".voice-source--english")?.textContent).toBe("<img src=x onerror=alert(1)>");
+    expect(root.querySelector(".voice-source--english img")).toBeNull();
+  });
+
+  it("reports a missing manifest with a retry path rather than inventing samples", async () => {
+    window.history.replaceState({}, "", "/#/voices");
+    let attempts = 0;
+    const fetcher = vi.fn(async (input: RequestInfo | URL) => {
+      if (String(input).endsWith("catalog.json")) return jsonResponse(fixtureCatalog);
+      if (String(input).endsWith("manifest.json")) {
+        attempts += 1;
+        return attempts === 1 ? new Response("missing", { status: 404 }) : jsonResponse(fixtureVoiceManifest);
+      }
+      return jsonResponse(fixtureBook());
+    });
+    app = createReaderApp(root, { fetcher, window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.textContent).toContain("試聴データを読み込めませんでした"));
+    await new Promise((resolve) => window.setTimeout(resolve, 0));
+    expect(root.querySelector(".voice-sample-card")).toBeNull();
+    const attemptsBeforeRetry = attempts;
+
+    root.querySelector<HTMLButtonElement>("[data-action='voice-retry']")!.click();
+    await vi.waitFor(() => expect(root.querySelectorAll(".voice-sample-card")).toHaveLength(4));
+    expect(attempts).toBeGreaterThan(attemptsBeforeRetry);
+  });
+
   it("renders the next-volume control at the end of the reading page", async () => {
     window.history.replaceState({}, "", "/#/iliad/1");
     app = createReaderApp(root, { fetcher: mockedFetcher(), window });
@@ -381,6 +479,17 @@ function mockedFetcher() {
     if (!workId || !file) return new Response("missing", { status: 404 });
     const number = Number(file);
     return jsonResponse(fixtureBook(workId as "iliad" | "odyssey", number));
+  });
+}
+
+function voiceMockedFetcher(manifest = fixtureVoiceManifest) {
+  return vi.fn(async (input: RequestInfo | URL) => {
+    const url = String(input);
+    if (url.endsWith("catalog.json")) return jsonResponse(fixtureCatalog);
+    if (url.endsWith("audio-samples/manifest.json")) return jsonResponse(manifest);
+    const [, workId, file] = url.match(/data\/(iliad|odyssey)\/(\d+)\.json$/) ?? [];
+    if (!workId || !file) return new Response("missing", { status: 404 });
+    return jsonResponse(fixtureBook(workId as "iliad" | "odyssey", Number(file)));
   });
 }
 

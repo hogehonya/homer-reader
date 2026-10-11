@@ -8,6 +8,7 @@
 - main commit `c149af8`へUIと48巻データを統合し、初回release `r1119-b3`を公開済みです。PR CI #2、main CI #3、台帳CI #184、配信57ファイルhash一致を確認しました。最新の配信検証記録は[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。
 - Issue #9の日英注釈はPR #10でmainに統合済みです。受入・配信証拠は[Gitea Issue #9](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/9)の完了コメントを参照します。
 - Issue #11はブラウザー標準SpeechSynthesisによる読み上げを追加します。外部TTS API・音声ファイル生成を追加せず、オフライン動作を保証しません。受入・実音声確認は[Gitea Issue #11](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/11)の完了記録を参照します。
+- Issue #13では`#/voices`の固定試聴サンプル比較を追加します。SPAは再生時に外部TTS APIを呼ばず、音声・manifestの受入と公開結果は[Gitea Issue #13](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/13)の最新記録を参照します。
 - 機能・コンテンツ仕様の正本は`SPEC.md`、受入条件の正本は`ACCEPTANCE.md`です。要求を変える場合は`SPEC.md`の要求IDを先に更新し、対応する条件を`ACCEPTANCE.md`へ反映します。
 - 要求の原文引用は`SPEC.md`の5.1だけに置き、他文書へ複製しません。
 
@@ -36,6 +37,7 @@ npm run typecheck
 npm run build
 npm run validate:content:if-present
 python3 -m unittest discover -s tests/content -v
+python3 scripts/validate-audio-samples.py
 # 全48巻を要求する厳格ゲート
 python3 scripts/validate-content.py --verify-published
 npm run validate:content

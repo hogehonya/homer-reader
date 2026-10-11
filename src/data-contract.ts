@@ -61,8 +61,30 @@ export interface BookData {
   units: TranslationUnit[];
 }
 
+export interface VoiceSample {
+  id: string;
+  language: "en" | "ja";
+  label: string;
+  voice: string;
+  rate: string;
+  src: string;
+  textSha256: string;
+  audioSha256: string;
+  durationSeconds: number;
+}
+
+export interface VoiceSampleManifest {
+  schema: "homer-voice-samples-v1";
+  generatedAt: string;
+  provider: string;
+  source: { workId: "iliad"; bookNumber: 1; unitId: "iliad-01-0001"; reference: string };
+  texts: { en: string; ja: string };
+  samples: VoiceSample[];
+}
+
 export type ReaderRoute =
   | { kind: "select" }
+  | { kind: "voices" }
   | { kind: "book"; workId: WorkId; bookNumber: number }
   | { kind: "invalid"; message: string };
 
@@ -78,6 +100,7 @@ export class DataContractError extends Error {
 
 export function parseRoute(hash: string): ReaderRoute {
   if (hash === "" || hash === "#" || hash === "#/") return { kind: "select" };
+  if (hash === "#/voices") return { kind: "voices" };
   const match = /^#\/([^/]+)\/([^/]+)$/.exec(hash);
   if (!match || !WORK_IDS.includes(match[1] as WorkId)) {
     return { kind: "invalid", message: "作品または巻を確認できません。作品一覧から選び直してください。" };
@@ -90,6 +113,83 @@ export function parseRoute(hash: string): ReaderRoute {
     return { kind: "invalid", message: "巻番号は1巻から24巻の範囲で選んでください。" };
   }
   return { kind: "book", workId: match[1] as WorkId, bookNumber };
+}
+
+const EXPECTED_VOICE_SAMPLES = [
+  { id: "en-ava", language: "en", label: "Ava", voice: "en-US-AvaMultilingualNeural" },
+  { id: "en-andrew", language: "en", label: "Andrew", voice: "en-US-AndrewMultilingualNeural" },
+  { id: "ja-nanami", language: "ja", label: "Nanami", voice: "ja-JP-NanamiNeural" },
+  { id: "ja-keita", language: "ja", label: "Keita", voice: "ja-JP-KeitaNeural" },
+] as const;
+
+export function parseVoiceManifest(input: unknown): VoiceSampleManifest {
+  const value = record(parseJson(input, "音声サンプルデータ"), "voiceManifest");
+  if (value.schema !== "homer-voice-samples-v1") throw new DataContractError("unsupported voice sample manifest schema");
+  const generatedAt = text(value.generatedAt, "voiceManifest.generatedAt");
+  if (!/^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:\.\d+)?(?:Z|[+-]\d\d:\d\d)$/.test(generatedAt)
+    || !Number.isFinite(Date.parse(generatedAt))) {
+    throw new DataContractError("voiceManifest.generatedAt must be a timezone-qualified ISO timestamp");
+  }
+  const provider = text(value.provider, "voiceManifest.provider");
+  if (provider !== "Microsoft Edge online TTS (edge-tts)") {
+    throw new DataContractError("voiceManifest.provider does not match the available sample provider");
+  }
+  const sourceRaw = record(value.source, "voiceManifest.source");
+  const sourceWorkId = text(sourceRaw.workId, "voiceManifest.source.workId");
+  const sourceBookNumber = integer(sourceRaw.bookNumber, "voiceManifest.source.bookNumber", 1, 1);
+  const sourceUnitId = text(sourceRaw.unitId, "voiceManifest.source.unitId");
+  const source = {
+    workId: sourceWorkId as "iliad",
+    bookNumber: sourceBookNumber as 1,
+    unitId: sourceUnitId as "iliad-01-0001",
+    reference: text(sourceRaw.reference, "voiceManifest.source.reference"),
+  };
+  if (sourceWorkId !== "iliad" || sourceUnitId !== "iliad-01-0001") {
+    throw new DataContractError("voiceManifest source unit must be Iliad 1's first unit");
+  }
+  const textsRaw = record(value.texts, "voiceManifest.texts");
+  const texts = {
+    en: text(textsRaw.en, "voiceManifest.texts.en"),
+    ja: text(textsRaw.ja, "voiceManifest.texts.ja"),
+  };
+  const samplesRaw = array(value.samples, "voiceManifest.samples");
+  if (samplesRaw.length !== EXPECTED_VOICE_SAMPLES.length) {
+    throw new DataContractError("voiceManifest must contain exactly four voice samples");
+  }
+  const seenPaths = new Set<string>();
+  const textHashes: Record<"en" | "ja", string | undefined> = { en: undefined, ja: undefined };
+  const samples = samplesRaw.map((rawSample, index): VoiceSample => {
+    const sample = record(rawSample, `voiceManifest.samples[${index}]`);
+    const expected = EXPECTED_VOICE_SAMPLES[index]!;
+    const id = text(sample.id, `voiceManifest.samples[${index}].id`);
+    const language = sample.language === "en" || sample.language === "ja" ? sample.language : undefined;
+    const label = text(sample.label, `voiceManifest.samples[${index}].label`);
+    const voice = text(sample.voice, `voiceManifest.samples[${index}].voice`);
+    const rate = text(sample.rate, `voiceManifest.samples[${index}].rate`);
+    const src = text(sample.src, `voiceManifest.samples[${index}].src`);
+    const textSha256 = text(sample.textSha256, `voiceManifest.samples[${index}].textSha256`);
+    const audioSha256 = text(sample.audioSha256, `voiceManifest.samples[${index}].audioSha256`);
+    const durationSeconds = sample.durationSeconds;
+    if (!language || id !== expected.id || language !== expected.language || label !== expected.label || voice !== expected.voice || rate !== "+0%") {
+      throw new DataContractError(`voiceManifest.samples[${index}] differs from the agreed voice configuration`);
+    }
+    if (!/^audio-samples\/[A-Za-z0-9_-]+\.mp3$/.test(src) || src !== `audio-samples/${id}.mp3` || seenPaths.has(src)) {
+      throw new DataContractError(`voiceManifest.samples[${index}] has an unsafe audio path`);
+    }
+    if (!/^[a-f0-9]{64}$/i.test(textSha256) || !/^[a-f0-9]{64}$/i.test(audioSha256)) {
+      throw new DataContractError(`voiceManifest.samples[${index}] has an invalid SHA-256 checksum`);
+    }
+    if (textHashes[language] !== undefined && textHashes[language] !== textSha256) {
+      throw new DataContractError(`voiceManifest ${language} samples must use the same source text`);
+    }
+    if (typeof durationSeconds !== "number" || !Number.isFinite(durationSeconds) || durationSeconds <= 0) {
+      throw new DataContractError(`voiceManifest.samples[${index}].durationSeconds must be positive`);
+    }
+    seenPaths.add(src);
+    textHashes[language] = textSha256;
+    return { id, language, label, voice, rate, src, textSha256, audioSha256, durationSeconds };
+  });
+  return { schema: "homer-voice-samples-v1", generatedAt, provider, source, texts, samples };
 }
 
 export function parseCatalog(input: unknown): Catalog {

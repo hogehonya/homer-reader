@@ -3,10 +3,13 @@ import {
   parseBook,
   parseCatalog,
   parseRoute,
+  parseVoiceManifest,
   type BookData,
   type Catalog,
   type Note,
   type ReaderRoute,
+  type VoiceSample,
+  type VoiceSampleManifest,
   type WorkIndex,
   type WorkId,
 } from "./data-contract";
@@ -53,10 +56,25 @@ export function createReaderApp(root: HTMLElement, options: AppOptions = {}): Re
   const speechSynthesis = options.speechSynthesis === undefined
     ? getSpeechSynthesis(browser)
     : options.speechSynthesis ?? undefined;
-  const speech = createSpeechController(speechSynthesis, options.speechUtteranceFactory ?? getUtteranceFactory(browser), (state) => updateSpeechControls(root, state));
+  const audioElements = new Set<HTMLAudioElement>();
+  const stopAudioSamples = (clear = false) => {
+    for (const audio of audioElements) {
+      try {
+        audio.pause();
+      } catch {
+        // Keep teardown moving if a browser media element refuses to pause.
+      }
+    }
+    if (clear) audioElements.clear();
+  };
+  const speech = createSpeechController(speechSynthesis, options.speechUtteranceFactory ?? getUtteranceFactory(browser), (state) => {
+    if (state.activeTarget) stopAudioSamples();
+    updateSpeechControls(root, state);
+  });
   let catalog: Catalog | undefined;
   let catalogError: string | undefined;
   let routeGeneration = 0;
+  let lastHash = browser.location.hash;
   let destroyed = false;
 
   const render = () => {
@@ -72,6 +90,11 @@ export function createReaderApp(root: HTMLElement, options: AppOptions = {}): Re
     const route = parseRoute(browser.location.hash);
     if (route.kind === "select") {
       renderCatalogPage(root, catalog);
+      return;
+    }
+    if (route.kind === "voices") {
+      const generation = ++routeGeneration;
+      void loadVoiceSamples(generation);
       return;
     }
     if (route.kind === "invalid") {
@@ -132,12 +155,40 @@ export function createReaderApp(root: HTMLElement, options: AppOptions = {}): Re
     }
   }
 
+  async function loadVoiceSamples(generation: number) {
+    renderVoiceLoading(root, catalog!);
+    try {
+      const response = await fetcher(`${dataRoot}/audio-samples/manifest.json`);
+      if (!response.ok) throw new DataContractError(`HTTP ${response.status}`);
+      const manifest = parseVoiceManifest(await response.json());
+      if (!isCurrentVoice(generation)) return;
+      renderVoiceSamples(root, catalog!, manifest, dataRoot, speech, audioElements);
+    } catch {
+      if (!isCurrentVoice(generation)) return;
+      renderVoiceError(root, catalog!, () => {
+        const retryGeneration = ++routeGeneration;
+        void loadVoiceSamples(retryGeneration);
+      });
+    }
+  }
+
+  function isCurrentVoice(generation: number) {
+    return !destroyed && generation === routeGeneration && parseRoute(browser.location.hash).kind === "voices";
+  }
+
   const onHashChange = () => {
+    const currentHash = browser.location.hash;
+    if (currentHash === lastHash) return;
+    lastHash = currentHash;
+    stopAudioSamples(true);
     speech.stop();
     routeGeneration += 1;
     render();
   };
-  const onPageHide = () => speech.stop();
+  const onPageHide = () => {
+    stopAudioSamples();
+    speech.stop();
+  };
   browser.addEventListener("hashchange", onHashChange);
   browser.addEventListener("pagehide", onPageHide);
   const ready = retryCatalog();
@@ -146,6 +197,7 @@ export function createReaderApp(root: HTMLElement, options: AppOptions = {}): Re
     ready,
     destroy() {
       destroyed = true;
+      stopAudioSamples(true);
       speech.stop();
       routeGeneration += 1;
       browser.removeEventListener("hashchange", onHashChange);
@@ -213,6 +265,135 @@ function renderCatalogPage(root: HTMLElement, catalog: Catalog, routeError?: str
 
 function renderInvalidRoute(root: HTMLElement, catalog: Catalog, message: string) {
   renderCatalogPage(root, catalog, message);
+}
+
+function renderVoiceLoading(root: HTMLElement, catalog: Catalog) {
+  const page = createPage(root.ownerDocument, catalog);
+  const main = element(root.ownerDocument, "main", "voice-page");
+  main.dataset.view = "voices";
+  appendText(main, "h1", "音声を聴き比べる");
+  const status = appendText(main, "p", "試聴データを読み込んでいます…", "page-status");
+  status.setAttribute("role", "status");
+  page.append(main);
+  root.replaceChildren(page);
+  finishPage(root, "ホメロス読書室 | 音声を聴き比べる");
+}
+
+function renderVoiceError(root: HTMLElement, catalog: Catalog, retry: () => void) {
+  const page = createPage(root.ownerDocument, catalog);
+  const main = element(root.ownerDocument, "main", "voice-page page-status--error");
+  main.dataset.view = "voices";
+  appendText(main, "h1", "試聴データを読み込めませんでした");
+  const message = appendText(main, "p", "通信状態を確認して、もう一度お試しください。");
+  message.setAttribute("role", "alert");
+  const actions = element(root.ownerDocument, "div", "page-status__actions");
+  const retryButton = button(root.ownerDocument, "試聴データを再読み込み", "voice-retry");
+  retryButton.addEventListener("click", retry);
+  actions.append(retryButton, routeLink(root.ownerDocument, "読書へ戻る", "#/"));
+  main.append(actions);
+  page.append(main);
+  root.replaceChildren(page);
+  finishPage(root, "ホメロス読書室 | 試聴データの読込エラー");
+}
+
+function renderVoiceSamples(
+  root: HTMLElement,
+  catalog: Catalog,
+  manifest: VoiceSampleManifest,
+  dataRoot: string,
+  speech: ReturnType<typeof createSpeechController>,
+  audioElements: Set<HTMLAudioElement>,
+) {
+  const page = createPage(root.ownerDocument, catalog);
+  const main = element(root.ownerDocument, "main", "voice-page");
+  main.dataset.view = "voices";
+  appendText(main, "h1", "音声を聴き比べる");
+  appendText(main, "p", "同じ冒頭文の音声サンプルです。実際に聴いて、声の違いをご確認ください。音声は自動再生されません。", "lede");
+
+  const source = element(root.ownerDocument, "section", "voice-source");
+  source.setAttribute("aria-labelledby", "voice-source-heading");
+  const sourceHeading = appendText(source, "h2", "共通の試聴本文");
+  sourceHeading.id = "voice-source-heading";
+  appendText(source, "p", `イリアス 第1巻・${manifest.source.reference}（${manifest.source.unitId}）`, "voice-source__reference");
+  appendText(source, "p", `生成元: ${manifest.provider}`, "voice-provider");
+  const generated = element(root.ownerDocument, "time", "voice-source__generated");
+  generated.dateTime = manifest.generatedAt;
+  generated.textContent = `生成日時: ${manifest.generatedAt}`;
+  source.append(generated);
+  main.append(source);
+
+  const groups: Array<{ language: "en" | "ja"; title: string; text: string }> = [
+    { language: "ja", title: "日本語音声", text: manifest.texts.ja },
+    { language: "en", title: "英語音声", text: manifest.texts.en },
+  ];
+  for (const group of groups) {
+    const section = element(root.ownerDocument, "section", `voice-group voice-group--${group.language}`);
+    appendText(section, "h2", group.title);
+    const sourceText = appendText(section, "p", group.text, group.language === "en" ? "voice-source--english" : "voice-source--japanese");
+    sourceText.lang = group.language;
+    const cards = element(root.ownerDocument, "div", "voice-sample-list");
+    const samples = manifest.samples.filter((sample) => sample.language === group.language);
+    for (const sample of samples) {
+      cards.append(renderVoiceSampleCard(root.ownerDocument, sample, dataRoot, speech, audioElements));
+    }
+    section.append(cards);
+    main.append(section);
+  }
+  const returnLink = routeLink(root.ownerDocument, "読書へ戻る", "#/");
+  returnLink.classList.add("voice-return");
+  main.append(returnLink);
+  page.append(main);
+  root.replaceChildren(page);
+  finishPage(root, "ホメロス読書室 | 音声を聴き比べる");
+}
+
+function renderVoiceSampleCard(
+  document: Document,
+  sample: VoiceSample,
+  dataRoot: string,
+  speech: ReturnType<typeof createSpeechController>,
+  audioElements: Set<HTMLAudioElement>,
+) {
+  const card = element(document, "article", "voice-sample-card");
+  card.dataset.voiceSample = sample.id;
+  appendText(card, "h3", sample.label);
+  const metadata = element(document, "dl", "voice-sample-metadata");
+  sourceRow(document, metadata, "音声ID", sample.voice);
+  sourceRow(document, metadata, "読み上げ速度", sample.rate);
+  sourceRow(document, metadata, "音声の長さ", `${sample.durationSeconds.toFixed(3)}秒`);
+  card.append(metadata);
+
+  const audio = element(document, "audio", "voice-sample-audio");
+  audio.controls = true;
+  audio.preload = "none";
+  audio.lang = "ja";
+  audio.src = `${dataRoot}/${sample.src}`;
+  audio.setAttribute("aria-label", `${sample.language === "ja" ? "日本語" : "英語"}サンプル ${sample.label}（${sample.voice}）`);
+  const status = appendText(card, "p", "", "voice-sample-status");
+  status.dataset.audioStatus = sample.id;
+  status.lang = "ja";
+  status.setAttribute("role", "status");
+  status.setAttribute("aria-live", "polite");
+  audio.addEventListener("play", () => {
+    speech.stop();
+    for (const other of audioElements) {
+      if (other !== audio) other.pause();
+    }
+    status.textContent = "再生を開始しています。";
+    status.classList.remove("voice-sample-status--error");
+  });
+  audio.addEventListener("playing", () => { status.textContent = "再生中です。"; });
+  audio.addEventListener("pause", () => {
+    if (!audio.error) status.textContent = "";
+  });
+  audio.addEventListener("ended", () => { status.textContent = ""; });
+  audio.addEventListener("error", () => {
+    status.textContent = "音声を読み込めませんでした。通信状態を確認して、再度お試しください。";
+    status.classList.add("voice-sample-status--error");
+  });
+  audioElements.add(audio);
+  card.append(audio);
+  return card;
 }
 
 function renderBookLoading(root: HTMLElement, catalog: Catalog, work: WorkIndex, bookIndex: WorkIndex["books"][number], route: Extract<ReaderRoute, { kind: "book" }>) {
@@ -503,6 +684,9 @@ function createPage(document: Document, catalog?: Catalog) {
       tabs.append(link);
     }
     header.append(tabs);
+    const voiceEntry = routeLink(document, "音声を聴き比べる", "#/voices", "voice-entry");
+    voiceEntry.dataset.voiceEntry = "true";
+    header.append(voiceEntry);
   }
   page.append(header);
   return page;
