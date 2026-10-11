@@ -6,7 +6,7 @@
 
 『イリアス』『オデュッセイア』全48巻を収録しています。初回公開はrelease `r1119-b3`（main commit `c149af861d9f574ee3e4abafcbefcbd0c0621a47`）として完了しました。main CI #3と公開台帳CI #184は成功し、初回配信57ファイルのhashがpublication metadataと一致します。初回配信の検証と公開後QAは[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。詳細は[PLAN.md](PLAN.md)。
 
-Issue #9の日英注釈対応はPR #10で統合済みです。読み上げ操作の統合受入・CI・公開結果は[Issue #11](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/11)の最新記録を参照してください。音声比較画面は`#/voices`から開きます。Issue #13のmain反映・CI・公開結果は同Issueの最新記録を参照してください。下記の初回公開証跡はIssue #13の比較画面を含みません。
+Issue #9の日英注釈対応はPR #10で統合済みです。読み上げ操作の統合受入・CI・公開結果は[Issue #11](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/11)の最新記録を参照してください。音声比較画面は`#/voices`から開きます。Issue #13のmain反映・CI・公開結果は同Issueの最新記録を参照してください。Issue #16では巻全体の連続表示とタブ切替を進めています。統合・CI・公開結果は同Issueの最新記録を参照してください。下記の初回公開証跡はIssue #13・#16の追加画面/表示を含みません。
 
 閲覧URL: https://homer-reader.honya.dev（初回公開でHTTP 200を2026-10-10 17:44:30 JSTに確認）
 
@@ -15,7 +15,7 @@ Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/h
 | 項目 | 状態 |
 | :--- | :--- |
 | 要求・仕様書 | 作成済み（[SPEC.md](SPEC.md)が機能・コンテンツ仕様の正本） |
-| アプリ実装 | 既存1,375注の日英対応はIssue #9 PR #10で統合済み。Issue #11では表示中の本文と開いた注釈に日英の読み上げ操作を追加。Issue #13の変更では`#/voices`に共通原稿の日英音声サンプル比較画面を追加。追加機能の実画面・CI・公開結果は各Issueの最新記録を参照。 |
+| アプリ実装 | 既存1,375注の日英対応はIssue #9 PR #10で統合済み。Issue #11では表示中の本文と開いた注釈に日英の読み上げ操作を追加。Issue #13の変更では`#/voices`に共通原稿の日英音声サンプル比較画面を追加。Issue #16の変更では巻全体を「対訳」「英語」「日本語」のタブで連続表示。追加機能の実画面・CI・公開結果は各Issueの最新記録を参照。 |
 | 本文・日本語訳・注釈データ | 本文は48巻・2,140対訳単位・英語本文268,999語。全1,375注に英語見出し・本文を追加し、親Agentのbaseline比較で既存日本語注・属性・順序・件数・source manifestの不変を確認。英訳確認の範囲・結果はIssue #9の最新記録を参照。本文・訳の既存抜取確認は98 distinct units / 11,718語と別途1単位、6件の限定修正を記録。全文の人手校閲は未実施。 |
 | CI | PR CI #2（[pipeline 2](https://ci.honya.dev/repos/154/pipeline/2)、commit `3ad028b`）は22 UI tests、12 Python tests、Node/Python strict 48-book verificationに成功。main CI #3と公開台帳CI #184も成功。 |
 | 公開 | 初回公開release `r1119-b3`を確認。HTTP 200、57配信ファイル全てのhash一致、初回登録後container ID `83485a1a23df505b9300091b8adbd9e0265c704f041eb61b8a54c01ab9ae8ea0`。この証跡はIssue #11・#13の追加機能を含みません。追加公開のQA結果は各Issue完了記録を参照。 |
@@ -38,6 +38,7 @@ Gitea repo: [honya-dev-spa/homer-reader](https://gitea.honya.dev/honya-dev-spa/h
 | 出典・訳者・AI生成有無・確認範囲を確認できるようにする | R12 |
 | 本文段落と開いた注釈を日英それぞれ読み上げる | R16 |
 | `#/voices`で共通原稿の日本語・英語音声サンプルを比較する | R17 |
+| 巻全体を対訳・英語・日本語タブで連続して読む | R18〜R20 |
 
 検索、公開SPAでの外部TTS API・翻訳API呼出し、全巻向け音声生成、アカウントは追加しません。音声比較には固定の試聴サンプルを使います。読み上げはブラウザー標準SpeechSynthesis APIを利用し、音声の利用可否・品質は端末とブラウザーに依存します。オフライン動作は保証しません。
 

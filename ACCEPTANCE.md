@@ -24,6 +24,7 @@ Issue #1の完了条件のうち、commit、PR、別Agentの監査は本リポ�
 - [x] D7: U5の実装・公開依頼をIssue #3/#4、S1〜S18、PLANの統合・公開工程へ追跡できる。
 - [x] D8: U6の先行計画依頼をPLAN step 0と後続工程の役割・依存・証拠へ追跡できる。
 - [x] D9: U7の公開先意図を、SPEC §5.1とPLANのGitea/固定URL公開工程へ追跡できる。固定URLでHTTP 200を確認し、配信hash一致を検証済み。
+- [x] D10: U11の表示改善・対象作品・タブ要求をSPEC §5.1のR18〜R20とIssue #16のT1〜T7へ追跡し、巻全体の連続表示等の採用詳細をAgent具体化として区別する。
 
 ## Issue #9 注釈の日英対応
 
@@ -60,6 +61,18 @@ R17の追加受入条件です。配信する候補・生成根拠はmanifestと
 - [ ] W4: 音声は利用者がnative audio controlsを操作したときだけ再生する。別音声、ルート変更、ページ離脱、アプリ破棄、既存SpeechSynthesis開始時に停止し、エラー時は再試行案内を出す。
 - [ ] W5: 320px幅・キーボード操作・フォーカス・aria statusを確認し、audio controlsが横にはみ出さない。
 - [ ] W6: UI tests、typecheck、build、音声manifest validator、既存のPython content tests、Node/Python strict 48-book validatorが成功し、CI公開後の実ブラウザーでサンプル再生を確認する。機械検査と実聴評価を区別する。
+
+## Issue #16 連続読書とタブ
+
+U11 / R18〜R20を実装する追加条件です。3つの表示モードと巻全体の連続表示は親Agentが具体化した設計です。両作品の本文データは変更しません。
+
+- [ ] T1: 各巻に「対訳」「英語」「日本語」の3タブがあり、初期表示は対訳。選択タブとtabpanelの関係をrole・`aria-selected`・`aria-controls`等で伝える。
+- [ ] T2: タブ切替で巻全体の表示言語が変わり、選択外の言語本文と注釈領域が非表示になる。表示本文の順序・文字列・対訳単位との対応は元データと一致する。
+- [ ] T3: タブを矢印キー、Home、Endで操作できる。選択外になった言語のSpeechSynthesisを停止する。
+- [ ] T4: 段落ごとの大きなカード枠・余白を外し、同じ対訳単位の本文と既存の注釈detailsを連続して読める。ネタバレ開閉・出典・段落深いリンクを保つ。
+- [ ] T5: 共通readerがイリアス・オデュッセイア双方で動作し、既存の音声サンプル比較画面と音声再生制御を維持する。
+- [ ] T6: 320px幅でも本文やtablistが横にはみ出さず、フォーカスと操作状態が確認できる。日本語書体はIBM Plex Sans JP。
+- [ ] T7: UI tests、typecheck、build、Python content tests、音声validator、Node/Python strict 48巻validatorに成功し、実画面QAの証拠をIssue #16完了記録へ残す。
 
 ## SPA（2026-10-10検証）
 
@@ -100,5 +113,6 @@ Issue #1のU1〜U4から要求ID・条件IDへの対応と、後続U5〜U7の実
 | U6 リポジトリに計画を先に記録 | SPEC §5.1の計画依頼 | D8、PLAN step 0〜5 |
 | U7 Giteaで公開（親Agentによる意図解釈） | SPEC §5.1の公開先依頼 | D9、PLAN step 4〜5、公開後検証 |
 | U8 注釈を英語と日本語で表示 | R15 | N1〜N7、PLAN Issue #9工程 |
+| U11 段落表示の見直し・イリアスにも適用・タブ採用 | R18〜R20 | T1〜T7、Issue #16の実装・公開QA工程 |
 
 Agentが本Issueで具体化した要件（R7〜R14）は、SPEC.mdの5.2の出所と、各条件に併記した要求IDに対応します。
