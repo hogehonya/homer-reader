@@ -444,12 +444,12 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
     english.lang = "en";
     appendText(english, "h4", "English").lang = "en";
     appendText(english, "p", unit.en, "unit__english");
-    appendSpeechControl(english, unit.en, `unit:${unit.id}:en`, "en-US", "英語", speech);
+    appendSpeechControl(english, unit.en, `unit:${unit.id}:en`, "en-US", "英語", unit.reference, speech);
     const japanese = element(root.ownerDocument, "section", "translation translation--japanese");
     japanese.lang = "ja";
     appendText(japanese, "h4", "日本語訳");
     appendText(japanese, "p", unit.ja, "unit__japanese");
-    appendSpeechControl(japanese, unit.ja, `unit:${unit.id}:ja`, "ja-JP", "日本語", speech);
+    appendSpeechControl(japanese, unit.ja, `unit:${unit.id}:ja`, "ja-JP", "日本語", unit.reference, speech);
     columns.append(english, japanese);
     article.append(columns);
     if (unit.notes.length) {
@@ -459,7 +459,7 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
       appendText(notesHeading, "span", "解説").lang = "ja";
       notes.append(notesHeading);
       const list = element(root.ownerDocument, "ul", "note-list");
-      unit.notes.forEach((note, noteIndex) => list.append(renderNote(article.ownerDocument, note, unit.id, noteIndex, speech)));
+      unit.notes.forEach((note, noteIndex) => list.append(renderNote(article.ownerDocument, note, unit.id, noteIndex, unit.reference, speech)));
       notes.append(list);
       article.append(notes);
     }
@@ -505,7 +505,9 @@ function renderReadingTabs(document: Document, panel: HTMLElement, speech: Retur
     panel?.setAttribute("aria-labelledby", activeTab.id);
     if (panel) {
       panel.dataset.readingMode = mode;
-      for (const localized of panel.querySelectorAll<HTMLElement>("[lang='en'], [lang='ja']")) {
+      // Hide content by its language, while retaining Japanese UI labels and
+      // status messages inside the visible English speech controls.
+      for (const localized of panel.querySelectorAll<HTMLElement>(".translation, .note__locale, .unit__notes-heading [lang], .note__kind [lang], .note__title [lang], .note__spoiler-label [lang]")) {
         localized.hidden = mode !== "bilingual" && localized.lang !== (mode === "english" ? "en" : "ja");
       }
       for (const separator of panel.querySelectorAll<HTMLElement>(".note__separator")) {
@@ -536,11 +538,13 @@ function renderReadingTabs(document: Document, panel: HTMLElement, speech: Retur
   return { tablist, setMode };
 }
 
-function renderNote(document: Document, note: Note, unitId: string, noteIndex: number, speech: ReturnType<typeof createSpeechController>) {
+function renderNote(document: Document, note: Note, unitId: string, noteIndex: number, reference: string, speech: ReturnType<typeof createSpeechController>) {
   const item = element(document, "li", "note");
   const details = element(document, "details", "note__details");
   details.dataset.spoiler = String(note.spoiler);
   const summary = element(document, "summary", "note__summary");
+  const disclosureIcon = appendText(summary, "span", "▸", "note__disclosure-icon");
+  disclosureIcon.setAttribute("aria-hidden", "true");
   const kind = element(document, "span", "note__kind");
   appendText(kind, "span", KIND_LABELS_EN[note.kind]).lang = "en";
   appendText(kind, "span", " / ", "note__separator").ariaHidden = "true";
@@ -561,8 +565,8 @@ function renderNote(document: Document, note: Note, unitId: string, noteIndex: n
   }
   const body = element(document, "div", "note__body");
   const noteTarget = `note:${unitId}:${noteIndex}`;
-  body.append(renderNoteLocale(document, "english", note.spoiler ? note.titleEn : undefined, note.bodyEn, `${noteTarget}:en`, "en-US", "英語", note.titleEn, details, speech));
-  body.append(renderNoteLocale(document, "japanese", note.spoiler ? note.title : undefined, note.body, `${noteTarget}:ja`, "ja-JP", "日本語", note.title, details, speech));
+  body.append(renderNoteLocale(document, "english", note.spoiler ? note.titleEn : undefined, note.bodyEn, `${noteTarget}:en`, "en-US", "英語", note.titleEn, reference, details, speech));
+  body.append(renderNoteLocale(document, "japanese", note.spoiler ? note.title : undefined, note.body, `${noteTarget}:ja`, "ja-JP", "日本語", note.title, reference, details, speech));
   details.addEventListener("toggle", () => {
     if (!details.open) speech.stopIfTargetStartsWith(`${noteTarget}:`);
   });
@@ -576,23 +580,25 @@ function renderNote(document: Document, note: Note, unitId: string, noteIndex: n
   return item;
 }
 
-function renderNoteLocale(document: Document, language: "english" | "japanese", title: string | undefined, body: string, target: string, voiceLocale: "en-US" | "ja-JP", label: string, speechTitle: string, details: HTMLDetailsElement, speech: ReturnType<typeof createSpeechController>) {
+function renderNoteLocale(document: Document, language: "english" | "japanese", title: string | undefined, body: string, target: string, voiceLocale: "en-US" | "ja-JP", label: string, speechTitle: string, reference: string, details: HTMLDetailsElement, speech: ReturnType<typeof createSpeechController>) {
   const english = language === "english";
   const locale = element(document, "section", `note__locale note__locale--${language}`);
   locale.lang = english ? "en" : "ja";
   if (title !== undefined) appendText(locale, "h5", title, "note__locale-title");
   appendText(locale, "p", body, "note__locale-body");
   const speechText = voiceLocale === "ja-JP" ? `${speechTitle}。${body}` : `${speechTitle}. ${body}`;
-  appendSpeechControl(locale, speechText, target, voiceLocale, label, speech, details);
+  appendSpeechControl(locale, speechText, target, voiceLocale, label, `${reference}・${speechTitle}`, speech, details);
   return locale;
 }
 
-function appendSpeechControl(parent: HTMLElement, text: string, target: string, locale: "en-US" | "ja-JP", label: string, speech: ReturnType<typeof createSpeechController>, disclosure?: HTMLDetailsElement) {
+function appendSpeechControl(parent: HTMLElement, text: string, target: string, locale: "en-US" | "ja-JP", label: string, targetLabel: string, speech: ReturnType<typeof createSpeechController>, disclosure?: HTMLDetailsElement) {
   const controls = element(parent.ownerDocument, "div", "speech-control");
   const control = button(parent.ownerDocument, `${label}を読み上げる`, "speech");
   control.lang = "ja";
   control.dataset.speechLabel = label;
+  control.dataset.speechTargetLabel = targetLabel;
   control.dataset.speechTarget = target;
+  control.setAttribute("aria-label", `${targetLabel}：${control.textContent}`);
   control.setAttribute("aria-pressed", "false");
   const status = element(parent.ownerDocument, "span", "speech-status");
   status.dataset.speechStatus = target;
@@ -617,6 +623,7 @@ function updateSpeechControls(root: HTMLElement, state: SpeechState) {
     control.setAttribute("aria-pressed", String(active));
     const label = control.dataset.speechLabel ?? "文章";
     control.textContent = active ? `${label}の読み上げを停止` : `${label}を読み上げる`;
+    control.setAttribute("aria-label", `${control.dataset.speechTargetLabel}：${control.textContent}`);
     const status = root.querySelector<HTMLElement>(`#speech-status-${target.replace(/[^a-z0-9-]/gi, "-")}`);
     if (!status) continue;
     status.textContent = state.errorTarget === target
