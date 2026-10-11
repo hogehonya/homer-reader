@@ -33,8 +33,7 @@ describe("reader app", () => {
     expect(root.querySelector(".unit__english")?.textContent).toBe("Sing, goddess.");
     expect(root.querySelector(".translation--english")?.getAttribute("lang")).toBe("en");
     expect(root.querySelector(".unit__japanese")?.textContent).toBe("女神よ、歌いたまえ。");
-    expect(root.querySelector(".unit__notes-heading [lang='en']")?.textContent).toBe("Notes");
-    expect(root.querySelector(".unit__notes-heading [lang='ja']")?.textContent).toBe("解説");
+    expect(root.querySelector(".unit__notes")?.getAttribute("aria-label")).toBe("解説");
     expect(root.querySelector("script")).toBeNull();
     expect(root.querySelector(".note__body")?.textContent).not.toContain("bad()");
 
@@ -43,6 +42,58 @@ describe("reader app", () => {
     expect(edition.textContent).toContain("AI translation from Butler");
     expect(edition.textContent).toContain("試験用データ。人手確認なし");
     expect(edition.textContent).toContain("英訳の段落単位");
+  });
+
+  it("keeps full passage names and language regions while sharing visible language headings", async () => {
+    app = createReaderApp(root, { fetcher: twoUnitFetcher(), window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelectorAll(".unit")).toHaveLength(2));
+    const units = [...root.querySelectorAll<HTMLElement>(".unit")];
+    expect(units.map((unit) => unit.querySelector(".unit__number")?.textContent)).toEqual(["1", "2"]);
+    for (const unit of units) {
+      const heading = document.getElementById(unit.getAttribute("aria-labelledby")!)!;
+      expect(heading.tagName).toBe("H3");
+      expect(heading.textContent).toContain("Book 1");
+      expect(heading.hidden).toBe(false);
+      expect(unit.querySelector(".unit__number")?.getAttribute("aria-hidden")).toBe("true");
+      expect(unit.querySelector(".translation--english")?.getAttribute("aria-label")).toBe("English");
+      expect(unit.querySelector(".translation--japanese")?.getAttribute("aria-label")).toBe("日本語訳");
+      expect(unit.querySelectorAll("h4")).toHaveLength(0);
+    }
+    const headings = root.querySelector<HTMLElement>(".reading-language-headings")!;
+    expect(headings.querySelector("[lang='en']")?.textContent).toBe("English");
+    expect(headings.querySelector(".reading-language-order")?.textContent).toBe("各段落で英語 → 日本語訳の順");
+    expect(headings.hidden).toBe(false);
+    for (const mode of ["english", "japanese"]) {
+      root.querySelector<HTMLButtonElement>(`[role='tab'][data-reading-mode='${mode}']`)!.click();
+      expect(headings.hidden).toBe(true);
+    }
+    root.querySelector<HTMLButtonElement>("[role='tab'][data-reading-mode='bilingual']")!.click();
+    expect(headings.hidden).toBe(false);
+  });
+
+  it("offers edition details before reading and preserves the mode, passages, and speech on disclosure", async () => {
+    const speech = speechHarness();
+    app = createReaderApp(root, { fetcher: twoUnitFetcher(), window, ...speech.options });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector(".unit")).not.toBeNull());
+    const edition = root.querySelector<HTMLDetailsElement>(".edition-details")!;
+    const panel = root.querySelector<HTMLElement>(".reading-panel")!;
+    expect(edition.compareDocumentPosition(panel) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(edition.querySelector("summary")?.textContent).toBe("版・出典・翻訳について");
+    expect(edition.open).toBe(false);
+    root.querySelector<HTMLButtonElement>("[role='tab'][data-reading-mode='japanese']")!.click();
+    const passage = root.querySelector(".unit__japanese")!;
+    const control = root.querySelector<HTMLButtonElement>("[data-speech-target='unit:iliad-01-0001:ja']")!;
+    control.click();
+    for (const open of [true, false]) {
+      edition.open = open;
+      edition.dispatchEvent(new Event("toggle"));
+      expect(panel.dataset.readingMode).toBe("japanese");
+      expect(root.querySelector(".unit__japanese")).toBe(passage);
+      expect(control.getAttribute("aria-pressed")).toBe("true");
+    }
+    expect(speech.engine.cancel).not.toHaveBeenCalled();
   });
 
   it("switches every passage and note locale across bilingual, English, and Japanese tabs", async () => {

@@ -432,32 +432,35 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
   readingPanel.id = readingPanelId;
   readingPanel.setAttribute("role", "tabpanel");
   const tabControls = renderReadingTabs(root.ownerDocument, readingPanel, speech);
+  const languageHeadings = element(root.ownerDocument, "div", "reading-language-headings");
+  appendText(languageHeadings, "span", "English").lang = "en";
+  appendText(languageHeadings, "span", "日本語訳").lang = "ja";
+  const readingOrder = appendText(languageHeadings, "span", "各段落で英語 → 日本語訳の順", "reading-language-order");
+  readingOrder.lang = "ja";
   const units = element(root.ownerDocument, "div", "units");
   book.units.forEach((unit, index) => {
     const article = element(root.ownerDocument, "article", "unit");
     article.id = unit.id;
     article.setAttribute("aria-labelledby", `unit-heading-${index}`);
-    const heading = appendText(article, "h3", unit.reference, "unit__reference");
+    const heading = appendText(article, "h3", unit.reference, "unit__reference visually-hidden");
     heading.id = `unit-heading-${index}`;
+    appendText(article, "span", String(index + 1), "unit__number").setAttribute("aria-hidden", "true");
     const columns = element(root.ownerDocument, "div", "unit__translations");
     const english = element(root.ownerDocument, "section", "translation translation--english");
     english.lang = "en";
-    appendText(english, "h4", "English").lang = "en";
+    english.setAttribute("aria-label", "English");
     appendText(english, "p", unit.en, "unit__english");
     appendSpeechControl(english, unit.en, `unit:${unit.id}:en`, "en-US", "英語", unit.reference, speech);
     const japanese = element(root.ownerDocument, "section", "translation translation--japanese");
     japanese.lang = "ja";
-    appendText(japanese, "h4", "日本語訳");
+    japanese.setAttribute("aria-label", "日本語訳");
     appendText(japanese, "p", unit.ja, "unit__japanese");
     appendSpeechControl(japanese, unit.ja, `unit:${unit.id}:ja`, "ja-JP", "日本語", unit.reference, speech);
     columns.append(english, japanese);
     article.append(columns);
     if (unit.notes.length) {
       const notes = element(root.ownerDocument, "section", "unit__notes");
-      const notesHeading = element(root.ownerDocument, "h4", "unit__notes-heading");
-      appendText(notesHeading, "span", "Notes").lang = "en";
-      appendText(notesHeading, "span", "解説").lang = "ja";
-      notes.append(notesHeading);
+      notes.setAttribute("aria-label", "解説");
       const list = element(root.ownerDocument, "ul", "note-list");
       unit.notes.forEach((note, noteIndex) => list.append(renderNote(article.ownerDocument, note, unit.id, noteIndex, unit.reference, speech)));
       notes.append(list);
@@ -465,8 +468,8 @@ function renderBookPage(root: HTMLElement, catalog: Catalog, work: WorkIndex, bo
     }
     units.append(article);
   });
-  readingPanel.append(units);
-  page.main.append(tabControls.tablist, readingPanel, renderEditionDetails(root.ownerDocument, work));
+  readingPanel.append(languageHeadings, units);
+  page.main.append(renderEditionDetails(root.ownerDocument, work), tabControls.tablist, readingPanel);
   page.main.append(createAdjacentBookNavigation(root.ownerDocument, work, book.bookNumber));
   tabControls.setMode("bilingual");
   root.replaceChildren(page.element);
@@ -505,9 +508,11 @@ function renderReadingTabs(document: Document, panel: HTMLElement, speech: Retur
     panel?.setAttribute("aria-labelledby", activeTab.id);
     if (panel) {
       panel.dataset.readingMode = mode;
+      const languageHeadings = panel.querySelector<HTMLElement>(".reading-language-headings");
+      if (languageHeadings) languageHeadings.hidden = mode !== "bilingual";
       // Hide content by its language, while retaining Japanese UI labels and
       // status messages inside the visible English speech controls.
-      for (const localized of panel.querySelectorAll<HTMLElement>(".translation, .note__locale, .unit__notes-heading [lang], .note__kind [lang], .note__title [lang], .note__spoiler-label [lang]")) {
+      for (const localized of panel.querySelectorAll<HTMLElement>(".translation, .note__locale, .note__kind [lang], .note__title [lang], .note__spoiler-label [lang]")) {
         localized.hidden = mode !== "bilingual" && localized.lang !== (mode === "english" ? "en" : "ja");
       }
       for (const separator of panel.querySelectorAll<HTMLElement>(".note__separator")) {
@@ -654,7 +659,7 @@ function getUtteranceFactory(browser: Window): SpeechUtteranceFactory | undefine
 
 function renderEditionDetails(document: Document, work: WorkIndex) {
   const details = element(document, "details", "edition-details");
-  appendText(details, "summary", "この版について");
+  appendText(details, "summary", "版・出典・翻訳について");
   const list = element(document, "dl", "source-list");
   sourceRow(document, list, "英語本文", `${work.source.english.title} — ${work.source.english.translator}`);
   sourceRow(document, list, "英訳の出典・利用条件", work.source.english.license, work.source.english.url);
