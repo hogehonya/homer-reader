@@ -7,10 +7,11 @@
 - Issue #1の文書整備は完了しています。Issue #3はreader UI・データ契約・テスト・CI構成、Issue #4は本文48巻の整備を担当し、別worktreeで並行します。
 - main commit `c149af8`へUIと48巻データを統合し、初回release `r1119-b3`を公開済みです。PR CI #2、main CI #3、台帳CI #184、配信57ファイルhash一致を確認しました。最新の配信検証記録は[Gitea Issue #3](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/3)の完了コメントを参照してください。
 - Issue #9の日英注釈はPR #10でmainに統合済みです。受入・配信証拠は[Gitea Issue #9](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/9)の完了コメントを参照します。
-- Issue #11はブラウザー標準SpeechSynthesisによる読み上げを追加します。外部TTS API・音声ファイル生成を追加せず、オフライン動作を保証しません。受入・実音声確認は[Gitea Issue #11](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/11)の完了記録を参照します。
-- Issue #13では`#/voices`の固定試聴サンプル比較を追加します。SPAは再生時に外部TTS APIを呼ばず、音声・manifestの受入と公開結果は[Gitea Issue #13](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/13)の最新記録を参照します。
-- Issue #15ではGitHub Actions PR gateとmain成功後のGitHub Pages配信を追加します。既存Gitea/Woodpecker経路は維持し、GitHub公開状態とPagesの配信証拠は[Gitea Issue #15](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/15)を参照します。
-- Issue #16では両作品の読書画面に巻全体の「対訳」「英語」「日本語」タブを追加し、連続表示へ整えます。本文データと音声比較画面を変更せず、統合・CI・公開後QAは[Gitea Issue #16](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/16)の最新記録を参照します。
+- Issue #11は当時ブラウザー標準SpeechSynthesisによる読み上げを追加しました。U23/R38・Issue #27で現行UIから除去済みです。過去の受入・実音声確認は[Gitea Issue #11](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/11)の完了記録を参照します。
+- Issue #13は当時`#/voices`の固定試聴サンプル比較を追加しました。Issue #27でroute・画面導線を現行UIから除去済みです。音声ファイル・manifest・validatorは静的配布物と検証資産に残ります。過去の受入は[Gitea Issue #13](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/13)を参照します。
+- Issue #15でGitHub Actions PR gateとmain成功後のGitHub Pages配信を追加しました。既存Gitea/Woodpecker経路は維持し、GitHub公開状態とPagesの配信証拠は[Gitea Issue #15](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/15)を参照します。
+- Issue #16で両作品の読書画面に巻全体の「対訳」「英語」「日本語」タブを追加し、連続表示へ整えました。タブは現行機能です。後続Issue #27で音声比較画面を除去しました。統合・CI・公開後QAは[Gitea Issue #16](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/16)の記録を参照します。
+- Issue #27の参照panel・人物相関・用語/解説機能と読み上げ/試聴UI除去は実装・ローカル検証済みです。音声資産・validatorは保持し、本文/注釈データとIssue #19機能は変更していません。独立最終監査・PR CI・merge・最新配信の状態は[Issue #27](https://gitea.honya.dev/honya-dev-spa/homer-reader/issues/27)および`ACCEPTANCE.md`を参照します。
 - 機能・コンテンツ仕様の正本は`SPEC.md`、受入条件の正本は`ACCEPTANCE.md`です。要求を変える場合は`SPEC.md`の要求IDを先に更新し、対応する条件を`ACCEPTANCE.md`へ反映します。
 - 要求の原文引用は`SPEC.md`の5.1だけに置き、他文書へ複製しません。
 

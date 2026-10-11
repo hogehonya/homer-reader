@@ -1,0 +1,770 @@
+{
+  "schema": "homer-character-relations-v1",
+  "noticeJa": "この図は選択中の巻までに本文で確認できる関係を表示します。同じ巻の内容は含まれます。先の巻で初めて確認できる関係は表示しません。",
+  "visibilityRule": "Show a character only when firstBook <= selectedBook; show a relation only when minBook <= selectedBook. minBook is the first volume containing the cited evidence verified for this proposal; it does not assert that no earlier mention exists. Do not encode deaths, endings, betrayals, or revelations beyond the cited unit.",
+  "sourcePolicy": "Each edge is grounded in the public-domain Samuel Butler English narrative in the cited unit, not in generated notes. Quotes are short audit excerpts. Japanese labels explicitly follow the from-to direction for family ties and state actor-to-action for events.",
+  "works": [
+    {
+      "workId": "iliad",
+      "source": {
+        "title": "The Iliad",
+        "translator": "Samuel Butler",
+        "projectGutenbergId": 2199,
+        "url": "https://www.gutenberg.org/cache/epub/2199/pg2199.txt"
+      },
+      "characters": [
+        {
+          "id": "achilles",
+          "nameEn": "Achilles",
+          "nameJa": "アキレウス",
+          "aliasesEn": [
+            "son of Peleus"
+          ],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "peleus",
+          "nameEn": "Peleus",
+          "nameJa": "ペーレウス",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "thetis",
+          "nameEn": "Thetis",
+          "nameJa": "テティス",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "patroclus",
+          "nameEn": "Patroclus",
+          "nameJa": "パトロクロス",
+          "aliasesEn": [
+            "son of Menoetius"
+          ],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "agamemnon",
+          "nameEn": "Agamemnon",
+          "nameJa": "アガメムノン",
+          "aliasesEn": [
+            "son of Atreus",
+            "king of men"
+          ],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "menelaus",
+          "nameEn": "Menelaus",
+          "nameJa": "メネラオス",
+          "aliasesEn": [
+            "son of Atreus"
+          ],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "helen",
+          "nameEn": "Helen",
+          "nameJa": "ヘレネ",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 2
+        },
+        {
+          "id": "paris",
+          "nameEn": "Paris",
+          "nameJa": "パリス",
+          "aliasesEn": [
+            "Alexandrus (Butler)"
+          ],
+          "aliasesJa": [
+            "アレクサンドロス（Butler英訳名）"
+          ],
+          "firstBook": 3
+        },
+        {
+          "id": "priam",
+          "nameEn": "Priam",
+          "nameJa": "プリアモス",
+          "aliasesEn": [
+            "king of Troy"
+          ],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "hector",
+          "nameEn": "Hector",
+          "nameJa": "ヘクトル",
+          "aliasesEn": [
+            "Priam's son"
+          ],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "andromache",
+          "nameEn": "Andromache",
+          "nameJa": "アンドロマケ",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 6
+        },
+        {
+          "id": "astyanax",
+          "nameEn": "Astyanax",
+          "nameJa": "アステュアナクス",
+          "aliasesEn": [
+            "Hector's child"
+          ],
+          "aliasesJa": [],
+          "firstBook": 6
+        },
+        {
+          "id": "zeus",
+          "nameEn": "Zeus",
+          "nameJa": "ゼウス",
+          "aliasesEn": [
+            "Jove (Butler)"
+          ],
+          "aliasesJa": [
+            "Jove（Butler英訳名）"
+          ],
+          "firstBook": 1
+        },
+        {
+          "id": "hera",
+          "nameEn": "Hera",
+          "nameJa": "ヘラ",
+          "aliasesEn": [
+            "Juno (Butler)"
+          ],
+          "aliasesJa": [
+            "Juno（Butler英訳名）"
+          ],
+          "firstBook": 1
+        },
+        {
+          "id": "apollo",
+          "nameEn": "Apollo",
+          "nameJa": "アポロン",
+          "aliasesEn": [
+            "Phoebus (Butler)"
+          ],
+          "aliasesJa": [
+            "Phoebus（Butler英訳名）"
+          ],
+          "firstBook": 1
+        },
+        {
+          "id": "athena",
+          "nameEn": "Athena",
+          "nameJa": "アテナ",
+          "aliasesEn": [
+            "Minerva (Butler)"
+          ],
+          "aliasesJa": [
+            "Minerva（Butler英訳名）"
+          ],
+          "firstBook": 1
+        }
+      ],
+      "relations": [
+        {
+          "id": "iliad-achilles-peleus",
+          "from": "achilles",
+          "to": "peleus",
+          "kind": "parent-child",
+          "labelEn": "son of",
+          "labelJa": "息子 → 父",
+          "minBook": 1,
+          "unitId": "iliad-01-0001",
+          "evidence": {
+            "en": "Achilles son of Peleus"
+          }
+        },
+        {
+          "id": "iliad-thetis-achilles",
+          "from": "thetis",
+          "to": "achilles",
+          "kind": "parent-child",
+          "labelEn": "mother of",
+          "labelJa": "母 → 息子",
+          "minBook": 1,
+          "unitId": "iliad-01-0036",
+          "evidence": {
+            "en": "I should have borne or suckled you"
+          }
+        },
+        {
+          "id": "iliad-achilles-patroclus",
+          "from": "achilles",
+          "to": "patroclus",
+          "kind": "companion",
+          "labelEn": "close companion of",
+          "labelJa": "親しい仲間 ↔ 親しい仲間",
+          "minBook": 1,
+          "unitId": "iliad-01-0031",
+          "evidence": {
+            "en": "his dear comrade"
+          }
+        },
+        {
+          "id": "iliad-menelaus-agamemnon",
+          "from": "menelaus",
+          "to": "agamemnon",
+          "kind": "sibling",
+          "labelEn": "brother of",
+          "labelJa": "兄弟 ↔ 兄弟",
+          "minBook": 2,
+          "unitId": "iliad-02-0042",
+          "evidence": {
+            "en": "brother to Agamemnon"
+          }
+        },
+        {
+          "id": "iliad-menelaus-helen",
+          "from": "menelaus",
+          "to": "helen",
+          "kind": "former-spouse",
+          "labelEn": "former husband seeking her return",
+          "labelJa": "元夫 → 元妻",
+          "minBook": 3,
+          "unitId": "iliad-03-0034",
+          "evidence": {
+            "en": "Menelaus has just vanquished Alexandrus, and is to take my hateful self back"
+          }
+        },
+        {
+          "id": "iliad-paris-helen",
+          "from": "paris",
+          "to": "helen",
+          "kind": "spouse",
+          "labelEn": "husband of",
+          "labelJa": "夫 → 妻",
+          "minBook": 3,
+          "unitId": "iliad-03-0029",
+          "evidence": {
+            "en": "Alexandrus, husband of lovely Helen"
+          }
+        },
+        {
+          "id": "iliad-priam-paris",
+          "from": "priam",
+          "to": "paris",
+          "kind": "parent-child",
+          "labelEn": "father of",
+          "labelJa": "父 → 息子",
+          "minBook": 3,
+          "unitId": "iliad-03-0027",
+          "evidence": {
+            "en": "this fight between my son and Menelaus"
+          }
+        },
+        {
+          "id": "iliad-priam-hector",
+          "from": "priam",
+          "to": "hector",
+          "kind": "parent-child",
+          "labelEn": "father of",
+          "labelJa": "父 → 息子",
+          "minBook": 2,
+          "unitId": "iliad-02-0068",
+          "evidence": {
+            "en": "Priam’s son, great Hector"
+          }
+        },
+        {
+          "id": "iliad-hector-paris",
+          "from": "hector",
+          "to": "paris",
+          "kind": "sibling",
+          "labelEn": "brother of",
+          "labelJa": "兄弟 ↔ 兄弟",
+          "minBook": 6,
+          "unitId": "iliad-06-0035",
+          "evidence": {
+            "en": "My good brother"
+          }
+        },
+        {
+          "id": "iliad-hector-andromache",
+          "from": "hector",
+          "to": "andromache",
+          "kind": "spouse",
+          "labelEn": "husband of",
+          "labelJa": "夫 → 妻",
+          "minBook": 6,
+          "unitId": "iliad-06-0029",
+          "evidence": {
+            "en": "His daughter had married Hector"
+          }
+        },
+        {
+          "id": "iliad-hector-astyanax",
+          "from": "hector",
+          "to": "astyanax",
+          "kind": "parent-child",
+          "labelEn": "father of",
+          "labelJa": "父 → 息子",
+          "minBook": 6,
+          "unitId": "iliad-06-0029",
+          "evidence": {
+            "en": "Hector had named him Scamandrius, but the people called him Astyanax"
+          }
+        },
+        {
+          "id": "iliad-zeus-apollo",
+          "from": "zeus",
+          "to": "apollo",
+          "kind": "parent-child",
+          "labelEn": "father of",
+          "labelJa": "父 → 息子",
+          "minBook": 1,
+          "unitId": "iliad-01-0002",
+          "evidence": {
+            "en": "the son of Jove and Leto"
+          }
+        },
+        {
+          "id": "iliad-zeus-athena",
+          "from": "zeus",
+          "to": "athena",
+          "kind": "parent-child",
+          "labelEn": "father of",
+          "labelJa": "父 → 娘",
+          "minBook": 1,
+          "unitId": "iliad-01-0018",
+          "evidence": {
+            "en": "daughter of aegis-bearing Jove"
+          }
+        },
+        {
+          "id": "iliad-hera-athena",
+          "from": "hera",
+          "to": "athena",
+          "kind": "divine-aid",
+          "labelEn": "sends to restrain Achilles",
+          "labelJa": "ヘラ → アテナを派遣（アキレウス制止）",
+          "minBook": 1,
+          "unitId": "iliad-01-0018",
+          "evidence": {
+            "en": "Juno had sent her"
+          }
+        },
+        {
+          "id": "iliad-athena-achilles",
+          "from": "athena",
+          "to": "achilles",
+          "kind": "intervention",
+          "labelEn": "restrains",
+          "labelJa": "アテナ → アキレウスを制止",
+          "minBook": 1,
+          "unitId": "iliad-01-0018",
+          "evidence": {
+            "en": "seized the son of Peleus by his yellow hair"
+          }
+        },
+        {
+          "id": "iliad-apollo-agamemnon",
+          "from": "apollo",
+          "to": "agamemnon",
+          "kind": "divine-opposition",
+          "labelEn": "strikes his host with plague over Chryses",
+          "labelJa": "アポロン → アガメムノンの軍へ疫病を送る",
+          "minBook": 1,
+          "unitId": "iliad-01-0002",
+          "evidence": {
+            "en": "sent a pestilence upon the host"
+          }
+        }
+      ]
+    },
+    {
+      "workId": "odyssey",
+      "source": {
+        "title": "The Odyssey",
+        "translator": "Samuel Butler",
+        "projectGutenbergId": 1727,
+        "url": "https://www.gutenberg.org/cache/epub/1727/pg1727.txt"
+      },
+      "characters": [
+        {
+          "id": "odysseus",
+          "nameEn": "Odysseus",
+          "nameJa": "オデュッセウス",
+          "aliasesEn": [
+            "Ulysses (Butler)"
+          ],
+          "aliasesJa": [
+            "Ulysses（Butler英訳名）"
+          ],
+          "firstBook": 1
+        },
+        {
+          "id": "penelope",
+          "nameEn": "Penelope",
+          "nameJa": "ペネロペ",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "telemachus",
+          "nameEn": "Telemachus",
+          "nameJa": "テレマコス",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "laertes",
+          "nameEn": "Laertes",
+          "nameJa": "ラエルテス",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "athena",
+          "nameEn": "Athena",
+          "nameJa": "アテナ",
+          "aliasesEn": [
+            "Minerva (Butler)"
+          ],
+          "aliasesJa": [
+            "Minerva（Butler英訳名）"
+          ],
+          "firstBook": 1
+        },
+        {
+          "id": "zeus",
+          "nameEn": "Zeus",
+          "nameJa": "ゼウス",
+          "aliasesEn": [
+            "Jove (Butler)"
+          ],
+          "aliasesJa": [
+            "Jove（Butler英訳名）"
+          ],
+          "firstBook": 1
+        },
+        {
+          "id": "poseidon",
+          "nameEn": "Poseidon",
+          "nameJa": "ポセイドン",
+          "aliasesEn": [
+            "Neptune (Butler)"
+          ],
+          "aliasesJa": [
+            "Neptune（Butler英訳名）"
+          ],
+          "firstBook": 1
+        },
+        {
+          "id": "calypso",
+          "nameEn": "Calypso",
+          "nameJa": "カリュプソ",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "hermes",
+          "nameEn": "Hermes",
+          "nameJa": "ヘルメス",
+          "aliasesEn": [
+            "Mercury (Butler)"
+          ],
+          "aliasesJa": [
+            "Mercury（Butler英訳名）"
+          ],
+          "firstBook": 1
+        },
+        {
+          "id": "nausicaa",
+          "nameEn": "Nausicaa",
+          "nameJa": "ナウシカア",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 6
+        },
+        {
+          "id": "alcinous",
+          "nameEn": "Alcinous",
+          "nameJa": "アルキノオス",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 6
+        },
+        {
+          "id": "arete",
+          "nameEn": "Arete",
+          "nameJa": "アレーテー",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 7
+        },
+        {
+          "id": "circe",
+          "nameEn": "Circe",
+          "nameJa": "キルケー",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 8
+        },
+        {
+          "id": "polyphemus",
+          "nameEn": "Polyphemus",
+          "nameJa": "ポリュペモス",
+          "aliasesEn": [],
+          "aliasesJa": [],
+          "firstBook": 1
+        },
+        {
+          "id": "eumaeus",
+          "nameEn": "Eumaeus",
+          "nameJa": "エウマイオス",
+          "aliasesEn": [
+            "swineherd"
+          ],
+          "aliasesJa": [
+            "豚飼い"
+          ],
+          "firstBook": 14
+        }
+      ],
+      "relations": [
+        {
+          "id": "odyssey-odysseus-penelope",
+          "from": "odysseus",
+          "to": "penelope",
+          "kind": "spouse",
+          "labelEn": "husband of",
+          "labelJa": "夫 → 妻",
+          "minBook": 1,
+          "unitId": "odyssey-01-0002",
+          "evidence": {
+            "en": "longing to return to his wife"
+          }
+        },
+        {
+          "id": "odyssey-odysseus-telemachus",
+          "from": "odysseus",
+          "to": "telemachus",
+          "kind": "parent-child",
+          "labelEn": "father of",
+          "labelJa": "父 → 息子",
+          "minBook": 1,
+          "unitId": "odyssey-01-0007",
+          "evidence": {
+            "en": "Ulysses’ son Telemachus"
+          }
+        },
+        {
+          "id": "odyssey-penelope-telemachus",
+          "from": "penelope",
+          "to": "telemachus",
+          "kind": "parent-child",
+          "labelEn": "mother of",
+          "labelJa": "母 → 息子",
+          "minBook": 1,
+          "unitId": "odyssey-01-0007",
+          "evidence": {
+            "en": "the suitors of his mother Penelope"
+          }
+        },
+        {
+          "id": "odyssey-odysseus-laertes",
+          "from": "odysseus",
+          "to": "laertes",
+          "kind": "parent-child",
+          "labelEn": "son of",
+          "labelJa": "息子 → 父",
+          "minBook": 9,
+          "unitId": "odyssey-09-0002",
+          "evidence": {
+            "en": "Ulysses son of Laertes"
+          }
+        },
+        {
+          "id": "odyssey-athena-telemachus",
+          "from": "athena",
+          "to": "telemachus",
+          "kind": "divine-support",
+          "labelEn": "encourages",
+          "labelJa": "アテナ → テレマコスを励ます",
+          "minBook": 1,
+          "unitId": "odyssey-01-0007",
+          "evidence": {
+            "en": "to put heart into Ulysses’ son Telemachus"
+          }
+        },
+        {
+          "id": "odyssey-athena-odysseus",
+          "from": "athena",
+          "to": "odysseus",
+          "kind": "divine-support",
+          "labelEn": "advocates for his return",
+          "labelJa": "アテナ → オデュッセウスの帰還を願い取りなす",
+          "minBook": 1,
+          "unitId": "odyssey-01-0005",
+          "evidence": {
+            "en": "it is for Ulysses that my heart bleeds"
+          }
+        },
+        {
+          "id": "odyssey-hermes-calypso",
+          "from": "hermes",
+          "to": "calypso",
+          "kind": "messenger",
+          "labelEn": "delivers Zeus’s return message to",
+          "labelJa": "ヘルメス → カリュプソに帰還命令を伝える",
+          "minBook": 5,
+          "unitId": "odyssey-05-0009",
+          "evidence": {
+            "en": "Jove sent me; it was no doing of mine"
+          }
+        },
+        {
+          "id": "odyssey-calypso-odysseus",
+          "from": "calypso",
+          "to": "odysseus",
+          "kind": "detains",
+          "labelEn": "detains",
+          "labelJa": "カリュプソ → オデュッセウスを引き留める",
+          "minBook": 1,
+          "unitId": "odyssey-01-0002",
+          "evidence": {
+            "en": "was detained by the goddess Calypso"
+          }
+        },
+        {
+          "id": "odyssey-poseidon-odysseus",
+          "from": "poseidon",
+          "to": "odysseus",
+          "kind": "divine-opposition",
+          "labelEn": "obstructs his return",
+          "labelJa": "ポセイドン → オデュッセウスの帰還を妨げる",
+          "minBook": 1,
+          "unitId": "odyssey-01-0002",
+          "evidence": {
+            "en": "Neptune, who still persecuted him without ceasing"
+          }
+        },
+        {
+          "id": "odyssey-poseidon-polyphemus",
+          "from": "poseidon",
+          "to": "polyphemus",
+          "kind": "parent-child",
+          "labelEn": "father of",
+          "labelJa": "父 → 息子",
+          "minBook": 1,
+          "unitId": "odyssey-01-0006",
+          "evidence": {
+            "en": "Polyphemus is son to Neptune"
+          }
+        },
+        {
+          "id": "odyssey-nausicaa-alcinous",
+          "from": "nausicaa",
+          "to": "alcinous",
+          "kind": "parent-child",
+          "labelEn": "daughter of",
+          "labelJa": "娘 → 父",
+          "minBook": 6,
+          "unitId": "odyssey-06-0002",
+          "evidence": {
+            "en": "Nausicaa, daughter to King Alcinous"
+          }
+        },
+        {
+          "id": "odyssey-arete-alcinous",
+          "from": "arete",
+          "to": "alcinous",
+          "kind": "spouse",
+          "labelEn": "wife of",
+          "labelJa": "妻 → 夫",
+          "minBook": 7,
+          "unitId": "odyssey-07-0007",
+          "evidence": {
+            "en": "a daughter Arete, whom Alcinous married"
+          }
+        },
+        {
+          "id": "odyssey-nausicaa-odysseus",
+          "from": "nausicaa",
+          "to": "odysseus",
+          "kind": "aid",
+          "labelEn": "offers clothes and help to",
+          "labelJa": "ナウシカア → 衣服と助力を申し出る",
+          "minBook": 6,
+          "unitId": "odyssey-06-0015",
+          "evidence": {
+            "en": "you shall not want for clothes"
+          }
+        },
+        {
+          "id": "odyssey-alcinous-odysseus",
+          "from": "alcinous",
+          "to": "odysseus",
+          "kind": "hospitality",
+          "labelEn": "grants an escort home to",
+          "labelJa": "アルキノオス → 帰国の船団を出す",
+          "minBook": 7,
+          "unitId": "odyssey-07-0020",
+          "evidence": {
+            "en": "agreed that he should have his escort"
+          }
+        },
+        {
+          "id": "odyssey-circe-odysseus",
+          "from": "circe",
+          "to": "odysseus",
+          "kind": "guidance",
+          "labelEn": "guides on the next stage of his homeward journey",
+          "labelJa": "キルケー → 帰還への次の旅路を案内",
+          "minBook": 10,
+          "unitId": "odyssey-10-0041",
+          "evidence": {
+            "en": "there is another journey which you have got to take"
+          }
+        },
+        {
+          "id": "odyssey-hermes-odysseus",
+          "from": "hermes",
+          "to": "odysseus",
+          "kind": "divine-aid",
+          "labelEn": "gives him the herb that counters Circe’s spell",
+          "labelJa": "ヘルメス → 術に対抗する薬草を渡す",
+          "minBook": 10,
+          "unitId": "odyssey-10-0023",
+          "evidence": {
+            "en": "the virtue of the herb that I shall give you"
+          }
+        },
+        {
+          "id": "odyssey-eumaeus-odysseus",
+          "from": "eumaeus",
+          "to": "odysseus",
+          "kind": "service",
+          "labelEn": "faithful swineherd and servant of",
+          "labelJa": "エウマイオス → 忠実な豚飼い・従者",
+          "minBook": 14,
+          "unitId": "odyssey-14-0001",
+          "evidence": {
+            "en": "the swineherd, who was the most thrifty servant he had"
+          }
+        }
+      ]
+    }
+  ]
+}
