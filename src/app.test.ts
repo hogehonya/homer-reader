@@ -33,8 +33,7 @@ describe("reader app", () => {
     expect(root.querySelector(".unit__english")?.textContent).toBe("Sing, goddess.");
     expect(root.querySelector(".translation--english")?.getAttribute("lang")).toBe("en");
     expect(root.querySelector(".unit__japanese")?.textContent).toBe("女神よ、歌いたまえ。");
-    expect(root.querySelector(".unit__notes-heading [lang='en']")?.textContent).toBe("Notes");
-    expect(root.querySelector(".unit__notes-heading [lang='ja']")?.textContent).toBe("解説");
+    expect(root.querySelector(".unit__notes")?.getAttribute("aria-label")).toBe("解説");
     expect(root.querySelector("script")).toBeNull();
     expect(root.querySelector(".note__body")?.textContent).not.toContain("bad()");
 
@@ -43,6 +42,58 @@ describe("reader app", () => {
     expect(edition.textContent).toContain("AI translation from Butler");
     expect(edition.textContent).toContain("試験用データ。人手確認なし");
     expect(edition.textContent).toContain("英訳の段落単位");
+  });
+
+  it("keeps full passage names and language regions while sharing visible language headings", async () => {
+    app = createReaderApp(root, { fetcher: twoUnitFetcher(), window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelectorAll(".unit")).toHaveLength(2));
+    const units = [...root.querySelectorAll<HTMLElement>(".unit")];
+    expect(units.map((unit) => unit.querySelector(".unit__number")?.textContent)).toEqual(["1", "2"]);
+    for (const unit of units) {
+      const heading = document.getElementById(unit.getAttribute("aria-labelledby")!)!;
+      expect(heading.tagName).toBe("H3");
+      expect(heading.textContent).toContain("Book 1");
+      expect(heading.hidden).toBe(false);
+      expect(unit.querySelector(".unit__number")?.getAttribute("aria-hidden")).toBe("true");
+      expect(unit.querySelector(".translation--english")?.getAttribute("aria-label")).toBe("English");
+      expect(unit.querySelector(".translation--japanese")?.getAttribute("aria-label")).toBe("日本語訳");
+      expect(unit.querySelectorAll("h4")).toHaveLength(0);
+    }
+    const headings = root.querySelector<HTMLElement>(".reading-language-headings")!;
+    expect(headings.querySelector("[lang='en']")?.textContent).toBe("English");
+    expect(headings.querySelector(".reading-language-order")?.textContent).toBe("各段落で英語 → 日本語訳の順");
+    expect(headings.hidden).toBe(false);
+    for (const mode of ["english", "japanese"]) {
+      root.querySelector<HTMLButtonElement>(`[role='tab'][data-reading-mode='${mode}']`)!.click();
+      expect(headings.hidden).toBe(true);
+    }
+    root.querySelector<HTMLButtonElement>("[role='tab'][data-reading-mode='bilingual']")!.click();
+    expect(headings.hidden).toBe(false);
+  });
+
+  it("offers edition details before reading and preserves the mode, passages, and speech on disclosure", async () => {
+    const speech = speechHarness();
+    app = createReaderApp(root, { fetcher: twoUnitFetcher(), window, ...speech.options });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector(".unit")).not.toBeNull());
+    const edition = root.querySelector<HTMLDetailsElement>(".edition-details")!;
+    const panel = root.querySelector<HTMLElement>(".reading-panel")!;
+    expect(edition.compareDocumentPosition(panel) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(edition.querySelector("summary")?.textContent).toBe("版・出典・翻訳について");
+    expect(edition.open).toBe(false);
+    root.querySelector<HTMLButtonElement>("[role='tab'][data-reading-mode='japanese']")!.click();
+    const passage = root.querySelector(".unit__japanese")!;
+    const control = root.querySelector<HTMLButtonElement>("[data-speech-target='unit:iliad-01-0001:ja']")!;
+    control.click();
+    for (const open of [true, false]) {
+      edition.open = open;
+      edition.dispatchEvent(new Event("toggle"));
+      expect(panel.dataset.readingMode).toBe("japanese");
+      expect(root.querySelector(".unit__japanese")).toBe(passage);
+      expect(control.getAttribute("aria-pressed")).toBe("true");
+    }
+    expect(speech.engine.cancel).not.toHaveBeenCalled();
   });
 
   it("switches every passage and note locale across bilingual, English, and Japanese tabs", async () => {
@@ -100,8 +151,103 @@ describe("reader app", () => {
     tabs[2]!.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true }));
     expect(document.activeElement).toBe(tabs[0]);
     expect(tabs[0]!.getAttribute("aria-selected")).toBe("true");
+    expect(tabs.every((tab) => tab.classList.contains("reading-tab"))).toBe(true);
     tabs[0]!.dispatchEvent(new KeyboardEvent("keydown", { key: "End", bubbles: true }));
     expect(document.activeElement).toBe(tabs[2]);
+  });
+
+  it("keeps English passage and note speech controls visible in the English tab", async () => {
+    const speech = speechHarness();
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window, ...speech.options });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector("[role='tablist']")).not.toBeNull());
+    root.querySelector<HTMLButtonElement>("[data-reading-mode='english'][role='tab']")!.click();
+    const note = root.querySelector<HTMLDetailsElement>('details[data-spoiler="false"]')!;
+    note.open = true;
+    for (const target of ["unit:iliad-01-0001:en", "note:iliad-01-0001:0:en"]) {
+      const control = root.querySelector<HTMLButtonElement>(`[data-speech-target='${target}']`)!;
+      const status = root.querySelector<HTMLElement>(`[data-speech-status='${target}']`)!;
+      expect(control.closest("[hidden]")).toBeNull();
+      expect(status.closest("[hidden]")).toBeNull();
+      expect(control.lang).toBe("ja");
+      control.focus();
+      control.click();
+      expect(control.getAttribute("aria-pressed")).toBe("true");
+      expect(status.textContent).toContain("読み上げ中");
+      expect(document.activeElement).toBe(control);
+      control.click();
+      expect(control.getAttribute("aria-pressed")).toBe("false");
+    }
+  });
+
+  it("names speech targets and retains focus through start, failure, retry, and stop", async () => {
+    const speech = speechHarness();
+    app = createReaderApp(root, { fetcher: twoUnitFetcher(), window, ...speech.options });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelectorAll(".unit")).toHaveLength(2));
+    const control = root.querySelector<HTMLButtonElement>("[data-speech-target='unit:iliad-01-0002:en']")!;
+    const noteControl = root.querySelector<HTMLButtonElement>("[data-speech-target='note:iliad-01-0001:0:en']")!;
+    expect(control.getAttribute("aria-label")).toBe("Book 1, paragraph 2：英語を読み上げる");
+    expect(noteControl.getAttribute("aria-label")).toContain("Poetic invocation");
+    control.focus();
+    control.click();
+    expect(control.getAttribute("aria-label")).toBe("Book 1, paragraph 2：英語の読み上げを停止");
+    expect(document.activeElement).toBe(control);
+    speech.utterances[0]!.onerror!({ error: "network" });
+    expect(root.querySelector("[data-speech-status='unit:iliad-01-0002:en']")!.textContent).toContain("もう一度");
+    expect(control.getAttribute("aria-label")).toContain("英語を読み上げる");
+    expect(document.activeElement).toBe(control);
+    control.click();
+    expect(speech.utterances).toHaveLength(2);
+    control.click();
+    expect(control.getAttribute("aria-pressed")).toBe("false");
+    expect(document.activeElement).toBe(control);
+  });
+
+  it("distinguishes same-title notes by their passage without adding that reference to speech", async () => {
+    const book = fixtureBook();
+    const first = book.units[0]!;
+    book.units.push({ ...first, id: "iliad-01-0002", reference: "Book 1, paragraph 2" });
+    const catalog = structuredClone(fixtureCatalog);
+    catalog.works[0]!.books[0]!.unitCount = 2;
+    const speech = speechHarness();
+    app = createReaderApp(root, {
+      fetcher: async (input) => jsonResponse(String(input).endsWith("catalog.json") ? catalog : book),
+      window, ...speech.options,
+    });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelectorAll(".unit")).toHaveLength(2));
+    const controls = ["iliad-01-0001", "iliad-01-0002"].map((id) =>
+      root.querySelector<HTMLButtonElement>(`[data-speech-target='note:${id}:0:en']`)!,
+    );
+    expect(controls[0]!.getAttribute("aria-label")).toBe("Book 1, paragraph 1・Poetic invocation：英語を読み上げる");
+    expect(controls[1]!.getAttribute("aria-label")).toBe("Book 1, paragraph 2・Poetic invocation：英語を読み上げる");
+    controls[1]!.closest<HTMLDetailsElement>("details")!.open = true;
+    controls[1]!.click();
+    expect(speech.utterances[0]!.text).toBe("Poetic invocation. The poet calls upon the goddess to begin the tale.");
+    expect(controls[1]!.getAttribute("aria-label")).toBe("Book 1, paragraph 2・Poetic invocation：英語の読み上げを停止");
+  });
+
+  it("provides a non-color disclosure cue and keeps the native note and focus on close", async () => {
+    app = createReaderApp(root, { fetcher: mockedFetcher(), window });
+    await app.ready;
+    await vi.waitFor(() => expect(root.querySelector(".note__summary")).not.toBeNull());
+    const note = root.querySelector<HTMLDetailsElement>('details[data-spoiler="false"]')!;
+    const summary = note.querySelector<HTMLElement>("summary")!;
+    const cue = summary.querySelector<HTMLElement>(".note__disclosure-icon")!;
+    expect(cue).not.toBeNull();
+    expect(cue.getAttribute("aria-hidden")).toBe("true");
+    const originalText = root.querySelector(".unit__english")!.textContent;
+    const originalHash = window.location.hash;
+    summary.focus();
+    note.open = true;
+    note.dispatchEvent(new Event("toggle"));
+    note.open = false;
+    note.dispatchEvent(new Event("toggle"));
+    expect(note.open).toBe(false);
+    expect(document.activeElement).toBe(summary);
+    expect(root.querySelector(".unit__english")!.textContent).toBe(originalText);
+    expect(window.location.hash).toBe(originalHash);
   });
 
   it("keeps spoiler notes concealed in details until explicitly opened", async () => {
